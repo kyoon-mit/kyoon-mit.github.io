@@ -24,13 +24,13 @@ This page documents my current results.
 - **Number of layers (`n_layers`):** 8
 - **Total parameters:** ≈ 1.3 M
 
-<h2>Relative difference vs. SNR</h2>
+<h2>Relative error vs. SNR</h2>
 <iframe src="{{ '/assets/plotly/rel_diff_chirp_mass.html' | relative_url }}" width="900" height="600"></iframe>
 
-<h2>Absolute difference vs. SNR</h2>
+<h2>Absolute error vs. SNR</h2>
 <iframe src="{{ '/assets/plotly/abs_diff_chirp_mass.html' | relative_url }}" width="900" height="600"></iframe>
 
-<h2>Fraction of events vs. SNR cutoff</h2>
+<h2>Relative error cutoff vs. Fraction of events</h2>
 <iframe src="{{ '/assets/plotly/frac_events_vs_cutoff.html' | relative_url }}" width="900" height="600"></iframe>
 
 <h2>SNR bins vs. Fraction of events below cutoff (per bin)</h2>
