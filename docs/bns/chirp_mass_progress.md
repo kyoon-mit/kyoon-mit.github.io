@@ -1,6 +1,6 @@
 ---
 layout: page
-title: BNS Parameter Regression — Progress
+title: BNS Chirp Mass
 permalink: /bns/chirp_mass_progress/
 ---
 
