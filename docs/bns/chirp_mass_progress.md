@@ -4,8 +4,7 @@ title: BNS Chirp Mass
 permalink: /bns/chirp_mass_progress/
 ---
 
-<p><em>Last updated: {{ site.time | date: "%Y-%m-%d" }}</em></p>
-This page documents my current results.
+This page documents my current results, newest first.
 
 ---
 <p><em>Last updated: 2026-01-02 </em></p>
@@ -76,10 +75,10 @@ Model 2: Transfer Learning
 
 <h2>Validation loss during training</h2>
 Model 1: From Scratch
-<iframe src="{{ '/assets/plotly/chirp_mass_progress/2026-01-02/from_scratch/val_loss.png' | relative_url }}" width="600" height="400"></iframe>
+<img src="{{ '/assets/plotly/chirp_mass_progress/2026-01-02/from_scratch/val_loss.png' | relative_url }}" alt="Validation loss, model trained from scratch on SNR [30, 40]" width="600">
 
 Model 2: Transfer Learning
-<iframe src="{{ '/assets/plotly/chirp_mass_progress/2026-01-02/transfer_learning/val_loss.png' | relative_url }}" width="600" height="400"></iframe>
+<img src="{{ '/assets/plotly/chirp_mass_progress/2026-01-02/transfer_learning/val_loss.png' | relative_url }}" alt="Validation loss, model pretrained on SNR [20, 30] then fine-tuned on [30, 40]" width="600">
 
 ---
 <p><em>Last updated: 2025-12-23 </em></p>
