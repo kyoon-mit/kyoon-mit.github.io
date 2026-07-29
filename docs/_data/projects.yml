@@ -22,6 +22,7 @@ current:
     tags: []
     image: /assets/img/projects/placeholder.svg
     url: /projects/placeholder/
+    hide_in_nav: true   # keeps "(Placeholder)" out of the footer link list
 
 past:
   - title: Higgs Rare Decays to Light Quark Mesons

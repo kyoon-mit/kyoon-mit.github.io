@@ -206,11 +206,14 @@ ul, ol { margin: 0; }
 /* Scrim: readable at rest, much darker on interaction. */
 .card__scrim {
   position: absolute; inset: 0;
+  /* Stops are measured from the bottom. The text block reaches ~25% of the
+     card on desktop and ~46% when the title and blurb both wrap on a phone,
+     so the opaque region has to extend that far. */
   background:
     linear-gradient(to top,
-      rgba(6, 10, 15, .94) 0%,
-      rgba(6, 10, 15, .88) 22%,
-      rgba(6, 10, 15, .5) 52%,
+      rgba(6, 10, 15, .95) 0%,
+      rgba(6, 10, 15, .9) 40%,
+      rgba(6, 10, 15, .58) 58%,
       rgba(6, 10, 15, .12) 100%);
   transition: background .3s ease, backdrop-filter .3s ease;
 }
@@ -368,14 +371,19 @@ ul, ol { margin: 0; }
 .prose .table-scroll { overflow-x: auto; }
 
 /* Spec list — key/value pairs for model + dataset parameters */
+/* Flex rather than grid: a partial last row stretches to fill the width
+   instead of leaving empty bordered cells. The items' own right/bottom
+   borders form the container's right and bottom edges. */
 .specs {
-  display: grid; gap: 0; margin: 0;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
-  border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden;
+  display: flex; flex-wrap: wrap; gap: 0; margin: 0;
+  border-top: 1px solid var(--line); border-left: 1px solid var(--line);
+  border-radius: var(--r-md); overflow: hidden;
   background: var(--bg-2);
 }
 .specs > div {
-  padding: .8rem 1rem; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  flex: 1 1 190px; min-width: 0;
+  padding: .8rem 1rem;
+  border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
 }
 .specs dt {
   font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
@@ -425,6 +433,29 @@ ul, ol { margin: 0; }
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
 }
 .prose .plot-pair, .prose .plot-full { margin-top: 1.4rem; }
+
+/* Collapsible extra figures inside an update */
+.extra {
+  border: 1px solid var(--line); border-radius: var(--r-md); background: var(--bg-2);
+  overflow: hidden;
+}
+.extra > summary {
+  cursor: pointer; list-style: none; padding: .8rem 1rem;
+  display: flex; align-items: center; gap: .55rem;
+  font-size: .92rem; font-weight: 600; color: var(--ink);
+}
+.extra > summary:hover { background: var(--bg-3); }
+.extra > summary::-webkit-details-marker { display: none; }
+.extra > summary::before {
+  content: ""; width: 0; height: 0; flex: none;
+  border-left: 5px solid var(--ink-3); border-top: 4px solid transparent; border-bottom: 4px solid transparent;
+  transition: transform .18s ease;
+}
+.extra[open] > summary::before { transform: rotate(90deg); }
+.extra__body {
+  display: grid; gap: 1.4rem; padding: .4rem 1rem 1.2rem;
+  border-top: 1px solid var(--line);
+}
 
 /* --- Updates index: calendar + tree -------------------------------------- */
 .cal {

@@ -42,6 +42,12 @@ plugins:
   - jekyll-feed
   - jekyll-redirect-from
 
+# There is no blog, so the feed covers the research log instead of posts.
+feed:
+  collections:
+    updates:
+      path: /projects/bns/updates/feed.xml
+
 exclude:
   - Gemfile
   - Gemfile.lock

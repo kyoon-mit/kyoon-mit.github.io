@@ -47,7 +47,7 @@
 
   <!-- chirp: amplitude grows and frequency increases toward merger.
        Kept clear of the lower band, where the card title sits. -->
-  <g transform="translate(0,-95)">
+  <g transform="translate(0,-155)">
   <path fill="none" stroke="url(#bnsWave)" stroke-width="3.2" stroke-linecap="round"
     d="M60 640
        q 30 -14 60 0 q 30 14 60 0

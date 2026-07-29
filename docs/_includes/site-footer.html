@@ -19,16 +19,16 @@
       <p class="site-footer__label">Research</p>
       <ul class="site-footer__list">
         {%- for p in site.data.projects.current -%}
-          {%- if p.url -%}<li><a href="{{ p.url | relative_url }}">{{ p.title }}</a></li>{%- endif -%}
+          {%- if p.url and p.hide_in_nav != true -%}<li><a href="{{ p.url | relative_url }}">{{ p.title }}</a></li>{%- endif -%}
         {%- endfor -%}
         {%- for p in site.data.projects.past -%}
-          {%- if p.url -%}<li><a href="{{ p.url | relative_url }}">{{ p.title }}</a></li>{%- endif -%}
+          {%- if p.url and p.hide_in_nav != true -%}<li><a href="{{ p.url | relative_url }}">{{ p.title }}</a></li>{%- endif -%}
         {%- endfor -%}
       </ul>
     </nav>
   </div>
   <div class="wrap site-footer__base">
     <p>© {{ site.time | date: "%Y" }} {{ site.title }}</p>
-    <p>Built with Jekyll. <a href="{{ '/feed.xml' | relative_url }}">Feed</a></p>
+    <p>Built with Jekyll. <a href="{{ '/projects/bns/updates/feed.xml' | relative_url }}">Updates feed</a></p>
   </div>
 </footer>

@@ -77,6 +77,31 @@ distributions per bin, which makes the tails easier to read.
    caption="Relative-error distribution within each SNR bin." %}
 </div>
 
+## Additional figures
+
+Supporting views of the same test set, collapsed by default.
+
+<details class="extra">
+  <summary>Absolute and relative error distributions, and the cutoff sweep</summary>
+  <div class="extra__body">
+{% include plot.html
+   src="/assets/plotly/chirp_mass_progress/2025-12-23/abs_diff_chirp_mass.html"
+   label="Absolute error"
+   ratio="3 / 2"
+   caption="Absolute difference between predicted and true chirp mass." %}
+{% include plot.html
+   src="/assets/plotly/chirp_mass_progress/2025-12-23/rel_diff_chirp_mass.html"
+   label="Relative error"
+   ratio="3 / 2"
+   caption="Relative difference between predicted and true chirp mass." %}
+{% include plot.html
+   src="/assets/plotly/chirp_mass_progress/2025-12-23/frac_events_vs_cutoff.html"
+   label="Cutoff sweep"
+   ratio="3 / 2"
+   caption="Fraction of all events below a given relative-error cutoff, integrated over SNR." %}
+  </div>
+</details>
+
 ## Takeaway
 
 Testing on SNR 20–40 after training on 20–30 puts half the test range outside the
