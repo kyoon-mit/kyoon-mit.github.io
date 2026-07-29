@@ -1,6 +1,7 @@
 {%- comment -%}
-  Project tile. Hover, keyboard focus, or long-press (touch :active) darkens the
-  artwork and reveals include.project.detail.
+  Project entry: a line-art plate with the title set beneath it. Hover,
+  keyboard focus, or long-press (touch :active) draws a warm ink wash across
+  the plate and sets include.project.detail into it.
   Params: project (hash from _data/projects.yml), variant ("current" | "past")
 {%- endcomment -%}
 {%- assign p = include.project -%}
@@ -10,31 +11,23 @@
 <{{ tag }} class="card card--{{ include.variant | default: 'current' }}"
   {%- if p.url %} href="{{ p.url | relative_url }}"{% endif -%}
   {%- unless p.url %} tabindex="0"{% endunless -%}>
-  <span class="card__media" aria-hidden="true">
+
+  <span class="card__media">
     <img src="{{ p.image | relative_url }}" alt="" loading="lazy" decoding="async">
+    <span class="card__wash">
+      {%- if p.detail %}<span class="card__detail">{{ p.detail | strip_newlines | strip }}</span>{% endif -%}
+      {%- if p.tags and p.tags != empty -%}
+        <span class="card__tags">
+          {%- for t in p.tags -%}<span class="chip">{{ t }}</span>{%- endfor -%}
+        </span>
+      {%- endif -%}
+      {%- if p.url %}<span class="card__cta">Read more</span>{% endif -%}
+    </span>
   </span>
 
-  <span class="card__scrim" aria-hidden="true"></span>
-
-  <span class="card__content">
-    <span class="card__head">
-      {%- if p.period %}<span class="card__eyebrow">{{ p.period }}</span>{% endif -%}
-      <span class="card__title">{{ p.title }}</span>
-      {%- if p.blurb %}<span class="card__blurb">{{ p.blurb }}</span>{% endif -%}
-    </span>
-
-    <span class="card__reveal">
-      <span class="card__reveal-inner">
-        {%- if p.detail %}<span class="card__detail">{{ p.detail | strip_newlines | strip }}</span>{% endif -%}
-        {%- if p.tags and p.tags != empty -%}
-          <span class="card__tags">
-            {%- for t in p.tags -%}<span class="chip">{{ t }}</span>{%- endfor -%}
-          </span>
-        {%- endif -%}
-        {%- if p.url -%}
-          <span class="card__cta">View project<svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M1 8h12M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        {%- endif -%}
-      </span>
-    </span>
+  <span class="card__body">
+    {%- if p.period %}<span class="card__eyebrow">{{ p.period }}</span>{% endif -%}
+    <span class="card__title">{{ p.title }}</span>
+    {%- if p.blurb %}<span class="card__blurb">{{ p.blurb }}</span>{% endif -%}
   </span>
 </{{ tag }}>

@@ -1,64 +1,46 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800" role="img" aria-label="Abstract particle decay vertex">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" role="img" aria-label="Line plate of a decay vertex producing a photon and a meson">
   <defs>
-    <linearGradient id="hBg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#1a1030"/>
-      <stop offset="55%" stop-color="#2b1747"/>
-      <stop offset="100%" stop-color="#140b26"/>
-    </linearGradient>
-    <radialGradient id="hGlow" cx="34%" cy="50%" r="44%">
-      <stop offset="0" stop-color="#c9a6ff" stop-opacity=".4"/>
-      <stop offset="100%" stop-color="#c9a6ff" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="hJet" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#e6d4ff" stop-opacity=".95"/>
-      <stop offset="100%" stop-color="#a97fe0" stop-opacity=".15"/>
-    </linearGradient>
-    <radialGradient id="hVertex" cx="50%" cy="50%" r="50%">
-      <stop offset="0" stop-color="#ffffff"/>
-      <stop offset="40%" stop-color="#e3ccff"/>
-      <stop offset="100%" stop-color="#8b5fd0" stop-opacity=".2"/>
-    </radialGradient>
+    <pattern id="hHatch" width="11" height="11" patternUnits="userSpaceOnUse" patternTransform="rotate(-40)">
+      <line x1="0" y1="0" x2="0" y2="11" stroke="#6d5c46" stroke-width="1.6"/>
+    </pattern>
   </defs>
 
-  <rect width="1200" height="800" fill="url(#hBg)"/>
-  <rect width="1200" height="800" fill="url(#hGlow)"/>
+  <!-- incoming line -->
+  <line x1="70" y1="450" x2="378" y2="450" stroke="#3f3427" stroke-width="3.2"/>
+  <path d="M356 439l28 11-28 11z" fill="#3f3427"/>
 
-  <g stroke="#d9c2ff" stroke-opacity=".08" fill="none">
-    <path d="M0 160h1200M0 320h1200M0 480h1200M0 640h1200"/>
+  <!-- vertex -->
+  <circle cx="412" cy="450" r="42" fill="url(#hHatch)" stroke="#4a3d2f" stroke-width="3"/>
+  <circle cx="412" cy="450" r="9" fill="#7c2d2d"/>
+
+  <!-- photon, drawn as a fine wave -->
+  <path fill="none" stroke="#3f3427" stroke-width="3.2" stroke-linecap="round"
+    d="M450 430
+       q 26 -30 52 -15 q 26 15 52 -15
+       q 26 -30 52 -15 q 26 15 52 -15
+       q 26 -30 52 -15 q 26 15 52 -15
+       q 26 -30 52 -15"/>
+  <circle cx="1042" cy="248" r="8" fill="none" stroke="#3f3427" stroke-width="3"/>
+
+  <!-- meson: a narrow cone of tracks -->
+  <g fill="none" stroke="#4a3d2f">
+    <line x1="452" y1="468" x2="1046" y2="586" stroke-width="2.8"/>
+    <line x1="452" y1="476" x2="1046" y2="666" stroke-width="2.8"/>
+    <line x1="452" y1="472" x2="1030" y2="626" stroke-width="2.4" stroke-opacity=".7"/>
+    <line x1="452" y1="482" x2="1010" y2="722" stroke-width="2.2" stroke-opacity=".55"/>
+    <line x1="452" y1="462" x2="1018" y2="540" stroke-width="2.2" stroke-opacity=".6"/>
+  </g>
+  <g fill="#7c2d2d">
+    <circle cx="1046" cy="586" r="6"/>
+    <circle cx="1046" cy="666" r="6"/>
   </g>
 
-  <!-- incoming beams -->
-  <g stroke="#d9c2ff" stroke-opacity=".45" stroke-width="2.4" fill="none">
-    <path d="M0 400h330"/>
-    <path d="M1200 400h-120"/>
-  </g>
-  <g fill="#d9c2ff" fill-opacity=".5">
-    <path d="M318 392l22 8-22 8z"/>
+  <!-- cone envelope -->
+  <g fill="none" stroke="#85735c" stroke-width="2" stroke-opacity=".55" stroke-dasharray="9 11">
+    <path d="M452 456 L1070 520"/>
+    <path d="M452 490 L1070 742"/>
   </g>
 
-  <!-- decay vertex -->
-  <circle cx="400" cy="400" r="46" fill="url(#hVertex)"/>
-  <circle cx="400" cy="400" r="13" fill="#ffffff"/>
-
-  <!-- photon: wavy line -->
-  <path fill="none" stroke="#ffffff" stroke-opacity=".9" stroke-width="3"
-    d="M400 400
-       q 26 -30 52 -15 q 26 15 52 -15 q 26 -30 52 -15 q 26 15 52 -15
-       q 26 -30 52 -15 q 26 15 52 -15 q 26 -30 52 -15"/>
-  <circle cx="1020" cy="280" r="6" fill="#ffffff"/>
-
-  <!-- meson: quark pair cone -->
-  <g fill="none" stroke="url(#hJet)" stroke-width="2.6" stroke-linecap="round">
-    <path d="M400 400 L1010 545"/>
-    <path d="M400 400 L1010 605"/>
-    <path d="M400 400 L990 660" stroke-opacity=".55"/>
-    <path d="M400 400 L960 700" stroke-opacity=".35"/>
-    <path d="M400 400 L1000 500" stroke-opacity=".4"/>
-  </g>
-  <g fill="#e6d4ff" fill-opacity=".85">
-    <circle cx="1010" cy="545" r="7"/>
-    <circle cx="1010" cy="605" r="7"/>
-  </g>
-  <ellipse cx="800" cy="575" rx="235" ry="112" fill="none" stroke="#e6d4ff" stroke-opacity=".16"
-    transform="rotate(13 800 575)"/>
+  <!-- plate rule -->
+  <line x1="70" y1="820" x2="1130" y2="820" stroke="#85735c" stroke-width="2" stroke-opacity=".6"/>
 </svg>

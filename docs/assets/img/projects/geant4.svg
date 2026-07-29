@@ -1,67 +1,59 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800" role="img" aria-label="Abstract particle shower through detector layers">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" role="img" aria-label="Line plate of a particle shower developing through detector layers">
   <defs>
-    <linearGradient id="gBg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#08231f"/>
-      <stop offset="55%" stop-color="#0d3a33"/>
-      <stop offset="100%" stop-color="#061a17"/>
-    </linearGradient>
-    <radialGradient id="gGlow" cx="22%" cy="50%" r="52%">
-      <stop offset="0" stop-color="#7fffd9" stop-opacity=".3"/>
-      <stop offset="100%" stop-color="#7fffd9" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="gTrack" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#a9ffe8" stop-opacity=".95"/>
-      <stop offset="100%" stop-color="#4fd8b4" stop-opacity=".1"/>
-    </linearGradient>
+    <pattern id="gHatchA" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="12" stroke="#6d5c46" stroke-width="1.6"/>
+    </pattern>
+    <pattern id="gHatchB" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+      <line x1="0" y1="0" x2="0" y2="9" stroke="#6d5c46" stroke-width="1.6"/>
+    </pattern>
   </defs>
 
-  <rect width="1200" height="800" fill="url(#gBg)"/>
-  <rect width="1200" height="800" fill="url(#gGlow)"/>
-
   <!-- detector layers -->
-  <g>
-    <rect x="330" y="90" width="120" height="620" fill="#a9ffe8" fill-opacity=".05" stroke="#a9ffe8" stroke-opacity=".18"/>
-    <rect x="490" y="90" width="180" height="620" fill="#a9ffe8" fill-opacity=".08" stroke="#a9ffe8" stroke-opacity=".18"/>
-    <rect x="710" y="90" width="240" height="620" fill="#a9ffe8" fill-opacity=".04" stroke="#a9ffe8" stroke-opacity=".18"/>
+  <g stroke="#4a3d2f" stroke-width="2.8">
+    <rect x="316" y="96" width="104" height="708" fill="url(#gHatchA)"/>
+    <rect x="464" y="96" width="162" height="708" fill="url(#gHatchB)"/>
+    <rect x="670" y="96" width="252" height="708" fill="none"/>
   </g>
-  <g stroke="#a9ffe8" stroke-opacity=".07">
-    <path d="M710 90v620M770 90v620M830 90v620M890 90v620"/>
+  <g stroke="#85735c" stroke-width="1.8" stroke-opacity=".55">
+    <line x1="733" y1="96" x2="733" y2="804"/>
+    <line x1="796" y1="96" x2="796" y2="804"/>
+    <line x1="859" y1="96" x2="859" y2="804"/>
   </g>
 
   <!-- primary track -->
-  <path d="M0 400h340" fill="none" stroke="#ffffff" stroke-opacity=".9" stroke-width="3.4"/>
+  <line x1="66" y1="450" x2="318" y2="450" stroke="#3f3427" stroke-width="3.6"/>
 
-  <!-- electromagnetic-style cascade, branching at each layer -->
-  <g fill="none" stroke="url(#gTrack)" stroke-width="2.2" stroke-linecap="round">
-    <path d="M340 400 L500 330 L680 250 L940 190"/>
-    <path d="M340 400 L500 330 L680 300 L940 265"/>
-    <path d="M340 400 L500 470 L680 545 L940 620"/>
-    <path d="M340 400 L500 470 L680 500 L940 520"/>
-    <path d="M500 330 L680 355 L940 400" stroke-opacity=".6"/>
-    <path d="M500 470 L680 430 L940 355" stroke-opacity=".6"/>
-    <path d="M680 250 L940 140" stroke-opacity=".4"/>
-    <path d="M680 545 L940 690" stroke-opacity=".4"/>
-    <path d="M680 300 L900 320" stroke-opacity=".3"/>
-    <path d="M680 500 L900 470" stroke-opacity=".3"/>
+  <!-- cascade -->
+  <g fill="none" stroke="#4a3d2f">
+    <path d="M318 450 L468 360 L668 258 L918 186" stroke-width="2.8"/>
+    <path d="M318 450 L468 360 L668 322 L918 288" stroke-width="2.8"/>
+    <path d="M318 450 L468 544 L668 638 L918 730" stroke-width="2.8"/>
+    <path d="M318 450 L468 544 L668 578 L918 604" stroke-width="2.8"/>
+    <path d="M468 360 L668 394 L918 450" stroke-width="2.4" stroke-opacity=".72"/>
+    <path d="M468 544 L668 496 L918 400" stroke-width="2.4" stroke-opacity=".72"/>
+    <path d="M668 258 L918 118" stroke-width="2.2" stroke-opacity=".55"/>
+    <path d="M668 638 L918 792" stroke-width="2.2" stroke-opacity=".55"/>
   </g>
 
   <!-- interaction points -->
-  <g fill="#ffffff">
-    <circle cx="340" cy="400" r="7"/>
-    <circle cx="500" cy="330" r="5" fill-opacity=".9"/>
-    <circle cx="500" cy="470" r="5" fill-opacity=".9"/>
-    <circle cx="680" cy="250" r="4" fill-opacity=".75"/>
-    <circle cx="680" cy="300" r="4" fill-opacity=".75"/>
-    <circle cx="680" cy="500" r="4" fill-opacity=".75"/>
-    <circle cx="680" cy="545" r="4" fill-opacity=".75"/>
+  <g fill="#7c2d2d">
+    <circle cx="318" cy="450" r="7.5"/>
+    <circle cx="468" cy="360" r="5.5"/>
+    <circle cx="468" cy="544" r="5.5"/>
+  </g>
+  <g fill="none" stroke="#4a3d2f" stroke-width="2.6">
+    <circle cx="668" cy="258" r="5"/>
+    <circle cx="668" cy="322" r="5"/>
+    <circle cx="668" cy="578" r="5"/>
+    <circle cx="668" cy="638" r="5"/>
   </g>
 
-  <!-- calorimeter energy deposits -->
-  <g fill="#a9ffe8">
-    <rect x="950" y="176" width="34" height="28" fill-opacity=".8"/>
-    <rect x="950" y="252" width="52" height="28" fill-opacity=".6"/>
-    <rect x="950" y="387" width="70" height="28" fill-opacity=".9"/>
-    <rect x="950" y="507" width="44" height="28" fill-opacity=".55"/>
-    <rect x="950" y="607" width="28" height="28" fill-opacity=".4"/>
+  <!-- sampled energy, as a bar profile at the readout -->
+  <g stroke="#4a3d2f" stroke-width="2.6" fill="url(#gHatchB)">
+    <rect x="928" y="170" width="48" height="34"/>
+    <rect x="928" y="272" width="76" height="34"/>
+    <rect x="928" y="434" width="112" height="34"/>
+    <rect x="928" y="588" width="66" height="34"/>
+    <rect x="928" y="714" width="38" height="34"/>
   </g>
 </svg>
