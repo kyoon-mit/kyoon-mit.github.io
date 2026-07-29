@@ -1,0 +1,41 @@
+---
+layout: default
+---
+<div class="wrap doc">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="{{ '/' | relative_url }}">Home</a>
+    <span aria-hidden="true">/</span>
+    <a href="{{ '/projects/bns/' | relative_url }}">Binary Neutron Stars</a>
+    {%- if page.url != '/projects/bns/' -%}
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{{ page.title }}</span>
+    {%- endif -%}
+  </nav>
+
+  <div class="doc__layout">
+    <aside class="doc__aside">
+      {% include project-subnav.html %}
+    </aside>
+
+    <article class="doc__body">
+      <header class="page__head">
+        {%- if page.eyebrow %}<p class="page__eyebrow">{{ page.eyebrow }}</p>{% endif -%}
+        <h1 class="page__title">{{ page.title }}</h1>
+        {%- if page.summary %}<p class="page__lede">{{ page.summary }}</p>{% endif -%}
+      </header>
+
+      <div class="prose">
+        {{ content }}
+      </div>
+
+      {%- if page.next_page -%}
+        <nav class="pager">
+          <a class="pager__next" href="{{ page.next_page | relative_url }}">
+            <span class="pager__label">Next</span>
+            <span class="pager__title">{{ page.next_title }}</span>
+          </a>
+        </nav>
+      {%- endif -%}
+    </article>
+  </div>
+</div>

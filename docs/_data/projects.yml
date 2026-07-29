@@ -1,0 +1,47 @@
+# Project cards shown on the home page.
+#
+#   title  — name on the card
+#   blurb  — one line, always visible under the title
+#   detail — longer text revealed on hover / long-press
+#   tags   — short keyword chips
+#   image  — artwork in assets/img/projects/
+#   url    — internal page, or leave blank for a card that is not yet clickable
+#   period — shown on past-project cards
+
+current:
+  - title: Binary Neutron Stars with State Space Models
+    blurb: Sequence models for gravitational-wave parameter estimation
+    detail: detailed description
+    tags: [Deep learning, Gravitational waves, S4D]
+    image: /assets/img/projects/bns.svg
+    url: /projects/bns/
+
+  - title: (Placeholder)
+    blurb: Project to be announced
+    detail: detailed description
+    tags: []
+    image: /assets/img/projects/placeholder.svg
+    url: /projects/placeholder/
+
+past:
+  - title: Higgs Rare Decays to Light Quark Mesons
+    blurb: Probing Higgs couplings to light quarks at the LHC
+    detail: >-
+      Searches for rare Higgs boson decays to a light vector meson and a photon —
+      a channel that gives direct experimental access to Higgs couplings of the
+      first- and second-generation quarks, which are otherwise inaccessible.
+    tags: [CMS, Collider physics, Statistical analysis]
+    image: /assets/img/projects/higgs.svg
+    url: /projects/higgs-rare-decays/
+    period: LHC / CMS
+
+  - title: GEANT4
+    blurb: Detector simulation and particle transport studies
+    detail: >-
+      Monte Carlo simulation of particle transport through detector geometry with
+      GEANT4 — modelling energy deposition, shower development, and detector
+      response to validate reconstruction against simulated truth.
+    tags: [Monte Carlo, Simulation, C++]
+    image: /assets/img/projects/geant4.svg
+    url: /projects/geant4/
+    period: Detector simulation

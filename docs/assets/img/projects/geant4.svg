@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800" role="img" aria-label="Abstract particle shower through detector layers">
+  <defs>
+    <linearGradient id="gBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#08231f"/>
+      <stop offset="55%" stop-color="#0d3a33"/>
+      <stop offset="100%" stop-color="#061a17"/>
+    </linearGradient>
+    <radialGradient id="gGlow" cx="22%" cy="50%" r="52%">
+      <stop offset="0" stop-color="#7fffd9" stop-opacity=".3"/>
+      <stop offset="100%" stop-color="#7fffd9" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="gTrack" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a9ffe8" stop-opacity=".95"/>
+      <stop offset="100%" stop-color="#4fd8b4" stop-opacity=".1"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="800" fill="url(#gBg)"/>
+  <rect width="1200" height="800" fill="url(#gGlow)"/>
+
+  <!-- detector layers -->
+  <g>
+    <rect x="330" y="90" width="120" height="620" fill="#a9ffe8" fill-opacity=".05" stroke="#a9ffe8" stroke-opacity=".18"/>
+    <rect x="490" y="90" width="180" height="620" fill="#a9ffe8" fill-opacity=".08" stroke="#a9ffe8" stroke-opacity=".18"/>
+    <rect x="710" y="90" width="240" height="620" fill="#a9ffe8" fill-opacity=".04" stroke="#a9ffe8" stroke-opacity=".18"/>
+  </g>
+  <g stroke="#a9ffe8" stroke-opacity=".07">
+    <path d="M710 90v620M770 90v620M830 90v620M890 90v620"/>
+  </g>
+
+  <!-- primary track -->
+  <path d="M0 400h340" fill="none" stroke="#ffffff" stroke-opacity=".9" stroke-width="3.4"/>
+
+  <!-- electromagnetic-style cascade, branching at each layer -->
+  <g fill="none" stroke="url(#gTrack)" stroke-width="2.2" stroke-linecap="round">
+    <path d="M340 400 L500 330 L680 250 L940 190"/>
+    <path d="M340 400 L500 330 L680 300 L940 265"/>
+    <path d="M340 400 L500 470 L680 545 L940 620"/>
+    <path d="M340 400 L500 470 L680 500 L940 520"/>
+    <path d="M500 330 L680 355 L940 400" stroke-opacity=".6"/>
+    <path d="M500 470 L680 430 L940 355" stroke-opacity=".6"/>
+    <path d="M680 250 L940 140" stroke-opacity=".4"/>
+    <path d="M680 545 L940 690" stroke-opacity=".4"/>
+    <path d="M680 300 L900 320" stroke-opacity=".3"/>
+    <path d="M680 500 L900 470" stroke-opacity=".3"/>
+  </g>
+
+  <!-- interaction points -->
+  <g fill="#ffffff">
+    <circle cx="340" cy="400" r="7"/>
+    <circle cx="500" cy="330" r="5" fill-opacity=".9"/>
+    <circle cx="500" cy="470" r="5" fill-opacity=".9"/>
+    <circle cx="680" cy="250" r="4" fill-opacity=".75"/>
+    <circle cx="680" cy="300" r="4" fill-opacity=".75"/>
+    <circle cx="680" cy="500" r="4" fill-opacity=".75"/>
+    <circle cx="680" cy="545" r="4" fill-opacity=".75"/>
+  </g>
+
+  <!-- calorimeter energy deposits -->
+  <g fill="#a9ffe8">
+    <rect x="950" y="176" width="34" height="28" fill-opacity=".8"/>
+    <rect x="950" y="252" width="52" height="28" fill-opacity=".6"/>
+    <rect x="950" y="387" width="70" height="28" fill-opacity=".9"/>
+    <rect x="950" y="507" width="44" height="28" fill-opacity=".55"/>
+    <rect x="950" y="607" width="28" height="28" fill-opacity=".4"/>
+  </g>
+</svg>

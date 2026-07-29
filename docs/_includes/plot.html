@@ -1,0 +1,14 @@
+{%- comment -%}
+  Embedded Plotly figure. Each exported HTML bundles its own copy of plotly.js,
+  so iframes are lazy-loaded and only fetched when scrolled into view.
+  Params: src (required), label, caption, ratio (default 3/2)
+{%- endcomment -%}
+<figure class="plot">
+  {%- if include.label %}<figcaption class="plot__label">{{ include.label }}</figcaption>{% endif -%}
+  <div class="plot__frame" style="aspect-ratio: {{ include.ratio | default: '3 / 2' }};">
+    <iframe src="{{ include.src | relative_url }}"
+            title="{{ include.caption | default: include.label | default: 'Interactive figure' | escape }}"
+            loading="lazy" scrolling="no"></iframe>
+  </div>
+  {%- if include.caption %}<figcaption class="plot__caption">{{ include.caption }}</figcaption>{% endif -%}
+</figure>

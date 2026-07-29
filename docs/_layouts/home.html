@@ -1,0 +1,49 @@
+---
+layout: default
+---
+<section class="hero">
+  <div class="wrap hero__inner">
+    <p class="hero__eyebrow">{{ site.affiliation }}</p>
+    <h1 class="hero__name">{{ site.title }}</h1>
+    <p class="hero__lede">{{ page.lede }}</p>
+
+    <div class="hero__actions">
+      <a class="btn btn--primary" href="{{ site.links.cv | relative_url }}">
+        Curriculum vitae
+        <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M8 1v9m0 0L4.5 6.5M8 10l3.5-3.5M2 13h12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a class="btn" href="{{ site.links.scholar }}" rel="noopener" target="_blank">Google Scholar</a>
+      <a class="btn" href="{{ site.links.github }}" rel="noopener" target="_blank">GitHub</a>
+      <a class="btn btn--quiet" href="mailto:{{ site.email }}">{{ site.email }}</a>
+    </div>
+  </div>
+</section>
+
+{{ content }}
+
+<section class="section">
+  <div class="wrap">
+    <header class="section__head">
+      <h2 class="section__title">Current work</h2>
+      <p class="section__note">Hover or long-press a project for detail.</p>
+    </header>
+    <div class="grid grid--current">
+      {%- for p in site.data.projects.current -%}
+        {% include project-card.html project=p variant="current" %}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="wrap">
+    <header class="section__head">
+      <h2 class="section__title">Past projects</h2>
+    </header>
+    <div class="grid grid--past">
+      {%- for p in site.data.projects.past -%}
+        {% include project-card.html project=p variant="past" %}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,60 @@
+---
+layout: default
+---
+{%- assign all = site.updates | where: "project", page.project | sort: "date" -%}
+<div class="wrap doc">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="{{ '/' | relative_url }}">Home</a>
+    <span aria-hidden="true">/</span>
+    <a href="{{ '/projects/bns/' | relative_url }}">Binary Neutron Stars</a>
+    <span aria-hidden="true">/</span>
+    <a href="{{ '/projects/bns/updates/' | relative_url }}">Updates</a>
+    <span aria-hidden="true">/</span>
+    <span aria-current="page">{{ page.date | date: "%b %-d, %Y" }}</span>
+  </nav>
+
+  <div class="doc__layout">
+    <aside class="doc__aside">
+      {% include project-subnav.html %}
+    </aside>
+
+    <article class="doc__body">
+      <header class="page__head">
+        <p class="page__eyebrow">
+          <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %-d, %Y" }}</time>
+        </p>
+        <h1 class="page__title">{{ page.title }}</h1>
+        {%- if page.summary %}<p class="page__lede">{{ page.summary }}</p>{% endif -%}
+      </header>
+
+      <div class="prose">
+        {{ content }}
+      </div>
+
+      <nav class="pager pager--split">
+        {%- assign idx = 0 -%}
+        {%- for u in all -%}{%- if u.url == page.url -%}{%- assign idx = forloop.index0 -%}{%- endif -%}{%- endfor -%}
+        {%- assign prev_i = idx | minus: 1 -%}
+        {%- assign next_i = idx | plus: 1 -%}
+
+        {%- if idx > 0 -%}
+          {%- assign prev = all[prev_i] -%}
+          <a class="pager__prev" href="{{ prev.url | relative_url }}">
+            <span class="pager__label">Previous update</span>
+            <span class="pager__title">{{ prev.title }}</span>
+          </a>
+        {%- else -%}
+          <span></span>
+        {%- endif -%}
+
+        {%- if next_i < all.size -%}
+          {%- assign nxt = all[next_i] -%}
+          <a class="pager__next" href="{{ nxt.url | relative_url }}">
+            <span class="pager__label">Next update</span>
+            <span class="pager__title">{{ nxt.title }}</span>
+          </a>
+        {%- endif -%}
+      </nav>
+    </article>
+  </div>
+</div>

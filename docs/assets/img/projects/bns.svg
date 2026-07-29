@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800" role="img" aria-label="Abstract inspiral and chirp waveform">
+  <defs>
+    <linearGradient id="bnsBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a1c2b"/>
+      <stop offset="55%" stop-color="#0d2f45"/>
+      <stop offset="100%" stop-color="#071722"/>
+    </linearGradient>
+    <radialGradient id="bnsGlow" cx="50%" cy="42%" r="42%">
+      <stop offset="0" stop-color="#7fe6ff" stop-opacity=".38"/>
+      <stop offset="70%" stop-color="#2aa8cc" stop-opacity=".08"/>
+      <stop offset="100%" stop-color="#7fe6ff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="bnsWave" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#6fd3e8" stop-opacity=".25"/>
+      <stop offset="60%" stop-color="#8ce8fb" stop-opacity=".95"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="1"/>
+    </linearGradient>
+    <radialGradient id="bnsStar" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="45%" stop-color="#b8f2ff"/>
+      <stop offset="100%" stop-color="#3ca9c9" stop-opacity=".25"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="800" fill="url(#bnsBg)"/>
+  <rect width="1200" height="800" fill="url(#bnsGlow)"/>
+
+  <g stroke="#8ce8fb" stroke-opacity=".10" fill="none">
+    <path d="M0 200h1200M0 400h1200M0 600h1200"/>
+    <path d="M200 0v800M400 0v800M600 0v800M800 0v800M1000 0v800"/>
+  </g>
+
+  <!-- inspiral orbit tracks -->
+  <g fill="none" stroke="#8ce8fb" stroke-opacity=".22">
+    <ellipse cx="600" cy="330" rx="330" ry="132" stroke-opacity=".10"/>
+    <ellipse cx="600" cy="330" rx="252" ry="101" stroke-opacity=".14"/>
+    <ellipse cx="600" cy="330" rx="176" ry="70" stroke-opacity=".2"/>
+    <ellipse cx="600" cy="330" rx="106" ry="42" stroke-opacity=".3"/>
+    <ellipse cx="600" cy="330" rx="52" ry="21" stroke-opacity=".45"/>
+  </g>
+
+  <!-- the two compact objects -->
+  <circle cx="652" cy="341" r="26" fill="url(#bnsStar)"/>
+  <circle cx="548" cy="319" r="23" fill="url(#bnsStar)"/>
+  <circle cx="652" cy="341" r="9" fill="#ffffff"/>
+  <circle cx="548" cy="319" r="8" fill="#ffffff"/>
+
+  <!-- chirp: amplitude grows and frequency increases toward merger.
+       Kept clear of the lower band, where the card title sits. -->
+  <g transform="translate(0,-95)">
+  <path fill="none" stroke="url(#bnsWave)" stroke-width="3.2" stroke-linecap="round"
+    d="M60 640
+       q 30 -14 60 0 q 30 14 60 0
+       q 28 -20 56 0 q 28 20 56 0
+       q 25 -28 50 0 q 25 28 50 0
+       q 21 -38 42 0 q 21 38 42 0
+       q 17 -50 34 0 q 17 50 34 0
+       q 13 -64 26 0 q 13 64 26 0
+       q 10 -78 20 0 q 10 78 20 0
+       q 8 -92 16 0 q 8 92 16 0
+       q 6 -104 12 0 q 6 104 12 0
+       q 5 -116 10 0 q 5 116 10 0
+       q 4 -60 8 0
+       l 40 0"/>
+
+  <!-- ringdown marker -->
+  <g stroke="#8ce8fb" stroke-opacity=".5" stroke-dasharray="4 7" fill="none">
+    <path d="M1054 420v230"/>
+  </g>
+  <circle cx="1054" cy="640" r="5" fill="#ffffff"/>
+  </g>
+</svg>

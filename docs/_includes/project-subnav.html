@@ -1,0 +1,29 @@
+{%- comment -%}
+  Section navigation for the BNS project. `page.url` drives the current-state
+  highlight; the Updates entry stays active on individual update pages too.
+{%- endcomment -%}
+{%- assign base = '/projects/bns/' -%}
+{%- assign u_overview = base -%}
+{%- assign u_background = base | append: 'background/' -%}
+{%- assign u_related = base | append: 'related-work/' -%}
+{%- assign u_updates = base | append: 'updates/' -%}
+{%- assign u_results = base | append: 'results/' -%}
+
+<nav class="subnav" aria-label="Project sections">
+  <p class="subnav__label">Binary Neutron Stars</p>
+  <ul class="subnav__list">
+    <li>
+      <a href="{{ u_overview | relative_url }}" class="subnav__link {% if page.url == u_overview %}is-current{% endif %}">Overview</a>
+      <ul class="subnav__sub">
+        <li><a href="{{ u_background | relative_url }}" class="subnav__link {% if page.url == u_background %}is-current{% endif %}">Background</a></li>
+        <li><a href="{{ u_related | relative_url }}" class="subnav__link {% if page.url == u_related %}is-current{% endif %}">Related Work</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="{{ u_updates | relative_url }}" class="subnav__link {% if page.url contains u_updates %}is-current{% endif %}">Updates</a>
+    </li>
+    <li>
+      <a href="{{ u_results | relative_url }}" class="subnav__link {% if page.url == u_results %}is-current{% endif %}">Results</a>
+    </li>
+  </ul>
+</nav>

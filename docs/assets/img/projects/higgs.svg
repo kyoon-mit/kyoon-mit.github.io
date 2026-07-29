@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800" role="img" aria-label="Abstract particle decay vertex">
+  <defs>
+    <linearGradient id="hBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1a1030"/>
+      <stop offset="55%" stop-color="#2b1747"/>
+      <stop offset="100%" stop-color="#140b26"/>
+    </linearGradient>
+    <radialGradient id="hGlow" cx="34%" cy="50%" r="44%">
+      <stop offset="0" stop-color="#c9a6ff" stop-opacity=".4"/>
+      <stop offset="100%" stop-color="#c9a6ff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="hJet" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#e6d4ff" stop-opacity=".95"/>
+      <stop offset="100%" stop-color="#a97fe0" stop-opacity=".15"/>
+    </linearGradient>
+    <radialGradient id="hVertex" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="40%" stop-color="#e3ccff"/>
+      <stop offset="100%" stop-color="#8b5fd0" stop-opacity=".2"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="800" fill="url(#hBg)"/>
+  <rect width="1200" height="800" fill="url(#hGlow)"/>
+
+  <g stroke="#d9c2ff" stroke-opacity=".08" fill="none">
+    <path d="M0 160h1200M0 320h1200M0 480h1200M0 640h1200"/>
+  </g>
+
+  <!-- incoming beams -->
+  <g stroke="#d9c2ff" stroke-opacity=".45" stroke-width="2.4" fill="none">
+    <path d="M0 400h330"/>
+    <path d="M1200 400h-120"/>
+  </g>
+  <g fill="#d9c2ff" fill-opacity=".5">
+    <path d="M318 392l22 8-22 8z"/>
+  </g>
+
+  <!-- decay vertex -->
+  <circle cx="400" cy="400" r="46" fill="url(#hVertex)"/>
+  <circle cx="400" cy="400" r="13" fill="#ffffff"/>
+
+  <!-- photon: wavy line -->
+  <path fill="none" stroke="#ffffff" stroke-opacity=".9" stroke-width="3"
+    d="M400 400
+       q 26 -30 52 -15 q 26 15 52 -15 q 26 -30 52 -15 q 26 15 52 -15
+       q 26 -30 52 -15 q 26 15 52 -15 q 26 -30 52 -15"/>
+  <circle cx="1020" cy="280" r="6" fill="#ffffff"/>
+
+  <!-- meson: quark pair cone -->
+  <g fill="none" stroke="url(#hJet)" stroke-width="2.6" stroke-linecap="round">
+    <path d="M400 400 L1010 545"/>
+    <path d="M400 400 L1010 605"/>
+    <path d="M400 400 L990 660" stroke-opacity=".55"/>
+    <path d="M400 400 L960 700" stroke-opacity=".35"/>
+    <path d="M400 400 L1000 500" stroke-opacity=".4"/>
+  </g>
+  <g fill="#e6d4ff" fill-opacity=".85">
+    <circle cx="1010" cy="545" r="7"/>
+    <circle cx="1010" cy="605" r="7"/>
+  </g>
+  <ellipse cx="800" cy="575" rx="235" ry="112" fill="none" stroke="#e6d4ff" stroke-opacity=".16"
+    transform="rotate(13 800 575)"/>
+</svg>
