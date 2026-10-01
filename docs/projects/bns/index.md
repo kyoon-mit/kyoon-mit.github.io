@@ -4,73 +4,76 @@ title: Binary Neutron Stars with State Space Models
 permalink: /projects/bns/
 eyebrow: Current project
 summary: >-
-  Recovering the chirp mass of binary neutron star inspirals directly from
-  strain time series, using deep state space sequence models.
-next_page: /projects/bns/background/
-next_title: Background — why long sequences are the hard part
+  Estimating binary neutron star parameters directly from detector strain with
+  small state space models, and asking whether that can work at the low
+  signal-to-noise ratios where most real events live.
+next_page: /projects/bns/story/
+next_title: The story so far, from the first chirp-mass fits to today
 ---
 
-## Overview
+## The question
 
-When two neutron stars spiral toward each other, they radiate gravitational waves
-for a long time before they merge. The signal is faint, buried well below the
-detector noise floor, and it evolves slowly: a binary neutron star inspiral stays
-in a ground-based detector's sensitive band for tens of seconds to minutes, far
-longer than the sub-second binary black hole signals that dominate current
-catalogs. That length is what makes these events scientifically valuable — and
-what makes them computationally awkward.
+A binary neutron star (BNS) inspiral spends tens of seconds to minutes in the
+LIGO band before it merges. That long, faint chirp is what makes these events
+valuable for multimessenger astronomy, and what makes them expensive to search
+for and to characterize.
 
-This project asks whether **deep state space models** can read those long,
-low-amplitude sequences directly. The specific target is the **chirp mass**, the
-mass combination that controls the leading-order phase evolution of the inspiral
-and therefore the parameter a model can hope to constrain earliest. Instead of
-correlating the data against a bank of pre-computed templates, the model is
-trained to map a raw strain segment to a chirp-mass estimate in a single forward
-pass.
+This project trains **state space models** (S4D) to read whitened strain and
+return physical parameters in a single forward pass, with no template bank and
+no stochastic sampling. The model also reports its own uncertainty. Three
+targets, in order:
 
-### Why state space models
+1. **Merger regression.** Chirp mass and its uncertainty from the last seconds
+   before coalescence.
+2. **Pre-merger regression.** The same estimate from a window that ends before
+   the merger, for early warning.
+3. **Sky localization.** Planned for later; a first two-detector attempt is
+   described in the [story]({{ '/projects/bns/story/' | relative_url }}).
 
-The architecture is **S4D**, the diagonal variant of the structured state space
-sequence model. S4D-style layers carry a continuous-time linear recurrence whose
-kernel can be evaluated convolutionally, which gives them two properties that
-matter here: they handle sequences of tens of thousands of samples without the
-quadratic cost of attention, and their parameterization biases them toward
-long-range structure rather than local texture. A gravitational-wave inspiral is
-almost pure long-range structure — the information about chirp mass is spread
-across the entire phase evolution, not concentrated in any short window.
+## What works, and what does not
 
-The models are deliberately small. The configuration used throughout the results
-below is 8 layers at a model dimension of 256, roughly 1.3 M parameters — small
-enough to train quickly on simulated data and to make latency plausible for a
-low-latency or early-warning setting.
+**Loud signals are solved.** On a population drawn the way real events are
+(SNR distributed as a power law), the current joint denoiser and regressor
+puts 78% of events with SNR 16 to 25 within 2% of the true chirp mass, and 97%
+of events with SNR 25 to 50.
+
+**Quiet signals are not.** Real BNS events are mostly quiet: in the same test
+set the median SNR is 5.6 and 76% of events sit below SNR 8. There, only 5 to
+8% of estimates land within 2%, and the estimate collapses toward the average
+chirp mass.
+
+Existing machine-learning pipelines reach that regime by **heterodyning**:
+they remove the chirp's phase using a prior guess of the chirp mass, so the
+network sees a nearly stationary signal. That includes the AFRAME BNS search
+we contributed to ([arXiv:2607.01372](https://arxiv.org/abs/2607.01372)). It
+works, but it presupposes the one number we are trying to estimate.
+
+So the question this project is now organized around is:
+
+> Can a learned model reach low-SNR sensitivity *without* heterodyning?
+
+So far the answer is no. The [story]({{ '/projects/bns/story/' | relative_url }})
+records every route tried, and the [live runs]({{ '/projects/bns/live/' | relative_url }})
+page tracks the one being tested now.
+
+## Where things stand
+
+The current attempt follows a lead from a different experiment. In Project 8,
+which measures electron energies from faint radio chirps, internal Project 8
+results show a denoiser trained jointly with a regressor recovering a remarkably sharp
+core of well-measured events. We first tried to reproduce
+that on the Project 8 data, then carried the training recipe back to BNS:
 
 <dl class="specs">
-  <div><dt>Architecture</dt><dd>S4D<small>diagonal state space</small></dd></div>
-  <div><dt>Model dimension</dt><dd>256</dd></div>
-  <div><dt>Layers</dt><dd>8</dd></div>
-  <div><dt>Parameters</dt><dd>≈ 1.3 M</dd></div>
-  <div><dt>Target</dt><dd>Chirp mass<small>regression</small></dd></div>
-  <div><dt>Input</dt><dd>Strain time series<small>216 Hz, ~55 s</small></dd></div>
+  <div><dt>Model</dt><dd>S4D denoiser + regressor<small>128 wide, 6 layers each</small></dd></div>
+  <div><dt>Targets</dt><dd>Chirp mass, mass ratio<small>with uncertainties</small></dd></div>
+  <div><dt>Input</dt><dd>4 s, two detectors<small>2048 Hz, real O3a noise</small></dd></div>
+  <div><dt>Training SNR</dt><dd>Power law, index −2<small>4 to 100</small></dd></div>
+  <div><dt>Noise</dt><dd>Each signal in 4 backgrounds<small>time-shifted O3a strain</small></dd></div>
+  <div><dt>Started</dt><dd>1 October 2026<small>about a week on two GPUs</small></dd></div>
 </dl>
 
-### Current questions
-
-Three threads are open, and the [Updates]({{ '/projects/bns/updates/' | relative_url }})
-log tracks them as they move:
-
-- **How far down in signal-to-noise can this go?** Accuracy degrades as SNR
-  falls, and the interesting question is the shape of that degradation rather
-  than any single headline number. Recent runs characterize error as a function
-  of SNR bin instead of quoting one aggregate figure.
-- **Does pretraining transfer across SNR regimes?** Training on a loud
-  population and fine-tuning on a quieter one is much cheaper than training each
-  regime from scratch. The
-  [January 2026 comparison]({{ '/projects/bns/updates/2026-01-02-transfer-learning-snr-30-40/' | relative_url }})
-  puts the two side by side under matched budgets.
-- **How early can a useful estimate be produced?** All results so far truncate
-  the waveform 8 s before merger, which is a first step toward asking what the
-  model knows before the merger happens.
-
-<p class="note"><strong>Status.</strong> Active work on simulated data. Everything
-on the Updates pages is a research snapshot, not a published result — numbers can
-and do move between entries.</p>
+<p class="note"><strong>Status.</strong> Everything here is research in
+progress on simulated signals injected into real detector noise. Numbers move
+between entries; the dated <a href="{{ '/projects/bns/updates/' | relative_url }}">updates</a>
+are snapshots, not published results.</p>

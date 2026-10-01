@@ -11,7 +11,11 @@
 current:
   - title: Binary Neutron Stars with State Space Models
     blurb: Sequence models for gravitational-wave parameter estimation
-    detail: detailed description
+    detail: >-
+      Small state space models that read detector strain and return the chirp
+      mass and its uncertainty, at the merger and before it. The open question:
+      can they reach the quiet events that dominate the real population without
+      heterodyning?
     tags: [Deep learning, Gravitational waves, S4D]
     image: /assets/img/projects/bns.svg
     url: /projects/bns/

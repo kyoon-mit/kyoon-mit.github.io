@@ -15,7 +15,7 @@ redirect_from:
 {%- assign MONTHS = "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec" | split: "," -%}
 
 <section class="cal" aria-label="Updates by month">
-  <p class="cal__legend">{{ ups | size }} update{% if ups.size != 1 %}s{% endif %} · filled months link to that month's entries</p>
+  <p class="cal__legend">{{ ups | size }} update{% if ups.size != 1 %}s{% endif %} · filled months link to that month's entries · entries marked <span class="tag">Talk</span> were presented as talks; the rest are research notes</p>
   {%- for year in years -%}
     <div class="cal__row">
       <span class="cal__year">{{ year.name }}</span>
@@ -57,7 +57,7 @@ redirect_from:
               <li class="tree__item">
                 <a class="tree__link" href="{{ u.url | relative_url }}">
                   <span class="tree__meta">
-                    <span class="tree__title">{{ u.title }}</span>
+                    <span class="tree__title">{{ u.title }}{% if u.talk %} <span class="tag">Talk</span>{% endif %}</span>
                     <time class="tree__date" datetime="{{ u.date | date_to_xmlschema }}">{{ u.date | date: "%b %-d, %Y" }}</time>
                   </span>
                   {%- if u.summary %}<span class="tree__summary">{{ u.summary }}</span>{% endif -%}

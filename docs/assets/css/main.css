@@ -522,3 +522,56 @@ ul, ol { margin: 0; }
   font-size: .74rem; color: var(--ink-3);
 }
 .site-footer__base p { margin: 0; }
+
+/* --- BNS research pages: wide figures, tables, live status, embeds -------- */
+/* Text keeps its measure; figures and tables may use the full column. */
+.doc__body .prose { max-width: none; }
+.doc__body .prose > :is(p, ul, ol, h2, h3, h4, blockquote, .note, pre, dl, details) { max-width: 36rem; }
+
+.plot__img { display: block; background: #fff; border: 1px solid var(--rule); }
+.plot__img img { display: block; width: 100%; height: auto; }
+
+.prose table {
+  width: 100%; border-collapse: collapse; font-size: .88rem;
+  border-top: 1px solid var(--ink-3); font-variant-numeric: tabular-nums;
+}
+.prose th, .prose td { text-align: left; padding: .5rem .9rem .5rem 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+.prose th {
+  font-size: .6rem; text-transform: uppercase; letter-spacing: .12em; font-weight: 600; color: var(--ink-3);
+}
+.prose td { color: var(--ink-2); }
+.table-scroll { overflow-x: auto; }
+
+.chapter-list { list-style: none; padding: 0; margin: 0; counter-reset: ch; border-top: 1px solid var(--ink-3); }
+.prose .chapter-list { padding-left: 0; max-width: none; }
+.chapter-list > li { counter-increment: ch; display: grid; grid-template-columns: 2.4rem minmax(0, 1fr); gap: .2rem 1rem; padding: 1rem 0; border-bottom: 1px solid var(--rule); margin: 0; }
+.chapter-list > li::before {
+  content: counter(ch, upper-roman); font-family: var(--font-display); color: var(--accent); font-size: 1.05rem; grid-row: span 2;
+}
+.chapter-list__title { font-family: var(--font-display); color: var(--ink); font-size: 1.02rem; }
+.chapter-list__title a { color: inherit; text-decoration: none; }
+.chapter-list__title a:hover { color: var(--accent); }
+.chapter-list__body { font-size: .9rem; color: var(--ink-3); line-height: 1.6; }
+
+.status { font-size: .6rem; text-transform: uppercase; letter-spacing: .12em; font-weight: 600; white-space: nowrap; }
+.status--running { color: var(--accent); }
+.status--finished { color: var(--ink-3); }
+.status--failed, .status--crashed { color: var(--ink-3); text-decoration: line-through; }
+
+.embed { border: 1px solid var(--rule); background: #fff; }
+.embed iframe { display: block; width: 100%; height: min(80vh, 60rem); border: 0; }
+
+/* Talk marker on research-log entries */
+.tag {
+  display: inline-block; vertical-align: middle; margin-left: .35rem;
+  font-family: var(--font-text); font-size: .56rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .12em; font-style: normal;
+  color: var(--accent); border: 1px solid var(--accent); padding: .1rem .35rem;
+}
+.talk {
+  max-width: 36rem; margin-bottom: 2.25rem; padding: 1rem 0 1.1rem;
+  border-top: 1px solid var(--accent); border-bottom: 1px solid var(--rule);
+}
+.talk__kind { font-size: .62rem; text-transform: uppercase; letter-spacing: .13em; font-weight: 600; color: var(--accent); }
+.talk__title { margin-top: .4rem; font-family: var(--font-display); font-size: 1.02rem; line-height: 1.4; color: var(--ink); }
+.talk__about { margin-top: .55rem; font-size: .9rem; line-height: 1.6; color: var(--ink-2); }

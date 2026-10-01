@@ -1,0 +1,10 @@
+{%- comment -%}
+  Static image figure. Params: src (required), alt (required), label, caption.
+{%- endcomment -%}
+<figure class="plot">
+  {%- if include.label %}<figcaption class="plot__label">{{ include.label }}</figcaption>{% endif -%}
+  <a class="plot__img" href="{{ include.src | relative_url }}">
+    <img src="{{ include.src | relative_url }}" alt="{{ include.alt | escape }}" loading="lazy">
+  </a>
+  {%- if include.caption %}<figcaption class="plot__caption">{{ include.caption }}</figcaption>{% endif -%}
+</figure>

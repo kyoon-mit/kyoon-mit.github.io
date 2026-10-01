@@ -80,7 +80,34 @@ more useful questions:
    that adapting to a new observing run does not mean starting over?
 
 The [Updates]({{ '/projects/bns/updates/' | relative_url }}) log works through
-these empirically. Everything so far uses simulated signals injected into
-simulated noise, which keeps the ground truth exact and the population
-controllable, at the price of not yet testing robustness to real detector
-artifacts — non-stationary noise and glitches are the obvious next frontier.
+these empirically. Signals are simulated and injected into real detector noise
+from the third observing run (O3), which keeps the ground truth exact while
+exposing the model to real non-stationary noise and glitches.
+
+## Most events are quiet
+
+The number of sources grows with volume, so the number of events louder than a
+given SNR falls steeply with that SNR, as its inverse cube. Real detections
+therefore pile up just above threshold. In a test population drawn this way,
+the median SNR is about 5.6, and three quarters of events sit below SNR 8.
+
+That is the regime that matters, and it is where a model trained or evaluated
+on uniformly distributed SNR is most misleading: uniform SNR over-represents
+loud events, so it can make a model look nearly perfect while it fails on the
+events the detectors actually record. The
+[July 2026 update]({{ '/projects/bns/updates/2026-07-30-reality-check/' | relative_url }})
+shows exactly that.
+
+## Heterodyning
+
+Machine-learning searches that do reach quiet BNS events, such as DINGO-BNS and
+the AFRAME BNS search, **heterodyne** the data first. They multiply the strain
+by the conjugate of the leading-order inspiral phase for an assumed chirp mass.
+If the assumption is close, the chirp collapses into a slowly varying signal
+that a network can integrate over a long window. If it is not, the signal
+smears out.
+
+Heterodyning is effective, but it needs the chirp mass up front, usually from a
+bank of candidate values swept in parallel. A model that could estimate the
+chirp mass directly at low SNR would not need it. Whether such a model can
+exist is the open question this project is organized around.

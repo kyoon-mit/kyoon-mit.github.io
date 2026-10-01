@@ -1,0 +1,82 @@
+updated: 1 October 2026, 15:24 EDT
+runs:
+- key: bns_recipe
+  title: 'BNS: Project 8 recipe, 128/6, chirp mass + mass ratio'
+  state: running
+  started: '2026-10-01'
+  epoch: 75
+  max_epochs: 800
+  metrics:
+  - label: overlap rho
+    value: '0.233'
+  - label: within 2%
+    value: 9.8%
+  - label: within 5%
+    value: 23.7%
+  - label: R² chirp mass
+    value: '0.397'
+  - label: R² mass ratio
+    value: '-0.022'
+  figure:
+    src: /assets/img/bns/live/bns_recipe.png
+    epoch: 70
+  update: /projects/bns/updates/2026-10-01-recipe-on-bns/
+  note: Power-law SNR (index −2) validation, so rho is low by construction.
+- key: bns_baseline
+  title: 'BNS: joint model baseline, 128/4, chirp mass'
+  state: running
+  started: '2026-09-25'
+  epoch: 1416
+  max_epochs: 2000
+  metrics:
+  - label: overlap rho
+    value: '0.182'
+  - label: within 2%
+    value: 18.4%
+  - label: within 5%
+    value: 30.1%
+  figure:
+    src: /assets/img/bns/live/bns_baseline.png
+    epoch: 1410
+  update: /projects/bns/updates/2026-09-29-den-reg-and-project-8/
+  note: Power-law SNR (index −3). The run the new recipe is compared against.
+- key: p8_size
+  title: 'Project 8: model size, 128/6, stored cavity noise'
+  state: running
+  started: '2026-09-29'
+  epoch: 138
+  max_epochs: 1000
+  metrics:
+  - label: overlap rho
+    value: '0.641'
+  - label: RMSE (eV)
+    value: '30.67'
+  - label: R² energy
+    value: '-0.120'
+  - label: within 2 eV
+    value: 3.5%
+  figure:
+    src: /assets/img/bns/live/p8_size.png
+    epoch: 130
+  update: /projects/bns/updates/2026-09-29-den-reg-and-project-8/
+  note: Regressor switched on at epoch 200, full weight at 400.
+- key: p8_noise
+  title: 'Project 8: fresh Gaussian noise every step, each signal ×5'
+  state: running
+  started: '2026-09-29'
+  epoch: 114
+  max_epochs: 200
+  metrics:
+  - label: overlap rho
+    value: '0.573'
+  - label: RMSE (eV)
+    value: '21.28'
+  - label: R² energy
+    value: '0.461'
+  - label: within 2 eV
+    value: 8.4%
+  figure:
+    src: /assets/img/bns/live/p8_noise.png
+    epoch: 112
+  update: /projects/bns/updates/2026-09-29-den-reg-and-project-8/
+  note: Regressor ramped in over epochs 40 to 80.

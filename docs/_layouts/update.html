@@ -27,6 +27,15 @@ layout: default
         {%- if page.summary %}<p class="page__lede">{{ page.summary }}</p>{% endif -%}
       </header>
 
+      {%- if page.talk %}
+      <aside class="talk" aria-label="Talk">
+        <p class="talk__kind">Talk · {{ page.talk.venue }}</p>
+        <p class="talk__title">{{ page.talk.title }}</p>
+        {%- if page.talk.about %}<p class="talk__about">{{ page.talk.about }}</p>{% endif -%}
+        {%- if page.talk.slides %}<p class="talk__about"><a href="{{ page.talk.slides | relative_url }}">Slides (PDF)</a></p>{% endif -%}
+      </aside>
+      {%- endif %}
+
       <div class="prose">
         {{ content }}
       </div>
