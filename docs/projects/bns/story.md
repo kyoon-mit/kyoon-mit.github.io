@@ -12,13 +12,55 @@ next_title: Background, the physics the model is trying to invert
 ---
 
 <ol class="chapter-list">
-  <li><span class="chapter-list__title"><a href="#i-early-promise-at-high-snr">Early promise at high SNR</a></span><span class="chapter-list__body">Dec 2025 to Jan 2026. Chirp mass from pre-merger strain, on loud signals.</span></li>
-  <li><span class="chapter-list__title"><a href="#ii-three-experiments">Three experiments</a></span><span class="chapter-list__body">To May 2026. Merger regression with uncertainty, pre-merger regression, a first sky-localization ring.</span></li>
-  <li><span class="chapter-list__title"><a href="#iii-the-reality-check">The reality check</a></span><span class="chapter-list__body">May to Aug 2026. A correct SNR and a realistic population break the merger model at low SNR.</span></li>
-  <li><span class="chapter-list__title"><a href="#iv-the-heterodyning-question">The heterodyning question</a></span><span class="chapter-list__body">Summer 2026. Why existing pipelines can reach low SNR, and why we want a way around it.</span></li>
-  <li><span class="chapter-list__title"><a href="#v-denoise-first">Denoise first</a></span><span class="chapter-list__body">Aug to Sep 2026. Teaching an S4D to recover the waveform, and what the loss was really measuring.</span></li>
-  <li><span class="chapter-list__title"><a href="#vi-project-8-as-a-test-bed">Project 8 as a test bed</a></span><span class="chapter-list__body">Sep 2026. Trying to reproduce a striking denoise-and-regress result on electron chirps.</span></li>
-  <li><span class="chapter-list__title"><a href="#vii-back-to-bns">Back to BNS</a></span><span class="chapter-list__body">Oct 2026, running now. The Project 8 recipe on BNS.</span></li>
+    <li>
+    <div class="chapter-list__text">
+      <p class="chapter-list__when">Dec 2025 to Jan 2026</p>
+      <p class="chapter-list__title"><a href="#i-early-promise-at-high-snr">Early promise at high SNR</a></p>
+      <p class="chapter-list__body">Chirp mass from pre-merger strain, on loud signals.</p>
+    </div>
+  </li>
+    <li>
+    <div class="chapter-list__text">
+      <p class="chapter-list__when">To May 2026</p>
+      <p class="chapter-list__title"><a href="#ii-three-experiments">Three experiments</a></p>
+      <p class="chapter-list__body">Merger regression with uncertainty, pre-merger regression, a first sky-localization ring.</p>
+    </div>
+  </li>
+    <li>
+    <div class="chapter-list__text">
+      <p class="chapter-list__when">May to Aug 2026</p>
+      <p class="chapter-list__title"><a href="#iii-the-reality-check">The reality check</a></p>
+      <p class="chapter-list__body">A correct SNR and a realistic population break the merger model at low SNR.</p>
+    </div>
+  </li>
+    <li>
+    <div class="chapter-list__text">
+      <p class="chapter-list__when">Summer 2026</p>
+      <p class="chapter-list__title"><a href="#iv-the-heterodyning-question">The heterodyning question</a></p>
+      <p class="chapter-list__body">Why existing pipelines can reach low SNR, and why we want a way around it.</p>
+    </div>
+  </li>
+    <li>
+    <div class="chapter-list__text">
+      <p class="chapter-list__when">Aug to Sep 2026</p>
+      <p class="chapter-list__title"><a href="#v-denoise-first">Denoise first</a></p>
+      <p class="chapter-list__body">Teaching an S4D to recover the waveform, and what the loss was really measuring.</p>
+    </div>
+  </li>
+    <li>
+    <div class="chapter-list__text">
+      <p class="chapter-list__when">Sep 2026</p>
+      <p class="chapter-list__title"><a href="#vi-project-8-as-a-test-bed">Project 8 as a test bed</a></p>
+      <p class="chapter-list__body">Trying to reproduce a striking denoise-and-regress result on electron chirps.</p>
+    </div>
+  </li>
+    <li>
+    <div class="chapter-list__text">
+      <p class="chapter-list__when">Oct 2026, running now</p>
+      <p class="chapter-list__title"><a href="#vii-back-to-bns">Back to BNS</a></p>
+      <p class="chapter-list__body">The Project 8 recipe on BNS.</p>
+    </div>
+  </li>
 </ol>
 
 ## I. Early promise at high SNR
