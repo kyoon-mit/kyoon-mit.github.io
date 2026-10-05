@@ -30,11 +30,14 @@ current:
     url: /projects/agentic-ligo/
 
   - title: Superconducting magnet control
-    blurb: ""
-    detail: ""
-    tags: []
+    blurb: Estimating the distance to thermal runaway in HTS tape
+    detail: >-
+      Learned models that estimate, from voltage taps, current and a few
+      thermometers, how close a high-temperature superconducting tape is to
+      thermal runaway, as part of a digital twin for magnet protection.
+    tags: [Superconducting magnets, Surrogate models, Sequence models]
     image: /assets/img/projects/placeholder.svg
-    url:
+    url: /projects/superconducting-magnets/
 
 past:
   - title: Higgs Rare Decays to Light Quark Mesons
