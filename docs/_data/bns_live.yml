@@ -1,82 +1,83 @@
-updated: 1 October 2026, 15:24 EDT
+updated: 5 October 2026, 10:19 EDT
 runs:
 - key: bns_recipe
   title: 'BNS: Project 8 recipe, 128/6, chirp mass + mass ratio'
   state: running
   started: '2026-10-01'
-  epoch: 75
+  epoch: 634
   max_epochs: 800
   metrics:
   - label: overlap rho
-    value: '0.233'
+    value: '0.311'
   - label: within 2%
-    value: 9.8%
+    value: 29.4%
   - label: within 5%
-    value: 23.7%
+    value: 46.8%
   - label: R² chirp mass
-    value: '0.397'
+    value: '0.452'
   - label: R² mass ratio
-    value: '-0.022'
+    value: '0.077'
   figure:
     src: /assets/img/bns/live/bns_recipe.png
-    epoch: 70
+    epoch: 630
   update: /projects/bns/updates/2026-10-01-recipe-on-bns/
-  note: Power-law SNR (index −2) validation, so rho is low by construction.
+  note: Validates on a power law with index −2, the baseline on −3, so the two rows
+    are not directly comparable. The shared power-law test set is.
 - key: bns_baseline
   title: 'BNS: joint model baseline, 128/4, chirp mass'
-  state: running
+  state: finished
   started: '2026-09-25'
-  epoch: 1416
+  epoch: 1999
   max_epochs: 2000
   metrics:
   - label: overlap rho
-    value: '0.182'
+    value: '0.190'
   - label: within 2%
-    value: 18.4%
+    value: 21.3%
   - label: within 5%
-    value: 30.1%
+    value: 34.6%
   figure:
     src: /assets/img/bns/live/bns_baseline.png
-    epoch: 1410
+    epoch: 1990
   update: /projects/bns/updates/2026-09-29-den-reg-and-project-8/
   note: Power-law SNR (index −3). The run the new recipe is compared against.
 - key: p8_size
   title: 'Project 8: model size, 128/6, stored cavity noise'
   state: running
   started: '2026-09-29'
-  epoch: 138
+  epoch: 301
   max_epochs: 1000
   metrics:
   - label: overlap rho
-    value: '0.641'
+    value: '0.718'
   - label: RMSE (eV)
-    value: '30.67'
+    value: '22.29'
   - label: R² energy
-    value: '-0.120'
+    value: '0.408'
   - label: within 2 eV
-    value: 3.5%
+    value: 7.7%
   figure:
     src: /assets/img/bns/live/p8_size.png
-    epoch: 130
+    epoch: 300
   update: /projects/bns/updates/2026-09-29-den-reg-and-project-8/
   note: Regressor switched on at epoch 200, full weight at 400.
 - key: p8_noise
   title: 'Project 8: fresh Gaussian noise every step, each signal ×5'
-  state: running
+  state: finished
   started: '2026-09-29'
-  epoch: 114
+  epoch: 199
   max_epochs: 200
   metrics:
   - label: overlap rho
-    value: '0.573'
+    value: '0.588'
   - label: RMSE (eV)
-    value: '21.28'
+    value: '20.30'
   - label: R² energy
-    value: '0.461'
+    value: '0.509'
   - label: within 2 eV
-    value: 8.4%
+    value: 9.6%
   figure:
     src: /assets/img/bns/live/p8_noise.png
-    epoch: 112
+    epoch: 198
   update: /projects/bns/updates/2026-09-29-den-reg-and-project-8/
   note: Regressor ramped in over epochs 40 to 80.
