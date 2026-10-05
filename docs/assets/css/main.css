@@ -583,3 +583,19 @@ ul, ol { margin: 0; }
 .talk__kind { font-size: .62rem; text-transform: uppercase; letter-spacing: .13em; font-weight: 600; color: var(--accent); }
 .talk__title { margin-top: .4rem; font-family: var(--font-display); font-size: 1.02rem; line-height: 1.4; color: var(--ink); }
 .talk__about { margin-top: .55rem; font-size: .9rem; line-height: 1.6; color: var(--ink-2); }
+
+/* Brainstorm checklist */
+.prose .checklist { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--ink-3); max-width: none; }
+.prose .checklist > li, .prose .checklist > li + li {
+  display: grid; grid-template-columns: 1.5rem minmax(0, 1fr); gap: .8rem;
+  margin: 0; padding: .85rem 0; border-bottom: 1px solid var(--rule);
+}
+.checklist__box {
+  width: 1rem; height: 1rem; margin-top: .25rem; border: 1px solid var(--ink-3);
+  display: inline-grid; place-items: center; font-size: .75rem; line-height: 1;
+}
+.checklist .is-done .checklist__box { background: var(--accent); border-color: var(--accent); }
+.checklist .is-done .checklist__box::after { content: "✓"; color: var(--on-accent); }
+.checklist .is-running .checklist__box { border-color: var(--accent); }
+.checklist .is-running .checklist__box::after { content: "…"; color: var(--accent); }
+.checklist__text { font-size: .92rem; line-height: 1.6; color: var(--ink-2); max-width: 40rem; }
