@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" role="img" aria-label="Line plate of a binary inspiral and its chirp waveform">
   <defs>
     <pattern id="bnsHatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
-      <line x1="0" y1="0" x2="0" y2="10" stroke="#6d5c46" stroke-width="1.6"/>
+      <line x1="0" y1="0" x2="0" y2="10" stroke="#4a5a70" stroke-width="1.6"/>
     </pattern>
   </defs>
 
   <!-- orbital plane: nested ellipses tightening toward the centre -->
-  <g fill="none" stroke="#4a3d2f">
+  <g fill="none" stroke="#1b2a41">
     <ellipse cx="600" cy="330" rx="430" ry="164" stroke-width="2.2" stroke-opacity=".45" stroke-dasharray="10 12"/>
     <ellipse cx="600" cy="330" rx="340" ry="130" stroke-width="2.6" stroke-opacity=".6"/>
     <ellipse cx="600" cy="330" rx="250" ry="95" stroke-width="2.8" stroke-opacity=".72"/>
@@ -15,15 +15,15 @@
   </g>
 
   <!-- the two bodies -->
-  <g stroke="#4a3d2f" stroke-width="3">
+  <g stroke="#1b2a41" stroke-width="3">
     <circle cx="686" cy="345" r="25" fill="url(#bnsHatch)"/>
     <circle cx="514" cy="315" r="20" fill="url(#bnsHatch)"/>
   </g>
-  <circle cx="686" cy="345" r="6" fill="#7c2d2d"/>
-  <circle cx="514" cy="315" r="5" fill="#7c2d2d"/>
+  <circle cx="686" cy="345" r="6" fill="#1f5aa6"/>
+  <circle cx="514" cy="315" r="5" fill="#1f5aa6"/>
 
   <!-- trace baseline with scale ticks -->
-  <g stroke="#6d5c46" stroke-width="2">
+  <g stroke="#4a5a70" stroke-width="2">
     <line x1="80" y1="690" x2="1120" y2="690" stroke-opacity=".7"/>
     <g stroke-opacity=".55">
       <line x1="80" y1="690" x2="80" y2="708"/>
@@ -35,7 +35,7 @@
   </g>
 
   <!-- chirp: amplitude and frequency both rise toward merger -->
-  <path fill="none" stroke="#3f3427" stroke-width="3.4" stroke-linecap="round"
+  <path fill="none" stroke="#14233a" stroke-width="3.4" stroke-linecap="round"
     d="M86 690
        q 27 -13 54 0 q 27 13 54 0
        q 25 -22 50 0 q 25 22 50 0
@@ -51,6 +51,6 @@
        l 44 0"/>
 
   <!-- merger marker -->
-  <line x1="1052" y1="556" x2="1052" y2="800" stroke="#7c2d2d" stroke-width="2.2" stroke-opacity=".8"/>
-  <circle cx="1052" cy="690" r="5.5" fill="#7c2d2d"/>
+  <line x1="1052" y1="556" x2="1052" y2="800" stroke="#1f5aa6" stroke-width="2.2" stroke-opacity=".8"/>
+  <circle cx="1052" cy="690" r="5.5" fill="#1f5aa6"/>
 </svg>

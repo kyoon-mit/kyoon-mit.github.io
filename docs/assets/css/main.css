@@ -7,52 +7,31 @@
 
 /* --- Tokens --------------------------------------------------------------- */
 :root {
-  --font-display: "Libre Baskerville", Georgia, "Times New Roman", serif;
-  --font-text: "Karla", "Helvetica Neue", Arial, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-display: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-text: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  /* paper and ink */
-  --paper:    #faf8f4;
-  --paper-2:  #f3efe7;
-  --paper-3:  #eae4d8;
-  --ink:      #23201c;
-  --ink-2:    #4d4740;
-  --ink-3:    #7d7568;
-  --rule:     #ddd6c8;
-  --rule-2:   #c7bfad;
+  /* white ground, navy ink (CERN slide palette) */
+  --paper:    #ffffff;
+  --paper-2:  #f4f6f9;
+  --paper-3:  #e8ecf2;
+  --ink:      #0f1e33;
+  --ink-2:    #34435a;
+  --ink-3:    #5d6b80;
+  --rule:     #e1e5ec;
+  --rule-2:   #c5cdd9;
 
-  /* oxblood accent */
-  --accent:      #7c2d2d;
-  --accent-2:    #5d1f1f;
-  --accent-wash: #f1e6e2;
-  --on-accent:   #faf8f4;
+  --accent:      #13386b;
+  --accent-2:    #0b2547;
+  --accent-wash: #e8eef7;
+  --on-accent:   #ffffff;
 
   /* the wash that covers artwork on hover */
-  --wash: rgba(30, 26, 22, .88);
+  --wash: rgba(11, 30, 58, .9);
 
-  --r: 2px;               /* square-ish corners; rounded reads as software */
+  --r: 2px;
   --wrap: 1080px;
   --step: clamp(1.15rem, 4.5vw, 2.25rem);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper:    #1b1815;
-    --paper-2:  #221e1a;
-    --paper-3:  #2b2620;
-    --ink:      #ece6dc;
-    --ink-2:    #c6bdaf;
-    --ink-3:    #948b7c;
-    --rule:     #352f27;
-    --rule-2:   #473f35;
-
-    --accent:      #d8917f;
-    --accent-2:    #ecab98;
-    --accent-wash: #2d2320;
-    --on-accent:   #1b1815;
-
-    --wash: rgba(12, 10, 8, .9);
-  }
 }
 
 /* --- Reset ---------------------------------------------------------------- */
@@ -216,11 +195,6 @@ ul, ol { margin: 0; }
 .card:hover .card__media, .card:focus-visible .card__media, .card:active .card__media {
   border-color: var(--rule-2);
 }
-/* The plates are drawn in warm ink on a transparent ground, so on the dark
-   palette they only need lifting, not inverting. */
-@media (prefers-color-scheme: dark) {
-  .card__media img { filter: brightness(1.45) saturate(.85); }
-}
 
 /* the wash + revealed copy */
 .card__wash {
@@ -233,17 +207,17 @@ ul, ol { margin: 0; }
 }
 .card:hover .card__wash, .card:focus-visible .card__wash, .card:active .card__wash { opacity: 1; }
 .card__detail {
-  font-size: .88rem; line-height: 1.6; color: #f4efe6;
+  font-size: .88rem; line-height: 1.6; color: #ffffff;
   display: -webkit-box; -webkit-line-clamp: 7; -webkit-box-orient: vertical; overflow: hidden;
 }
 .card__tags { display: flex; flex-wrap: wrap; gap: .3rem .9rem; }
 .chip {
   font-size: .63rem; text-transform: uppercase; letter-spacing: .12em; font-weight: 600;
-  color: rgba(244, 239, 230, .72);
+  color: rgba(255, 255, 255, .72);
 }
 .card__cta {
   font-size: .66rem; text-transform: uppercase; letter-spacing: .14em; font-weight: 700;
-  color: #f4efe6; border-top: 1px solid rgba(244, 239, 230, .3);
+  color: #ffffff; border-top: 1px solid rgba(255, 255, 255, .3);
   padding-top: .6rem;
 }
 .card__cta svg { display: none; }
@@ -599,3 +573,10 @@ ul, ol { margin: 0; }
 .checklist .is-running .checklist__box { border-color: var(--accent); }
 .checklist .is-running .checklist__box::after { content: "…"; color: var(--accent); }
 .checklist__text { font-size: .92rem; line-height: 1.6; color: var(--ink-2); max-width: 40rem; }
+
+/* sans display: weight carries the hierarchy */
+.page__title, .hero__name, .prose h2, .prose h3, .section__title,
+.card__title, .timeline__title, .tree__title, .pager__title,
+.chapter-list__title, .talk__title, .wordmark__name { font-weight: 600; }
+.page__lede, .hero__lede, .note, .plot__caption, .specs dd small,
+.site-footer__muted, .section__note { font-style: normal; }

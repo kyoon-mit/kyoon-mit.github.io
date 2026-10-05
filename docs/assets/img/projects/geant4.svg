@@ -1,30 +1,30 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" role="img" aria-label="Line plate of a particle shower developing through detector layers">
   <defs>
     <pattern id="gHatchA" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-      <line x1="0" y1="0" x2="0" y2="12" stroke="#6d5c46" stroke-width="1.6"/>
+      <line x1="0" y1="0" x2="0" y2="12" stroke="#4a5a70" stroke-width="1.6"/>
     </pattern>
     <pattern id="gHatchB" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
-      <line x1="0" y1="0" x2="0" y2="9" stroke="#6d5c46" stroke-width="1.6"/>
+      <line x1="0" y1="0" x2="0" y2="9" stroke="#4a5a70" stroke-width="1.6"/>
     </pattern>
   </defs>
 
   <!-- detector layers -->
-  <g stroke="#4a3d2f" stroke-width="2.8">
+  <g stroke="#1b2a41" stroke-width="2.8">
     <rect x="316" y="96" width="104" height="708" fill="url(#gHatchA)"/>
     <rect x="464" y="96" width="162" height="708" fill="url(#gHatchB)"/>
     <rect x="670" y="96" width="252" height="708" fill="none"/>
   </g>
-  <g stroke="#85735c" stroke-width="1.8" stroke-opacity=".55">
+  <g stroke="#6b7a90" stroke-width="1.8" stroke-opacity=".55">
     <line x1="733" y1="96" x2="733" y2="804"/>
     <line x1="796" y1="96" x2="796" y2="804"/>
     <line x1="859" y1="96" x2="859" y2="804"/>
   </g>
 
   <!-- primary track -->
-  <line x1="66" y1="450" x2="318" y2="450" stroke="#3f3427" stroke-width="3.6"/>
+  <line x1="66" y1="450" x2="318" y2="450" stroke="#14233a" stroke-width="3.6"/>
 
   <!-- cascade -->
-  <g fill="none" stroke="#4a3d2f">
+  <g fill="none" stroke="#1b2a41">
     <path d="M318 450 L468 360 L668 258 L918 186" stroke-width="2.8"/>
     <path d="M318 450 L468 360 L668 322 L918 288" stroke-width="2.8"/>
     <path d="M318 450 L468 544 L668 638 L918 730" stroke-width="2.8"/>
@@ -36,12 +36,12 @@
   </g>
 
   <!-- interaction points -->
-  <g fill="#7c2d2d">
+  <g fill="#1f5aa6">
     <circle cx="318" cy="450" r="7.5"/>
     <circle cx="468" cy="360" r="5.5"/>
     <circle cx="468" cy="544" r="5.5"/>
   </g>
-  <g fill="none" stroke="#4a3d2f" stroke-width="2.6">
+  <g fill="none" stroke="#1b2a41" stroke-width="2.6">
     <circle cx="668" cy="258" r="5"/>
     <circle cx="668" cy="322" r="5"/>
     <circle cx="668" cy="578" r="5"/>
@@ -49,7 +49,7 @@
   </g>
 
   <!-- sampled energy, as a bar profile at the readout -->
-  <g stroke="#4a3d2f" stroke-width="2.6" fill="url(#gHatchB)">
+  <g stroke="#1b2a41" stroke-width="2.6" fill="url(#gHatchB)">
     <rect x="928" y="170" width="48" height="34"/>
     <rect x="928" y="272" width="76" height="34"/>
     <rect x="928" y="434" width="112" height="34"/>

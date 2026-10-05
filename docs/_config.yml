@@ -1,12 +1,11 @@
 # --- Site identity -----------------------------------------------------------
 title: Kyungseop Yoon
-tagline: Physics and machine learning
+tagline: MIT
 affiliation: Massachusetts Institute of Technology
 email: kyoon@mit.edu
 description: >-
-  Kyungseop Yoon — research at the intersection of experimental physics and
-  machine learning: gravitational-wave inference with state space models,
-  rare Higgs decays, and detector simulation.
+  Kyungseop Yoon, MIT. Machine learning for physics: LIGO binary neutron star
+  time series, an agent for LIGO, and superconducting magnet control.
 
 domain: kyungseop-yoon.com       # custom domain, without the protocol (see /CNAME)
 url: https://kyungseop-yoon.com  # the base hostname and protocol for your site

@@ -12,21 +12,29 @@ current:
   - title: Binary Neutron Stars with State Space Models
     blurb: Sequence models for gravitational-wave parameter estimation
     detail: >-
-      Small state space models that read detector strain and return the chirp
-      mass and its uncertainty, at the merger and before it. The open question:
-      can they reach the quiet events that dominate the real population without
-      heterodyning?
+      Small state space models that estimate binary neutron star parameters
+      directly from LIGO strain, and the question of whether that can work at
+      low signal-to-noise without heterodyning.
     tags: [Deep learning, Gravitational waves, S4D]
     image: /assets/img/projects/bns.svg
     url: /projects/bns/
 
-  - title: (Placeholder)
-    blurb: Project to be announced
-    detail: detailed description
+  - title: Agentic LIGO
+    blurb: An end-to-end AI agent for gravitational-wave analysis
+    detail: >-
+      Following the design of an agentic CMS analysis from our group, we are
+      building an end-to-end agent for LIGO data, aimed at anomaly detection.
+      The first step is defining the dataset and gravitational-wave benchmarks.
+    tags: [AI agents, Gravitational waves, Anomaly detection]
+    image: /assets/img/projects/placeholder.svg
+    url: /projects/agentic-ligo/
+
+  - title: Superconducting magnet control
+    blurb: ""
+    detail: ""
     tags: []
     image: /assets/img/projects/placeholder.svg
-    url: /projects/placeholder/
-    hide_in_nav: true   # keeps "(Placeholder)" out of the footer link list
+    url:
 
 past:
   - title: Higgs Rare Decays to Light Quark Mesons
