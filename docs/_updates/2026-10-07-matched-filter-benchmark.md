@@ -59,9 +59,9 @@ at 0.5% and has three mass ratios. The network never passes about 55% within
 
 {% include figure.html
    src="/assets/img/bns/2026-10-07/mf_snr.png"
-   alt="Left: predicted against true chirp mass at SNR 8 to 12, median and one-sigma band, for the matched filter and the network, on equal axes. Right: distribution of the matched-filter score on empty data and on data with a weak signal"
-   label="Chirp mass at SNR 8 to 12, and the matched-filter score"
-   caption="Left: median and 16 to 84% band against the true value, equal axes, dotted line at 45°. The matched filter's band is too narrow to see. The network pulls light systems toward 1.4 to 1.6 M☉. Right: the best network SNR over the bank on windows with no signal and on windows with a signal at SNR 8 to 12, each normalized." %}
+   alt="Left: matched-filter network SNR against injected SNR, median and one-sigma band, equal log axes with the 45 degree line. Right: distribution of the matched-filter score on empty data and on data with a weak signal"
+   label="Recovered SNR, and the score on empty data against weak signals"
+   caption="Left: median and 16 to 84% band of the recovered network SNR against the injected SNR, equal axes, dotted line at 45°. Above SNR 10 it tracks the injected value a few percent low (bank and window mismatch); below about 7 it sits on the noise floor of about 6.3. Right: the best network SNR over the bank on windows with no signal and on windows with a signal at SNR 8 to 12, each normalized." %}
 
 ## Detection
 
