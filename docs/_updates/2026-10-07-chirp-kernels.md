@@ -86,9 +86,15 @@ frequency, like a tuning fork, $$\cos(\omega t + \varphi)$$. A *damped*
 tone is a sinusoid whose amplitude fades, $$e^{-\alpha t}\cos(\omega t +
 \varphi)$$, like the fork's ring dying out. State $$n$$ has frequency
 $$\omega_n$$ and fades at rate $$\alpha_n$$. The layer's kernel is a weighted
-sum of them. In the code
-we use (ml4gw's `S4DKernel`) each channel has 32 such tones, discretized with
-a step $$\Delta t$$, so the kernel is
+sum of them.
+
+The formulas above are in continuous time, but the data comes in samples.
+The code we use (ml4gw's `S4DKernel`) gives each channel 32 tones and
+evaluates its kernel once per sample, at lags $$\ell = 0, 1, 2, \dots$$
+samples. A learned number per channel, the step $$\Delta t$$, sets how much
+of the tones' time passes between two samples: a larger $$\Delta t$$ makes
+every tone in that channel rotate faster and fade sooner per sample. Written
+per sample, the kernel is
 
 $$
 K_\ell = 2\,\mathrm{Re}\sum_n C_n \frac{e^{\Delta t\, a_n}-1}{a_n}\, e^{\Delta t\, a_n \ell}, \qquad \ell = 0, 1, \dots, L-1 .
