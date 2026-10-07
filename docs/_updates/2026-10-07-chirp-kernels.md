@@ -330,7 +330,7 @@ What one kernel produces, on data with a signal at SNR 10:
    src="/assets/img/bns/2026-10-07/chirp-kernel/kernel_output.png"
    alt="Energy output of one chirp kernel against time: a sharp spike at the merger for the right chirp mass, a smaller earlier bump for a kernel 1 percent off, and noise only"
    label="One chirp kernel's output"
-   caption="At the true chirp mass the energy spikes at the merger. A kernel 1% off peaks lower and earlier: chirp mass and merger time partly trade off. Noise alone stays low." %}
+   caption="At the true chirp mass the energy spikes at the merger. A kernel 1% off peaks lower and earlier: chirp mass and merger time partly trade off. Noise only: the same kernel at the true chirp mass run on a separate stretch of pure white noise with no signal. Each normalized kernel gives a standard normal output per phase on noise, so the energy (sum of two squares) averages 2 and reaches 10 to 15 only by chance, well below the signal's spike of about 60." %}
 
 **What it keeps from each side.**
 
