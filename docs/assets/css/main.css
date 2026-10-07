@@ -497,15 +497,15 @@ ul, ol { margin: 0; }
 }
 .site-footer__base p { margin: 0; }
 
-/* --- BNS research pages: wide figures, tables, live status, embeds -------- */
-/* Text keeps its measure; figures and tables may use the full column. */
-.doc__body .prose { max-width: none; }
-.doc__body .prose > :is(p, ul, ol, h2, h3, h4, blockquote, .note, pre, dl, details) { max-width: 36rem; }
+/* --- BNS research pages: one column for text, equations, figures, tables -- */
+.doc__body .prose { max-width: 46rem; }
+.doc__body .prose > * { max-width: 100%; }
+.doc__body .page__lede { max-width: 46rem; }
 
-/* Math (KaTeX, pages with math: true): equations stay in the text column */
+/* Math (KaTeX, pages with math: true) */
 .prose .katex { font-size: 1.08em; }
 .prose .katex-display {
-  max-width: 36rem; margin: 1.1rem 0;
+  margin: 1.1rem 0;
   overflow-x: auto; overflow-y: hidden; padding-block: .15rem;
 }
 
