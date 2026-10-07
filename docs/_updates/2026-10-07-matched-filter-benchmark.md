@@ -15,7 +15,7 @@ summary: >-
 
 The test windows were dumped from the network's own test pipeline: whitened
 4 s of H1 and L1 at 2048 Hz, O3b background, half the windows with an
-injection, power-law SNR (index −3) from 4 and from 8. The 630-epoch network
+injection, power-law SNR (index −3) from 4 and from 8, and uniform SNR from 4 to 50. The 630-epoch network
 and a matched filter then ran on exactly the same windows.
 
 - **Bank:** 613 waveforms drawn from the injection waveform set itself,
@@ -37,9 +37,11 @@ pipeline.
    src="/assets/img/bns/2026-10-07/mf_vs_ml_accuracy.png"
    alt="Fraction of events within 1, 2, 5 and 10 percent in chirp mass against injected SNR, matched filter against the network, same scale in every panel"
    label="Chirp mass accuracy against SNR"
-   caption="Both power-law test sets pooled, 12,834 events. Same y scale in every panel." %}
+   caption="All three test sets pooled, 19,251 events. Same y scale in every panel." %}
 
 <div markdown="1">
+
+Power-law sets pooled, 12,834 events:
 
 | SNR | events | matched filter, within 1 / 2 / 5 / 10% | network, within 1 / 2 / 5 / 10% |
 |---|---|---|---|
@@ -53,6 +55,9 @@ pipeline.
 
 </div>
 
+On the uniform set, overall 95% within 2% for the matched filter against 74%
+for the network; at SNR 8 to 12, 98 to 99% against 18 to 24%.
+
 The matched filter's 1% column stops at 95% only because the bank is spaced
 at 0.5% and has three mass ratios. The network never passes about 55% within
 1%, even above SNR 25, so it has a precision ceiling the data does not impose.
@@ -61,7 +66,7 @@ at 0.5% and has three mass ratios. The network never passes about 55% within
    src="/assets/img/bns/2026-10-07/mf_snr.png"
    alt="Left: matched-filter network SNR against injected SNR, median and one-sigma band, equal log axes with the 45 degree line. Right: distribution of the matched-filter score on empty data and on data with a weak signal"
    label="Recovered SNR, and the score on empty data against weak signals"
-   caption="Left: median and 16 to 84% band of the recovered network SNR against the injected SNR, equal axes, dotted line at 45°. Above SNR 10 it tracks the injected value a few percent low (bank and window mismatch); below about 7 it sits on the noise floor of about 6.3. Right: the best network SNR over the bank on windows with no signal and on windows with a signal at SNR 8 to 12, each normalized." %}
+   caption="Left: all three test sets, median and 16 to 84% band of the recovered network SNR against the injected SNR, equal axes, dotted line at 45°. Above SNR 10 it tracks the injected value a few percent low (bank and window mismatch); below about 7 it sits on the noise floor of about 6.3. Right: the best network SNR over the bank on windows with no signal and on windows with a signal at SNR 8 to 12, each normalized." %}
 
 ## Detection
 
@@ -77,7 +82,9 @@ at 0.5% and has three mass ratios. The network never passes about 55% within
 |---|---|---|
 | power law from SNR 4 | 0.74 | 0.63 |
 | power law from SNR 8 | 0.99 | 0.86 |
-| SNR 8 to 12 only | 0.98 | 0.77 |
+| uniform SNR 4 to 50 | 0.97 | 0.94 |
+| SNR 8 to 12 only (power law from 4) | 0.98 | 0.77 |
+| SNR 8 to 12 only (uniform) | 0.98 | 0.80 |
 
 </div>
 
