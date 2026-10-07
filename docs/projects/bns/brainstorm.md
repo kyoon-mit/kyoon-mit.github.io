@@ -50,6 +50,7 @@ of 100 heterodynes. See the
 
 <ul class="checklist">
   <li><span class="checklist__box" aria-label="to do"></span><span class="checklist__text"><b>Heterodyne near the true chirp mass, then the joint denoiser and regressor,</b> small model, 256 Hz anti-aliased, pre-merger window. Scan the chirp-mass error ε = 0, 0.1%, 1%, 3%. This is DINGO's refinement setting in our architecture.</span></li>
+  <li><span class="checklist__box" aria-label="to do"></span><span class="checklist__text"><b>Chirp-kernel layer:</b> kernels that are physical chirps with a learned chirp mass, two phases, energy and maximum over time. <a href="{{ u | append: '2026-10-07-chirp-kernels/' | relative_url }}">7 Oct</a></span></li>
   <li><span class="checklist__box" aria-label="to do"></span><span class="checklist__text"><b>Heterodyne grid as input channels,</b> the AFRAME mechanism, in the joint model. Needs no chirp mass.</span></li>
   <li><span class="checklist__box" aria-label="to do"></span><span class="checklist__text"><b>Bootstrap:</b> estimate the chirp mass, heterodyne with it, denoise, re-estimate.</span></li>
   <li><span class="checklist__box" aria-label="to do"></span><span class="checklist__text"><b>A dedicated detection output</b> (classification loss, balanced signal and noise) alongside σ.</span></li>
