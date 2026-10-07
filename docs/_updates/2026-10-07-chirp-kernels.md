@@ -119,10 +119,30 @@ set by three learned numbers and one per-channel step size:
 - `C` (one complex number per state) sets how loud each tone is in the sum
   and its starting phase.
 
-In the architecture, `d_state` = 64 means 32 tones per channel (they come
-in conjugate pairs), and `d_model` = 128 means 128 channels, each with its
-own 32 tones. Channels are mixed only after the convolution, by a pointwise
-layer. So one channel can be a sum of at most 32 tones.
+**Why 64 states make 32 tones.** Our runs set `d_state` = 64, the number of
+state dimensions per channel. One complex state on its own is not a real
+signal: $$e^{(-\alpha + i\omega)t}$$ is an arrow in the complex plane that
+spins at rate $$\omega$$ while shrinking at rate $$\alpha$$. Its complex
+conjugate $$e^{(-\alpha - i\omega)t}$$ shrinks the same way but spins the
+other way. Added together, with a weight $$c$$ on one and $$\bar c$$ on the
+other, the imaginary parts cancel:
+
+$$
+c\,e^{(-\alpha+i\omega)t} + \bar c\,e^{(-\alpha-i\omega)t}
+= 2\,\mathrm{Re}\big(c\,e^{(-\alpha+i\omega)t}\big)
+= 2\lvert c\rvert\, e^{-\alpha t}\cos\!\big(\omega t + \arg c\big),
+$$
+
+which is one real damped cosine: one tone. Because the data and the kernel
+are real, the states must come in such conjugate pairs, so 64 state
+dimensions make 32 pairs, 32 tones. The code stores only one member of each
+pair (its arrays have 32 entries per channel) and takes twice the real part
+instead of adding the partner, which by the identity above is the same thing.
+That is the $$2\,\mathrm{Re}$$ in the kernel formula.
+
+`d_model` = 128 means 128 channels, each with its own 32 tones. Channels are
+mixed only after the convolution, by a pointwise layer, so one channel's
+kernel is a sum of at most 32 tones.
 
 **Memory.** A tone with decay $$\alpha_n$$ forgets the input after about
 $$1/(\Delta t\,\alpha_n)$$ samples. In our trained models the median is 13 to
@@ -274,7 +294,21 @@ K^{(c)}_{k}(\ell) = A_k(\tau_\ell)\cos\Phi(\tau_\ell;\mathcal{M}_k), \qquad
 K^{(s)}_{k}(\ell) = A_k(\tau_\ell)\sin\Phi(\tau_\ell;\mathcal{M}_k), \qquad \tau_\ell = \ell\,\Delta t .
 $$
 
-Then add the two steps the network is missing:
+Then add the two steps that a matched filter has and our network lacks
+(section 3 showed the matched filter is three steps: a convolution, an
+energy, and a maximum over time). The convolution is already there; the
+other two are new:
+
+- **Energy.** Square the outputs of the cosine and sine kernels and add
+  them. This removes the unknown phase of the signal and turns the
+  oscillating output into a single positive bump, so it can be summed over
+  detectors. The current network applies a GELU here instead, which does
+  neither.
+- **Maximum over time.** Keep the largest energy in the window. This
+  removes the unknown merger time. The current network averages over time
+  instead, and averaging an oscillating signal cancels it.
+
+In formulas:
 
 $$
 e_k(t) = \sum_{\text{detectors}} \Big[ \big(K^{(c)}_k * u\big)(t)^2 + \big(K^{(s)}_k * u\big)(t)^2 \Big],
