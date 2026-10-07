@@ -161,7 +161,6 @@ shift, so a hallucinated chirp is penalized directly.
    label="SNR-series denoiser, first epochs"
    caption="Peak SNR of the output on signal windows and on noise-only windows. After 15 epochs they are not yet separated." %}
 
-Also running: a matched-filter benchmark on the same test windows the network
-sees, to measure what a template bank achieves on chirp mass and detection at
-SNR 8 to 12. See the
-[brainstorm]({{ '/projects/bns/brainstorm/' | relative_url }}).
+A matched filter run on the same test windows the network sees is in the
+[next entry]({{ u | append: '2026-10-07-matched-filter-benchmark/' | relative_url }}):
+the information the network misses is there.
