@@ -502,6 +502,13 @@ ul, ol { margin: 0; }
 .doc__body .prose { max-width: none; }
 .doc__body .prose > :is(p, ul, ol, h2, h3, h4, blockquote, .note, pre, dl, details) { max-width: 36rem; }
 
+/* Math (KaTeX, pages with math: true): equations stay in the text column */
+.prose .katex { font-size: 1.08em; }
+.prose .katex-display {
+  max-width: 36rem; margin: 1.1rem 0;
+  overflow-x: auto; overflow-y: hidden; padding-block: .15rem;
+}
+
 .plot__img { display: block; background: #fff; border: 1px solid var(--rule); }
 .plot__img img { display: block; width: 100%; height: auto; }
 
