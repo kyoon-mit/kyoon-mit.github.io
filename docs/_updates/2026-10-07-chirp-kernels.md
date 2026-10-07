@@ -37,12 +37,49 @@ $$
 its solution from rest is $$x(t) = \int_0^\infty e^{sA} B\, u(t-s)\, ds$$
 (differentiate under the integral to check). Multiply by $$C$$. $$\square$$
 
-S4D takes $$A$$ diagonal with complex entries $$a_n = -\alpha_n + i\,\omega_n$$.
-Then the kernel splits into one term per state:
+**S4D makes $$A$$ diagonal.** In general $$A$$ is a full matrix, so every
+state can feed every other state. S4D (the "D" stands for diagonal; Gu,
+Gupta, Goel and Ré, 2022) keeps only the diagonal: each state talks to
+itself and nothing else. The code we use stores $$A$$ as a plain list of
+complex numbers, one per state,
 
 $$
-K(s) = \sum_{n} c_n\, e^{-\alpha_n s}\, e^{i \omega_n s}.
+a_n = -\alpha_n + i\,\omega_n ,
 $$
+
+with a negative real part (so each state fades instead of blowing up) and an
+imaginary part that sets how fast it rotates.
+
+**Why that splits the kernel into separate states.** The kernel needs
+$$e^{sA}$$, which is defined by the same series as an ordinary exponential:
+$$e^{sA} = I + sA + \tfrac{1}{2}(sA)^2 + \dots$$. For a diagonal matrix,
+multiplying it by itself just multiplies the diagonal entries:
+
+$$
+\begin{pmatrix} a_1 & \\ & a_2 \end{pmatrix}^{2} = \begin{pmatrix} a_1^2 & \\ & a_2^2 \end{pmatrix}.
+$$
+
+Every power stays diagonal, so the whole series stays diagonal, and each
+diagonal entry is the ordinary series for one number:
+
+$$
+e^{sA} = \begin{pmatrix} e^{s a_1} & & \\ & e^{s a_2} & \\ & & \ddots \end{pmatrix}.
+$$
+
+Sandwiching this between the row $$C$$ and the column $$B$$ just picks out
+each diagonal entry, weights it by $$C_n B_n$$, and adds them up:
+
+$$
+K(s) = C\,e^{sA}B = \sum_n C_n B_n\, e^{s a_n} = \sum_{n} c_n\, e^{-\alpha_n s}\, e^{i \omega_n s}, \qquad c_n = C_n B_n .
+$$
+
+The last step uses $$e^{s a_n} = e^{-\alpha_n s}\,e^{i\omega_n s}$$: a fade
+times a rotation. So the kernel is a plain sum, one independent term per
+state, with no state influencing another.
+
+One practical detail: the states come in complex-conjugate pairs, so each
+pair adds up to a real cosine. That is why the code's formula below has
+$$2\,\mathrm{Re}$$ and sums over only half the states.
 
 Each state is a **damped tone**. A *tone* is a pure sinusoid: one fixed
 frequency, like a tuning fork, $$\cos(\omega t + \varphi)$$. A *damped*
