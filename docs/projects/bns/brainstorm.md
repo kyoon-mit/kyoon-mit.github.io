@@ -37,11 +37,13 @@ of 100 heterodynes. See the
   <li class="is-done"><span class="checklist__box" aria-label="done"></span><span class="checklist__text"><b>Project 8: model size (128/6) and fresh Gaussian noise.</b> Neither produced a core; all variants end near 20 eV RMS. <a href="{{ u | append: '2026-10-07-why-denoising-does-not-detect/' | relative_url }}">7 Oct</a></span></li>
   <li class="is-done"><span class="checklist__box" aria-label="done"></span><span class="checklist__text"><b>Project 8: is the core in our data?</b> Yes. Given the carrier frequency, every event lands within 1 eV; even a plain spectrum peak beats our network. Finding the carrier among its sidebands is what fails. <a href="{{ u | append: '2026-10-07-why-denoising-does-not-detect/' | relative_url }}">7 Oct</a></span></li>
   <li class="is-done"><span class="checklist__box" aria-label="done"></span><span class="checklist__text"><b>Matched-filter benchmark on the network's own test windows.</b> 96 to 99% within 2% at SNR 8 to 12, against 16 to 29% for the network; detection AUC 0.98 against 0.77. The information is in the window; the network is the limit. <a href="{{ u | append: '2026-10-07-matched-filter-benchmark/' | relative_url }}">7 Oct</a></span></li>
+  <li class="is-done"><span class="checklist__box" aria-label="done"></span><span class="checklist__text"><b>Chirp kernels, tested.</b> An S4D layer with energy and maximum learned nothing; chirp kernels with a regression read-out reached 5 to 7%; picking the highest-energy kernel, untrained, reached 87% within 2% at SNR 8 to 12. The read-out was the failure. <a href="{{ u | append: '2026-10-08-chirp-kernels-work/' | relative_url }}">8 Oct</a></span></li>
 </ul>
 
 ## Running
 
 <ul class="checklist">
+  <li class="is-running"><span class="checklist__box" aria-label="running"></span><span class="checklist__text"><b>Chirp-kernel network:</b> 512 learned chirp kernels, energy, maximum over time, softmax over chirp masses. 94 to 97% within 2% at SNR 8 to 12 on validation at epoch 24. <a href="{{ u | append: '2026-10-08-chirp-kernels-work/' | relative_url }}">8 Oct</a></span></li>
   <li class="is-running"><span class="checklist__box" aria-label="running"></span><span class="checklist__text"><b>Denoiser trained on the matched-filter SNR time series,</b> target zero on noise-only windows. Started 7 Oct.</span></li>
   <li class="is-running"><span class="checklist__box" aria-label="running"></span><span class="checklist__text"><b>SNR-8 training, matched pair:</b> with and without the shape and amplitude terms, both with 96% signal windows. Started 6 and 7 Oct.</span></li>
 </ul>
