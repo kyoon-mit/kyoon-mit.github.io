@@ -79,6 +79,74 @@ without the terms has been stopped.
 
 ## Against the earlier runs
 
-The test plots for the run with the terms, at epoch 339, on the three
-standard populations, are running; this section will compare them with the
-630-epoch run trained from SNR 4.
+The run with the terms (trained from SNR 8, epoch 339) against our previous
+best, the 630-epoch run trained from SNR 4, on the standard test: O3b
+background, half the windows with an injection. Epoch 339 was tested on
+24,982 signal windows per population, epoch 630 on 12,795. Chirp mass within
+1 / 2%:
+
+<div markdown="1">
+
+| SNR | power law from 4: epoch 339 | epoch 630 | power law from 8: epoch 339 | epoch 630 | uniform: epoch 339 | epoch 630 |
+|---|---|---|---|---|---|---|
+| 4 to 8 | 4 / 8% | 3 / 6% | | | 5 / 10% | 4 / 6% |
+| 8 to 12 | 18 / 31% | 10 / 20% | 17 / 31% | 11 / 20% | 20 / 35% | 11 / 23% |
+| 12 to 16 | 40 / 67% | 32 / 53% | 42 / 67% | 31 / 55% | 42 / 67% | 33 / 56% |
+| 16 to 25 | 66 / 90% | 48 / 82% | 65 / 91% | 53 / 82% | 67 / 93% | 52 / 83% |
+| 25 to 50 | 78 / 99% | 54 / 94% | 79 / 98% | 51 / 92% | 80 / 98% | 51 / 93% |
+| all | 11 / 19% | 8 / 15% | 34 / 52% | 24 / 42% | 62 / 81% | 42 / 75% |
+
+</div>
+
+The same pattern in all three populations:
+
+- **Within 2% at SNR 8 to 16** improves by 11 to 14 points, the band that
+  sets how far a search can see.
+- **Within 1% above SNR 16** improves by 13 to 29 points. The 630-epoch run
+  topped out near 50% within 1% even on loud events; this run reaches
+  about 80%.
+- **Below SNR 8** almost nothing moves (1 to 4 points).
+
+<div class="plot-pair">
+{% include figure.html
+   src="/assets/img/bns/2026-10-09/ep339_snr8_powerlaw_frac_within.png"
+   alt="Fraction within 1, 2, 5 and 10 percent against SNR for the SNR-8 run with the terms, power law from SNR 8"
+   label="Epoch 339, trained from SNR 8, with the terms"
+   caption="Power law from SNR 8." %}
+{% include figure.html
+   src="/assets/img/bns/2026-10-09/ep630_snr8_powerlaw_frac_within.png"
+   alt="Fraction within 1, 2, 5 and 10 percent against SNR for the 630-epoch run, power law from SNR 8"
+   label="Epoch 630, trained from SNR 4"
+   caption="Power law from SNR 8." %}
+</div>
+
+<div class="plot-pair">
+{% include figure.html
+   src="/assets/img/bns/2026-10-09/ep339_snr4_powerlaw_frac_within.png"
+   alt="Fraction within 1, 2, 5 and 10 percent against SNR for the SNR-8 run with the terms, power law from SNR 4"
+   label="Epoch 339, trained from SNR 8, with the terms"
+   caption="Power law from SNR 4." %}
+{% include figure.html
+   src="/assets/img/bns/2026-10-09/ep630_snr4_powerlaw_frac_within.png"
+   alt="Fraction within 1, 2, 5 and 10 percent against SNR for the 630-epoch run, power law from SNR 4"
+   label="Epoch 630, trained from SNR 4"
+   caption="Power law from SNR 4." %}
+</div>
+
+<div class="plot-pair">
+{% include figure.html
+   src="/assets/img/bns/2026-10-09/ep339_snr4_uniform_frac_within.png"
+   alt="Fraction within 1, 2, 5 and 10 percent against SNR for the SNR-8 run with the terms, uniform SNR"
+   label="Epoch 339, trained from SNR 8, with the terms"
+   caption="Uniform SNR 4 to 50." %}
+{% include figure.html
+   src="/assets/img/bns/2026-10-09/ep630_snr4_uniform_frac_within.png"
+   alt="Fraction within 1, 2, 5 and 10 percent against SNR for the 630-epoch run, uniform SNR"
+   label="Epoch 630, trained from SNR 4"
+   caption="Uniform SNR 4 to 50." %}
+</div>
+
+Two things changed between these runs, not one: the training population
+(SNR 8 and up instead of 4 and up, power law index −3 instead of −2) and
+the denoiser loss settings. Section 3 isolates the loss terms; this section
+shows the combination is our best regressor so far.
