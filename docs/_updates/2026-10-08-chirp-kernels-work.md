@@ -226,7 +226,7 @@ estimate = log_k[logits.argmax(-1)].exp()
 
 ## 4. Test on 12,800 windows per population
 
-The epoch-24 checkpoint, tested with the standard test step: O3b
+The epoch-38 checkpoint (the run's best by validation), tested with the standard test step: O3b
 background, half the windows with an injection, three SNR populations.
 Chirp mass within 1 / 2 / 5 / 10%:
 
@@ -234,24 +234,25 @@ Chirp mass within 1 / 2 / 5 / 10%:
 
 | SNR | power law from 4 | power law from 8 | uniform 4 to 50 | previous network (epoch 630), within 2% |
 |---|---|---|---|---|
-| 4 to 6 | 11 / 15 / 21 / 28% | | 15 / 21 / 26 / 33% | 5% |
-| 6 to 8 | 43 / 52 / 57 / 62% | | 46 / 51 / 56 / 62% | 8% |
-| 8 to 10 | 77 / 86 / 89 / 90% | 76 / 86 / 88 / 91% | 76 / 85 / 87 / 89% | 15% |
-| 10 to 12 | 90 / 99 / 99 / 99% | 88 / 97 / 98 / 98% | 86 / 97 / 97 / 98% | 25% |
-| 12 to 16 | 89 / 99 / 99 / 100% | 91 / 98 / 99 / 99% | 89 / 97 / 98 / 99% | 56% |
-| 16 to 25 | 94 / 100 / 100 / 100% | 90 / 99 / 99 / 99% | 91 / 99 / 100 / 100% | 85% |
-| whole population, within 1 / 2% | 35 / 42% | 85 / 94% | 82 / 92% | 15% (within 2%, power law from 4) |
+| 4 to 6 | 12 / 15 / 21 / 29% | | 15 / 20 / 25 / 31% | 5% |
+| 6 to 8 | 43 / 52 / 57 / 61% | | 46 / 50 / 55 / 59% | 8% |
+| 8 to 10 | 80 / 87 / 89 / 91% | 77 / 86 / 89 / 91% | 80 / 86 / 88 / 89% | 15% |
+| 10 to 12 | 91 / 98 / 99 / 99% | 90 / 97 / 98 / 98% | 88 / 96 / 98 / 98% | 25% |
+| 12 to 16 | 93 / 99 / 99 / 100% | 92 / 99 / 99 / 99% | 90 / 97 / 99 / 99% | 56% |
+| 16 to 25 | 95 / 100 / 100 / 100% | 93 / 99 / 99 / 99% | 92 / 99 / 100 / 100% | 85% |
+| 25 to 50 | 89 / 97 / 98 / 98% | 93 / 99 / 100 / 100% | 90 / 98 / 99 / 99% | 92% |
+| whole population, within 1 / 2% | 36 / 42% | 86 / 94% | 85 / 92% | 15% (within 2%, power law from 4) |
 
 </div>
 
 <div class="plot-pair">
 {% include figure.html
-   src="/assets/img/bns/2026-10-08/test_ep24/snr8_powerlaw_frac_within.png"
+   src="/assets/img/bns/2026-10-08/test_ep38/snr8_powerlaw_frac_within.png"
    alt="Fraction of events within 1, 2, 5 and 10 percent in chirp mass against SNR, power law from SNR 8"
    label="Power law from SNR 8"
    caption="Fraction within 1, 2, 5 and 10% against SNR." %}
 {% include figure.html
-   src="/assets/img/bns/2026-10-08/test_ep24/snr8_powerlaw_pred_vs_true.png"
+   src="/assets/img/bns/2026-10-08/test_ep38/snr8_powerlaw_pred_vs_true.png"
    alt="Predicted against true chirp mass, power law from SNR 8"
    label="Power law from SNR 8"
    caption="Predicted against true chirp mass: median and 1-sigma band." %}
@@ -259,12 +260,12 @@ Chirp mass within 1 / 2 / 5 / 10%:
 
 <div class="plot-pair">
 {% include figure.html
-   src="/assets/img/bns/2026-10-08/test_ep24/snr4_powerlaw_frac_within.png"
+   src="/assets/img/bns/2026-10-08/test_ep38/snr4_powerlaw_frac_within.png"
    alt="Fraction of events within 1, 2, 5 and 10 percent in chirp mass against SNR, power law from SNR 4"
    label="Power law from SNR 4"
    caption="The realistic population; most events are below SNR 8." %}
 {% include figure.html
-   src="/assets/img/bns/2026-10-08/test_ep24/snr4_powerlaw_pred_vs_true.png"
+   src="/assets/img/bns/2026-10-08/test_ep38/snr4_powerlaw_pred_vs_true.png"
    alt="Predicted against true chirp mass, power law from SNR 4"
    label="Power law from SNR 4"
    caption="Below SNR 8 many estimates fall far from the truth, widening the band." %}
@@ -272,18 +273,20 @@ Chirp mass within 1 / 2 / 5 / 10%:
 
 <div class="plot-pair">
 {% include figure.html
-   src="/assets/img/bns/2026-10-08/test_ep24/snr4_uniform_frac_within.png"
+   src="/assets/img/bns/2026-10-08/test_ep38/snr4_uniform_frac_within.png"
    alt="Fraction of events within 1, 2, 5 and 10 percent in chirp mass against SNR, uniform SNR 4 to 50"
    label="Uniform SNR 4 to 50"
    caption="Fraction within 1, 2, 5 and 10% against SNR." %}
 {% include figure.html
-   src="/assets/img/bns/2026-10-08/test_ep24/snr4_uniform_pred_vs_true.png"
+   src="/assets/img/bns/2026-10-08/test_ep38/snr4_uniform_pred_vs_true.png"
    alt="Predicted against true chirp mass, uniform SNR 4 to 50"
    label="Uniform SNR 4 to 50"
    caption="Predicted against true chirp mass: median and 1-sigma band." %}
 </div>
 
-From SNR 10 up, 97 to 100% of events are within 2%, matched-filter level.
+From SNR 10 up, 96 to 100% of events are within 2%, matched-filter level, and
+88 to 95% within 1%. Against epoch 24, within 2% is unchanged and within 1%
+is a few points higher, most at SNR 25 to 50 (89 to 93% against 81 to 86%).
 At SNR 6 to 8, half the events are within 2%, against 8% for the previous
 network.
 
