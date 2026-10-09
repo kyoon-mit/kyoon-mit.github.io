@@ -74,11 +74,14 @@ off at the same place: about 9 to 10% of events within 1% in chirp mass,
    src="/assets/img/bns/2026-10-07/bns_den_reg_rho.png"
    alt="Denoiser overlap with the true waveform against epoch for the same three runs"
    label="Denoiser overlap"
-   caption="The shape and amplitude terms double the overlap, with no effect on the chirp mass above." %}
+   caption="The shape and amplitude terms double the overlap. (Correction, 9 October: the run with them used half background windows by mistake, so its chirp-mass curve above is not a fair comparison. See the 9 October update.)" %}
 
 - The shape and amplitude terms in the denoiser loss double the overlap (0.11
-  against 0.06) and change nothing in the regression. Cleaner waveforms are
-  not what limits the chirp mass.
+  against 0.06). **Correction (9 October):** I first wrote that they change
+  nothing in the regression. That comparison was confounded: the run with
+  them saw half background windows by mistake. With matched settings they
+  help the chirp mass; see the
+  [9 October update]({{ u | append: '2026-10-09-shape-and-amplitude-terms/' | relative_url }}).
 - On the power-law test set, the SNR-8 model at epoch 336 against the
   630-epoch model trained from SNR 4, fraction within 1 / 2 / 5 / 10%:
 

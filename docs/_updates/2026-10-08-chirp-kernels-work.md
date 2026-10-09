@@ -224,17 +224,108 @@ loss = -(target * torch.log_softmax(logits, -1)).sum(-1).mean()
 estimate = log_k[logits.argmax(-1)].exp()
 ```
 
-## 4. Caveats
+## 4. Test on 12,800 windows per population
+
+The epoch-24 checkpoint, tested with the standard test step: O3b
+background, half the windows with an injection, three SNR populations.
+Chirp mass within 1 / 2 / 5 / 10%:
+
+<div markdown="1">
+
+| SNR | power law from 4 | power law from 8 | uniform 4 to 50 | previous network (epoch 630), within 2% |
+|---|---|---|---|---|
+| 4 to 6 | 11 / 15 / 21 / 28% | | 15 / 21 / 26 / 33% | 5% |
+| 6 to 8 | 43 / 52 / 57 / 62% | | 46 / 51 / 56 / 62% | 8% |
+| 8 to 10 | 77 / 86 / 89 / 90% | 76 / 86 / 88 / 91% | 76 / 85 / 87 / 89% | 15% |
+| 10 to 12 | 90 / 99 / 99 / 99% | 88 / 97 / 98 / 98% | 86 / 97 / 97 / 98% | 25% |
+| 12 to 16 | 89 / 99 / 99 / 100% | 91 / 98 / 99 / 99% | 89 / 97 / 98 / 99% | 56% |
+| 16 to 25 | 94 / 100 / 100 / 100% | 90 / 99 / 99 / 99% | 91 / 99 / 100 / 100% | 85% |
+| whole population, within 1 / 2% | 35 / 42% | 85 / 94% | 82 / 92% | 15% (within 2%, power law from 4) |
+
+</div>
+
+<div class="plot-pair">
+{% include figure.html
+   src="/assets/img/bns/2026-10-08/test_ep24/snr8_powerlaw_frac_within.png"
+   alt="Fraction of events within 1, 2, 5 and 10 percent in chirp mass against SNR, power law from SNR 8"
+   label="Power law from SNR 8"
+   caption="Fraction within 1, 2, 5 and 10% against SNR." %}
+{% include figure.html
+   src="/assets/img/bns/2026-10-08/test_ep24/snr8_powerlaw_pred_vs_true.png"
+   alt="Predicted against true chirp mass, power law from SNR 8"
+   label="Power law from SNR 8"
+   caption="Predicted against true chirp mass: median and 1-sigma band." %}
+</div>
+
+<div class="plot-pair">
+{% include figure.html
+   src="/assets/img/bns/2026-10-08/test_ep24/snr4_powerlaw_frac_within.png"
+   alt="Fraction of events within 1, 2, 5 and 10 percent in chirp mass against SNR, power law from SNR 4"
+   label="Power law from SNR 4"
+   caption="The realistic population; most events are below SNR 8." %}
+{% include figure.html
+   src="/assets/img/bns/2026-10-08/test_ep24/snr4_powerlaw_pred_vs_true.png"
+   alt="Predicted against true chirp mass, power law from SNR 4"
+   label="Power law from SNR 4"
+   caption="Below SNR 8 many estimates fall far from the truth, widening the band." %}
+</div>
+
+<div class="plot-pair">
+{% include figure.html
+   src="/assets/img/bns/2026-10-08/test_ep24/snr4_uniform_frac_within.png"
+   alt="Fraction of events within 1, 2, 5 and 10 percent in chirp mass against SNR, uniform SNR 4 to 50"
+   label="Uniform SNR 4 to 50"
+   caption="Fraction within 1, 2, 5 and 10% against SNR." %}
+{% include figure.html
+   src="/assets/img/bns/2026-10-08/test_ep24/snr4_uniform_pred_vs_true.png"
+   alt="Predicted against true chirp mass, uniform SNR 4 to 50"
+   label="Uniform SNR 4 to 50"
+   caption="Predicted against true chirp mass: median and 1-sigma band." %}
+</div>
+
+From SNR 10 up, 97 to 100% of events are within 2%, matched-filter level.
+At SNR 6 to 8, half the events are within 2%, against 8% for the previous
+network.
+
+## 5. Training made it worse after epoch 40
+
+Validation within 1% at SNR 8 to 12 fell from 81 to 95% (epochs 19 to 24)
+to about 60 to 80% by epoch 180. It is not overfitting: every step draws
+fresh injections. Two learned quantities drifted away from "the
+highest-energy kernel wins":
+
+<div markdown="1">
+
+| | start | epoch 24 | epoch 38 | epoch 183 |
+|---|---|---|---|---|
+| largest gap between kernel chirp masses | 0.23% | 0.83% | 0.94% | 2.07% |
+| kernels out of order | 0 | 215 | 218 | 240 |
+| scale s on the energies | 5.0 | 0.52 | 0.33 | 0.18 |
+
+</div>
+
+- The kernels are free to move, and nothing keeps them evenly spaced. Gaps
+  of up to 2% opened, and an event in a gap has no kernel within 1%.
+- The scale on the bank's energies shrank 28 times, so the decision passed
+  to the learned correction W, a blurrier mapping. Cross-entropy against a
+  soft target rewards hedging when unsure, which pushes s down.
+
+So the useful checkpoint is an early one, and the next version freezes the
+kernels and keeps the bank's scale fixed. That version is training: frozen
+kernels, per-detector energy maps, four S4D layers on the maps, and a
+maximum over time, added to the fixed-scale bank.
+
+## 6. Caveats
 
 - **Small validation set.** About 100 events per epoch at SNR 8 to 12, so
-  the per-epoch numbers swing by several points. A test on 12,800 benchmark
-  windows per population is running.
+  the per-epoch numbers swing by several points. Section 4 uses 12,800
+  windows per population instead.
 - **Close to a learned matched filter.** The kernels are physical chirps and
   the read-out picks the best one. What training adds is the placement of
   the kernels and the correction $$W$$; the network did not discover chirps
   on its own.
 - **Only chirp mass so far.** No mass ratio, no detection statistic, no sky
   position. Those are the next steps.
-- **Training is at epoch 24 of 200.** This page is a snapshot; it will be
-  updated when training finishes. The wandb run is
+- **Training snapshot.** The validation curves stop at epoch 24; section 5
+  covers what happened afterwards. The wandb run is
   `CLAUDE-TESTS/chirp_kernel_512_learned_mc_softmax_train_snr8_prob0.96`.
