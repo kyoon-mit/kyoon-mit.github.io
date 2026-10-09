@@ -148,5 +148,5 @@ The same pattern in all three populations:
 
 Two things changed between these runs, not one: the training population
 (SNR 8 and up instead of 4 and up, power law index −3 instead of −2) and
-the denoiser loss settings. Section 3 isolates the loss terms; this section
+the denoiser loss settings. The matched comparison above isolates the loss terms; this section
 shows the combination is our best regressor so far.
