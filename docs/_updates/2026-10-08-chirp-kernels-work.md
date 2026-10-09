@@ -290,10 +290,27 @@ is a few points higher, most at SNR 25 to 50 (89 to 93% against 81 to 86%).
 At SNR 6 to 8, half the events are within 2%, against 8% for the previous
 network.
 
-## 5. Training made it worse after epoch 40
+## 5. What happened after epoch 38
 
-Validation within 1% at SNR 8 to 12 fell from 81 to 95% (epochs 19 to 24)
-to about 60 to 80% by epoch 180. It is not overfitting: every step draws
+Validation, 10-epoch running means:
+
+<div markdown="1">
+
+| epoch | SNR 8 to 12, within 1% | SNR 8 to 12, within 2% | all events, within 1% | all events, within 2% |
+|---|---|---|---|---|
+| 24 | 83% | 92% | 36% | 43% |
+| 38 | 83% | 91% | 37% | 44% |
+| 60 | 86% | 92% | 39% | 44% |
+| 100 | 78% | 90% | 35% | 42% |
+| 140 | 81% | 90% | 37% | 44% |
+| 180 | 67% | 87% | 31% | 42% |
+| 190 | 71% | 89% | 32% | 42% |
+
+</div>
+
+It held its level to about epoch 60, then slid: within 1% at SNR 8 to 12
+dropped from about 85% to about 70%, while within 2% lost only a few points.
+The fine precision is what went. It is not overfitting: every step draws
 fresh injections. Two learned quantities drifted away from "the
 highest-energy kernel wins":
 
