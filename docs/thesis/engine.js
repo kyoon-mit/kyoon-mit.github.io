@@ -132,14 +132,26 @@ window.TG = (() => {
   function keyUp(k) { held[k] = false; dirStack = dirStack.filter(d => d !== k); }
   function releaseAll() { for (const k in held) held[k] = false; dirStack = []; }
   function dir() { return dirStack.length ? dirStack[dirStack.length - 1] : null; }
+  // fallbacks for layouts and input methods that leave e.code empty (Korean 2-set: W A S D B = \u3148 \u3141 \u3134 \u3147 \u3160)
+  const NAMES = {
+    w: 'up', a: 'left', s: 'down', d: 'right', b: 'b', ' ': 'a', spacebar: 'a', enter: 'a', escape: 'b',
+    arrowup: 'up', arrowdown: 'down', arrowleft: 'left', arrowright: 'right',
+    '\u3148': 'up', '\u3141': 'left', '\u3134': 'down', '\u3147': 'right', '\u3160': 'b',
+  };
+  const CODES = { 87: 'up', 65: 'left', 83: 'down', 68: 'right', 66: 'b', 32: 'a', 13: 'a', 27: 'b', 37: 'left', 38: 'up', 39: 'right', 40: 'down' };
+  const keyOf = e => KEYS[e.code] || NAMES[String(e.key || '').toLowerCase()] || CODES[e.keyCode] || null;
   window.addEventListener('keydown', e => {
     if (!state.keysOn || state.textInput || e.ctrlKey || e.metaKey || e.altKey) return;
-    const k = KEYS[e.code];
+    const k = keyOf(e);
     if (!k) return;
     e.preventDefault();
     if (!e.repeat) keyDown(k);
   });
-  window.addEventListener('keyup', e => { const k = KEYS[e.code]; if (k) keyUp(k); });
+  window.addEventListener('keyup', e => {
+    const k = keyOf(e);
+    if (k) keyUp(k);
+    else if (e.keyCode === 229 || e.key === 'Process') releaseAll();
+  });
   window.addEventListener('blur', releaseAll);
   document.querySelectorAll('[data-key]').forEach(el => {
     const k = el.dataset.key;

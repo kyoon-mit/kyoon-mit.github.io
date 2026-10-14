@@ -3,7 +3,7 @@
 .th-page main { padding: 28px 16px 48px; }
 
 /* ---- gate */
-.gate { max-width: 1040px; margin: 0 auto; text-align: center; }
+.gate { max-width: 1180px; margin: 0 auto; text-align: center; }
 .gate__title {
   font-size: clamp(1.15rem, 3.4vw, 1.75rem); font-weight: 600; color: var(--ink);
   margin: 0 0 22px;
@@ -18,7 +18,7 @@
   user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
 }
 .gba__screen {
-  position: relative; width: 720px; max-width: 100%;
+  position: relative; width: 740px; max-width: 100%;
   padding: 10px; background: var(--ink); border-radius: 10px 10px 26px 10px;
   box-shadow: inset 0 0 0 2px var(--accent-2);
 }
@@ -54,19 +54,19 @@
 .dpad__down::after { border-top-color: var(--accent-wash); margin-top: 3px; }
 .dpad__left::after { border-right-color: var(--accent-wash); margin-left: -3px; }
 .dpad__right::after { border-left-color: var(--accent-wash); margin-left: 3px; }
-.dpad__btn.is-down, .ab__btn.is-down { background: var(--ink); }
+.dpad__btn.is-down { background: var(--ink); }
 
-.ab { display: flex; gap: 14px; align-items: center; transform: rotate(-22deg); }
-.ab__btn {
-  width: 54px; height: 54px; border-radius: 50%; border: 0; cursor: pointer; touch-action: none;
-  background: var(--ink-2); color: var(--on-accent);
-  font: 600 18px/1 var(--font-text);
-  box-shadow: inset 0 -3px 0 var(--ink);
+.keys { display: flex; gap: 12px; align-items: center; }
+.keycap {
+  height: 50px; min-width: 50px; padding: 0 14px; border: 0; border-radius: 10px; cursor: pointer; touch-action: none;
+  background: var(--ink-2); color: var(--on-accent); font: 600 16px/1 var(--font-text);
+  box-shadow: inset 0 -4px 0 var(--ink);
 }
-.ab__btn--a { margin-top: -26px; }
-.dpad__btn:focus-visible, .ab__btn:focus-visible { outline: 2px solid var(--accent-wash); outline-offset: 2px; }
+.keycap--space { min-width: 116px; }
+.keycap.is-down { background: var(--ink); box-shadow: inset 0 -1px 0 var(--ink); transform: translateY(2px); }
+.dpad__btn:focus-visible, .keycap:focus-visible { outline: 2px solid var(--accent-wash); outline-offset: 2px; }
 
-@media (max-width: 1100px) { .gba__screen { width: 480px; } }
+@media (max-width: 1240px) { .gba__screen { width: 500px; } }
 @media (max-width: 760px) {
   .gba {
     display: grid; grid-template-columns: 1fr 1fr; grid-template-areas: "screen screen" "left right";
