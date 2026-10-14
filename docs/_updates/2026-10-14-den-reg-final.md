@@ -113,3 +113,133 @@ epoch 339. I do not yet know why longer training does this.
   [13 October]({{ u | append: '2026-10-13-learned-long-kernels/' | relative_url }})
   already list both epochs. The learned long kernels stay 2.3 to 3 times
   ahead of the final den-reg within 1% at SNR 8 to 12.
+
+## Standard test plots, epoch 799
+
+The standard output of the test for the final checkpoint, per population:
+chirp-mass accuracy against SNR, predicted against true chirp mass and mass
+ratio, the chirp-mass z-score, and the predicted chirp-mass σ for signals and
+noise with its ROC.
+
+### Power law from SNR 4
+
+<div class="plot-pair">
+{% include figure.html
+   src="/assets/img/bns/2026-10-14/ep799_snr4_powerlaw_chirp_mass_frac_within_vs_snr.png"
+   alt="Chirp mass within 1, 2, 5 and 10%% against SNR, epoch 799, power law from SNR 4"
+   label="Accuracy against SNR"
+   caption="" %}
+{% include figure.html
+   src="/assets/img/bns/2026-10-14/ep799_snr4_powerlaw_chirp_mass_pred_vs_true.png"
+   alt="Predicted against true chirp mass, median and 1σ band, epoch 799, power law from SNR 4"
+   label="Chirp mass, predicted against true"
+   caption="" %}
+</div>
+
+<div class="plot-pair">
+{% include figure.html
+   src="/assets/img/bns/2026-10-14/ep799_snr4_powerlaw_mass_ratio_pred_vs_true.png"
+   alt="Predicted against true mass ratio, median and 1σ band, epoch 799, power law from SNR 4"
+   label="Mass ratio, predicted against true"
+   caption="" %}
+{% include figure.html
+   src="/assets/img/bns/2026-10-14/ep799_snr4_powerlaw_chirp_mass_zscore.png"
+   alt="Histogram of chirp-mass z-scores with a Gaussian fit, epoch 799, power law from SNR 4"
+   label="Chirp-mass z-score"
+   caption="" %}
+</div>
+
+<div class="plot-pair">
+{% include figure.html
+   src="/assets/img/bns/2026-10-14/ep799_snr4_powerlaw_chirp_mass_sigma_sig_vs_bkg.png"
+   alt="Predicted chirp-mass σ for signals and for noise, epoch 799, power law from SNR 4"
+   label="σ, signal and noise"
+   caption="" %}
+{% include figure.html
+   src="/assets/img/bns/2026-10-14/ep799_snr4_powerlaw_chirp_mass_roc_loglog_sigma.png"
+   alt="ROC of the predicted chirp-mass σ as a detection score, log axes, epoch 799, power law from SNR 4"
+   label="ROC of σ"
+   caption="" %}
+</div>
+
+### Power law from SNR 8
+
+<div class="plot-pair">
+{% include figure.html
+   src="/assets/img/bns/2026-10-14/ep799_snr8_powerlaw_chirp_mass_frac_within_vs_snr.png"
+   alt="Chirp mass within 1, 2, 5 and 10%% against SNR, epoch 799, power law from SNR 8"
+   label="Accuracy against SNR"
+   caption="" %}
+{% include figure.html
+   src="/assets/img/bns/2026-10-14/ep799_snr8_powerlaw_chirp_mass_pred_vs_true.png"
+   alt="Predicted against true chirp mass, median and 1σ band, epoch 799, power law from SNR 8"
+   label="Chirp mass, predicted against true"
+   caption="" %}
+</div>
+
+<div class="plot-pair">
+{% include figure.html
+   src="/assets/img/bns/2026-10-14/ep799_snr8_powerlaw_mass_ratio_pred_vs_true.png"
+   alt="Predicted against true mass ratio, median and 1σ band, epoch 799, power law from SNR 8"
+   label="Mass ratio, predicted against true"
+   caption="" %}
+{% include figure.html
+   src="/assets/img/bns/2026-10-14/ep799_snr8_powerlaw_chirp_mass_zscore.png"
+   alt="Histogram of chirp-mass z-scores with a Gaussian fit, epoch 799, power law from SNR 8"
+   label="Chirp-mass z-score"
+   caption="" %}
+</div>
+
+<div class="plot-pair">
+{% include figure.html
+   src="/assets/img/bns/2026-10-14/ep799_snr8_powerlaw_chirp_mass_sigma_sig_vs_bkg.png"
+   alt="Predicted chirp-mass σ for signals and for noise, epoch 799, power law from SNR 8"
+   label="σ, signal and noise"
+   caption="" %}
+{% include figure.html
+   src="/assets/img/bns/2026-10-14/ep799_snr8_powerlaw_chirp_mass_roc_loglog_sigma.png"
+   alt="ROC of the predicted chirp-mass σ as a detection score, log axes, epoch 799, power law from SNR 8"
+   label="ROC of σ"
+   caption="" %}
+</div>
+
+### Uniform SNR 4 to 50
+
+<div class="plot-pair">
+{% include figure.html
+   src="/assets/img/bns/2026-10-14/ep799_snr4_uniform_chirp_mass_frac_within_vs_snr.png"
+   alt="Chirp mass within 1, 2, 5 and 10%% against SNR, epoch 799, uniform SNR 4 to 50"
+   label="Accuracy against SNR"
+   caption="" %}
+{% include figure.html
+   src="/assets/img/bns/2026-10-14/ep799_snr4_uniform_chirp_mass_pred_vs_true.png"
+   alt="Predicted against true chirp mass, median and 1σ band, epoch 799, uniform SNR 4 to 50"
+   label="Chirp mass, predicted against true"
+   caption="" %}
+</div>
+
+<div class="plot-pair">
+{% include figure.html
+   src="/assets/img/bns/2026-10-14/ep799_snr4_uniform_mass_ratio_pred_vs_true.png"
+   alt="Predicted against true mass ratio, median and 1σ band, epoch 799, uniform SNR 4 to 50"
+   label="Mass ratio, predicted against true"
+   caption="" %}
+{% include figure.html
+   src="/assets/img/bns/2026-10-14/ep799_snr4_uniform_chirp_mass_zscore.png"
+   alt="Histogram of chirp-mass z-scores with a Gaussian fit, epoch 799, uniform SNR 4 to 50"
+   label="Chirp-mass z-score"
+   caption="" %}
+</div>
+
+<div class="plot-pair">
+{% include figure.html
+   src="/assets/img/bns/2026-10-14/ep799_snr4_uniform_chirp_mass_sigma_sig_vs_bkg.png"
+   alt="Predicted chirp-mass σ for signals and for noise, epoch 799, uniform SNR 4 to 50"
+   label="σ, signal and noise"
+   caption="" %}
+{% include figure.html
+   src="/assets/img/bns/2026-10-14/ep799_snr4_uniform_chirp_mass_roc_loglog_sigma.png"
+   alt="ROC of the predicted chirp-mass σ as a detection score, log axes, epoch 799, uniform SNR 4 to 50"
+   label="ROC of σ"
+   caption="" %}
+</div>
