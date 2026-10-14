@@ -74,7 +74,7 @@ next_title: Background, the physics the model is trying to invert
 
 The first models were trained in a standalone codebase. An S4D of about
 1.3 M parameters (model dimension 256, 8 layers) read 55 to 56 seconds of strain
-ending 8 seconds before merger, at 216 Hz, and regressed the chirp mass
+ending 8 seconds before merger, at 256 Hz, and regressed the chirp mass
 directly. On signals with SNR 20 to 40 it worked well. A follow-up compared
 pre-training on one SNR band and fine-tuning on another against training from
 scratch.

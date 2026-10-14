@@ -1,5 +1,5 @@
 ---
-title: "Chirp kernels work: matched-filter accuracy at SNR 8 to 12"
+title: "Chirp kernels work: close to matched-filter accuracy from SNR 10"
 date: 2026-10-08
 math: true
 summary: >-

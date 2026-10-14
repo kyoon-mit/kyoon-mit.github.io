@@ -29,7 +29,7 @@ pretraining stage.
 <dl class="specs">
   <div><dt>Training SNR</dt><dd>30 – 40<small>uniform</small></dd></div>
   <div><dt>Time span</dt><dd>0 – 55 s<small>8 s before merger</small></dd></div>
-  <div><dt>Sampling rate</dt><dd>216 Hz<small>generated at 512 Hz, downsampled</small></dd></div>
+  <div><dt>Sampling rate</dt><dd>256 Hz<small>generated at 512 Hz, downsampled</small></dd></div>
   <div><dt>Train / validation</dt><dd>80,000 / 10,000</dd></div>
 </dl>
 
@@ -39,7 +39,7 @@ pretraining stage.
   <div><dt>Pretraining SNR</dt><dd>20 – 30<small>uniform</small></dd></div>
   <div><dt>Fine-tuning SNR</dt><dd>30 – 40<small>uniform</small></dd></div>
   <div><dt>Time span</dt><dd>0 – 55 s<small>8 s before merger</small></dd></div>
-  <div><dt>Sampling rate</dt><dd>216 Hz<small>generated at 512 Hz, downsampled</small></dd></div>
+  <div><dt>Sampling rate</dt><dd>256 Hz<small>generated at 512 Hz, downsampled</small></dd></div>
   <div><dt>Train / validation</dt><dd>80,000 / 10,000<small>at each stage</small></dd></div>
 </dl>
 
@@ -48,7 +48,7 @@ pretraining stage.
 <dl class="specs">
   <div><dt>Test SNR</dt><dd>30 – 40<small>uniform</small></dd></div>
   <div><dt>Time span</dt><dd>0 – 55 s<small>8 s before merger</small></dd></div>
-  <div><dt>Sampling rate</dt><dd>216 Hz</dd></div>
+  <div><dt>Sampling rate</dt><dd>256 Hz</dd></div>
   <div><dt>Test set</dt><dd>10,000 samples</dd></div>
 </dl>
 

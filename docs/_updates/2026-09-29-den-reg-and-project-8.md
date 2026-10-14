@@ -20,7 +20,7 @@ talk:
 
 <dl class="specs">
   <div><dt>Model</dt><dd>S4D denoiser + regressor<small>128 wide, 4 layers each</small></dd></div>
-  <div><dt>Training</dt><dd>Power-law SNR, index −3<small>4 to 100, 1415 epochs</small></dd></div>
+  <div><dt>Training</dt><dd>Power-law SNR, index −3<small>4 to 100, checkpoint at epoch 1415</small></dd></div>
   <div><dt>Checkpoint</dt><dd>Epoch 970<small>best validation denoiser loss</small></dd></div>
   <div><dt>Test set</dt><dd>25,790 signals<small>+ 25,410 noise-only</small></dd></div>
   <div><dt>Test SNR</dt><dd>Median 5.6<small>76% below 8</small></dd></div>
