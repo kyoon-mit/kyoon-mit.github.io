@@ -84,6 +84,33 @@ tools/
 - **Live runs:** edit the `RUNS` table in `tools/bns_live.py`, then
   `uv run --script tools/bns_live.py` (needs wandb credentials on the machine).
 
+## Rules for every BNS page: claims and jargon
+
+Set by the owner on 14 October 2026; they apply to every page in
+`docs/projects/bns/` and `docs/_updates/`, old and new.
+
+- **No bare claims.** Every quantitative or physical statement is either
+  derived on the derivations page (`docs/projects/bns/derivations.md`,
+  `/projects/bns/derivations/`), with a link from the claim to the section,
+  or cited to a paper, book or other source. Numbers computed for the site get
+  a numerical check, and the derivation says how it was checked. Do not write
+  "roughly" or "about" for something that can be stated exactly.
+- **Jargon is defined.** Every technical term goes in
+  `docs/_data/glossary.yml` with a plain-language definition (written for a
+  physicist outside the field), and a source: a citation, or the exact wording
+  quoted from a paper or reference, marked as a quotation. The definitions page
+  (`/projects/bns/definitions/`) is built from that file. A script
+  (`docs/assets/js/glossary.js`, loaded on BNS pages from
+  `_includes/head.html`) links the first appearance of each term on each page
+  to its definition, so terms need no hand-written links; add the term and its
+  spellings (`also:`) to the glossary instead.
+- **Verify every citation** (title, authors, journal or arXiv number) before
+  publishing.
+- **Math:** inline `$...$` and display `$$...$$` both render (KaTeX, pages
+  with `math: true` in the front matter).
+- When a page adds a new term or claim, add its definition or derivation in
+  the same commit.
+
 ## Building and checking
 
 There is no Ruby on the training machine, and nothing should be installed

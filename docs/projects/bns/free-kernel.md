@@ -42,16 +42,19 @@ units) and passed to a linear output layer.
 
 The kernels are complex, which gives each unit a cosine and a sine filter at
 once, so its energy does not depend on the signal's phase. Each kernel is
-scaled to unit norm, so $E_c$ is the SNR² of the signal it matches best
-(white noise gives 2 on average at each time).
+scaled to unit norm, so its peak energy on a signal of SNR $\rho$ is
+exactly $\rho^2 m_c^2$, where $m_c$ is the kernel's match to the signal
+([derivation]({{ '/projects/bns/derivations/' | relative_url }}#peak-energy)). Pure noise gives 2 on average at a time
+where the kernel overlaps the data completely ([derivation]({{ '/projects/bns/derivations/' | relative_url }}#noise)).
 
 ### Why the log and the standardization
 
-For a loud signal, a kernel's peak energy is roughly the signal's SNR²
-times the kernel's match to the waveform squared,
+For a noise-free signal, a kernel's peak energy is exactly the signal's SNR²
+times the kernel's match to the waveform squared, and for a loud signal the
+noise adds comparatively little,
 
 $$
-\max_t E_c \approx {\rm SNR}^2\, m_c^2,
+\max_t E_c = {\rm SNR}^2\, m_c^2 \ \text{(no noise)},
 \qquad
 \log \max_t E_c \approx \log {\rm SNR}^2 + \log m_c^2 .
 $$
@@ -61,8 +64,10 @@ Chirp mass sets which kernels match well, the pattern of $m_c$ across the
 same factor and carries no information about chirp mass.
 
 - **The log** turns that common factor into a common offset, and compresses
-  a range of about 10 (noise) to a few thousand (SNR 50) into a range the
-  linear layer can handle. The 1 inside $\log(1 + \cdot)$ keeps it finite.
+  the range from pure noise (the two-detector peak averages 22, 10% to 90%:
+  19 to 26; [measured]({{ '/projects/bns/derivations/' | relative_url }}#noise-peak)) to 2,500 (a perfect match at SNR 50)
+  into a range the linear layer can handle. The 1 inside $\log(1 + \cdot)$
+  keeps it finite.
 - **Standardizing across the 256 units** (subtracting their mean and
   dividing by their spread, separately for every window) removes the common
   offset $\log {\rm SNR}^2$. What reaches the output layer is the shape of
@@ -70,9 +75,9 @@ same factor and carries no information about chirp mass.
   or 50. Without it, the output layer would have to learn to ignore
   loudness, and its inputs would change scale with every event.
 
-This holds for signals well above the noise. Near the noise level, the
-largest energies come partly from noise, and the pattern carries less
-information.
+This holds when the signal term is much larger than the noise term. Near
+the noise level, the largest energies come partly from noise, and the
+cancellation is incomplete ([derivation]({{ '/projects/bns/derivations/' | relative_url }}#log-standardize)).
 
 {% include figure.html
    src="/assets/img/bns/2026-10-14/free_kernel_diagram.png"
@@ -105,7 +110,7 @@ information.
 </div>
 
 Each kernel is stored as its spectrum: one complex number per frequency,
-set to zero outside the band. An inverse Fourier transform turns it into the
+set to zero outside the band ([counts]({{ '/projects/bns/derivations/' | relative_url }}#parameters)). An inverse Fourier transform turns it into the
 kernel's time samples. Storing the time samples directly gives the same set
 of possible kernels; a run that does so is in progress, to test whether the
 spectrum storage matters for training.
@@ -121,16 +126,17 @@ on how many numbers there are.
 
 - **Free kernels: each number used once per window.** There is one layer.
   The input's spectrum is multiplied by the 256 stored kernel spectra and
-  transformed back, about 0.6 billion operations per window. The maximum
+  transformed back, $6.4 \times 10^8$ operations per window. The maximum
   over time then reduces each window to 256 numbers, and the rest is tiny.
 - **S4D: few numbers, reused at every time step.** Each of the 4 layers
   carries all 256 channels at all 8,192 time steps. Each layer builds its
   256 kernels from 128 tones each (an array of 256 × 128 × 8,192 terms),
   convolves the 256 channels, and then mixes channels with a 256 → 512 linear
   map applied separately at every one of the 8,192 time steps: the same
-  131,000 numbers used 8,192 times, about a billion multiply-adds per window
-  per layer. In all, about 10 billion operations per window, and every
-  layer's full-length activations are kept in memory for training.
+  131,000 numbers used 8,192 times, $2.1 \times 10^9$ operations per window
+  per layer. In all $9.8 \times 10^9$ operations per window, 15 times the
+  free kernels' ([counts]({{ '/projects/bns/derivations/' | relative_url }}#cost)), and every layer's full-length
+  activations are kept in memory for training.
 
 So the free kernels are wide and shallow, with each number used once; the
 S4D has fewer numbers but uses them at every time step of every layer.

@@ -104,6 +104,47 @@ of 0.5 to 0.8%), so the loss at high SNR is this bias, not noise. Below
 1.3 M☉ only 1% of loud events at epoch 799 are within 1%, against 81% at
 epoch 339. I do not yet know why longer training does this.
 
+## Sensitive volume
+
+Measured on 14 October the same way as for epoch 365 on 9 and 10 October:
+one week of O3b background (579,108 s, with 72 time-shifted copies of the
+two detectors' data), simulated BNS signals injected throughout, the negative
+predicted chirp-mass uncertainty (−σ) as the detection statistic, and no time
+integration. One week can measure false-alarm rates down to one per
+579,108 s, 54 per year. The volume is computed with aframe's tools (Marx et
+al. 2025, [arXiv:2403.18661](https://arxiv.org/abs/2403.18661)), which weight
+the injections as in Tiwari 2018
+([arXiv:1712.00482](https://arxiv.org/abs/1712.00482)). The O3 pipelines'
+volumes come from the LIGO–Virgo–KAGRA O3 search-sensitivity injection release
+that accompanies GWTC-3 ([Zenodo 7890437](https://zenodo.org/records/7890437)).
+
+Sensitive volume at a false-alarm rate of 54 per year, and its fraction of
+MBTA's at the same rate. The uncertainties are the statistical errors of the
+volume estimate:
+
+<div markdown="1">
+
+| masses | epoch 799 | epoch 365 | template bank with χ² test (no training) |
+|---|---|---|---|
+| 1.4 + 1.4 M☉ | (9.6 ± 4) × 10⁻⁵ Gpc³, 1.0% | (9.9 ± 4) × 10⁻⁵ Gpc³, 1.1% | (8.2 ± 2) × 10⁻⁴ Gpc³, 9.0% |
+| 1.6 + 1.6 M☉ | (5.1 ± 1) × 10⁻⁴ Gpc³, 4.0% | (4.1 ± 1) × 10⁻⁴ Gpc³, 3.2% | (1.32 ± 0.2) × 10⁻³ Gpc³, 10.2% |
+| 1.8 + 1.8 M☉ | (7.4 ± 1) × 10⁻⁴ Gpc³, 4.8% | (4.6 ± 0.9) × 10⁻⁴ Gpc³, 2.9% | (1.69 ± 0.2) × 10⁻³ Gpc³, 10.9% |
+| 2.0 + 2.0 M☉ | (1.48 ± 0.2) × 10⁻³ Gpc³, 8.6% | (1.00 ± 0.1) × 10⁻³ Gpc³, 5.8% | (2.83 ± 0.2) × 10⁻³ Gpc³, 16.5% |
+
+</div>
+
+{% include figure.html
+   src="/assets/img/bns/2026-10-14/den_reg_sv_ep799.png"
+   alt="Sensitive volume against false-alarm rate for four equal-mass BNS systems: den-reg epochs 799 and 365, the template bank with the chi-squared test, MBTA and PyCBC"
+   label="Sensitive volume against false-alarm rate"
+   caption="One week of O3b background. Points with error bars: our statistics; lines: the O3 pipelines MBTA and PyCBC. Same scale in every panel." %}
+
+- **Epoch 799 against epoch 365:** larger by a factor of 1.6 at 1.8 + 1.8 M☉
+  and 1.5 at 2.0 + 2.0 M☉, each 2.1 combined standard errors; at 1.4 + 1.4 and
+  1.6 + 1.6 M☉ the difference is within the errors.
+- **Against the template bank with the χ² test,** which needs no training:
+  the bank's volume is 1.9 to 8.5 times epoch 799's.
+
 ## What it means
 
 - Neither checkpoint is better everywhere; the choice depends on which SNR

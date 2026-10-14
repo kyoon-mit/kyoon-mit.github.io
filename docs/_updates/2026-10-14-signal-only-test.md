@@ -40,19 +40,21 @@ chirp mass, trained with a β-weighted Gaussian likelihood (β = 0.3).
    src="/assets/img/bns/2026-10-14/free_kernel_diagram.png"
    alt="Block diagram of the free-kernel network: input strain, long convolution with 256 learned 4 s kernels, energy, detector sum, maximum over time, log and standardize, linear head, mean and variance of chirp mass"
    label="The free-kernel network"
-   caption="Signal-only version at 2048 Hz. Only the kernels and the linear head are learned. The kernels are stored as their spectrum in 20 to 1024 Hz and scaled to unit norm. On noisy data (13 October) the same network runs at 1024 Hz (4,096 taps per kernel) and its head has 235 outputs, one per chirp-mass bin, with a softmax." %}
+   caption="Signal-only version at 2048 Hz. Only the kernels and the linear head are learned. The kernels are stored as their spectrum in 20 to 1024 Hz and scaled to unit norm. On noisy data (13 October) the same network runs at 1024 Hz (4,096 time samples per kernel) and its head has 235 outputs, one per chirp-mass bin, with a softmax." %}
 
 The network, its outputs and its parameters are described on the
 [free-kernel page]({{ '/projects/bns/free-kernel/' | relative_url }}).
 
 The free kernels, with four times the stored parameters of the large S4D,
-train about five times faster per step: 39 ms against 208 ms for a batch of
-32 (S4D 64 × 32 × 4: 28 ms). In the same 9.5 hours on a shared GPU the free
+train 5.3 times faster per step: 39 ms against 208 ms for a batch of 32
+(S4D 64 × 32 × 4: 28 ms); the operation counts are on the
+[derivations page]({{ '/projects/bns/derivations/' | relative_url }}#cost). In the same 9.5 hours on a shared GPU the free
 kernels ran 48 epochs and the large S4D 25.
 
 The learning rate first followed a reduce-on-plateau schedule on the
 validation loss. That loss rises as the predicted variance shrinks, so the
-schedule cut the rate while accuracy was still improving. The runs were
+schedule cut the rate while accuracy was still improving
+([derivation]({{ '/projects/bns/derivations/' | relative_url }}#beta-nll)). The runs were
 resumed from their checkpoints on the warm-restart cosine schedule (S4D
 256 × 256 × 4 from epoch 22, the other two from epoch 42).
 
@@ -84,7 +86,7 @@ levelled off near 32%.
 
 Each network also predicts σ, its own uncertainty on chirp mass. For a
 Gaussian error with the predicted σ, the mean absolute error is 0.80 σ and
-the root-mean-square error is σ. Mean of the last five validation epochs:
+the root-mean-square error is σ ([derivation]({{ '/projects/bns/derivations/' | relative_url }}#calibration)). Mean of the last five validation epochs:
 
 <div markdown="1">
 
@@ -102,9 +104,10 @@ the root-mean-square error is σ. Mean of the last five validation epochs:
    label="Predicted against actual error"
    caption="Left: predicted σ (solid) and actual mean |error| (dashed), log scale. Right: their ratio; the dotted line is 0.80, a calibrated Gaussian." %}
 
-The free kernels' σ matches their errors (0.80), with a slightly heavier
-tail than a Gaussian (1.16), and is five to eight times smaller than the
-S4D networks'. The large S4D's σ is about a quarter too small; the small S4D's is
+The free kernels' σ matches their errors (0.80). The RMS ratio, 1.16, is
+above 1 also when every σ is right but σ varies between events, so the mean
+\|error\| ratio is the cleaner test ([derivation]({{ '/projects/bns/derivations/' | relative_url }}#calibration)). Their σ
+is 5.3 and 7.9 times smaller than the two S4D networks'. The large S4D's σ is about a quarter too small; the small S4D's is
 about half its actual error, and the gap widened during training. These are
 averages over all validation events; a per-event check of σ needs the test
 set.

@@ -67,3 +67,29 @@ read them. If you read only two, read 3 and 6.
    and not for long BNS chirps. For the size of a template bank and its
    compression: K. Cannon et al., Phys. Rev. D 82, 044025 (2010),
    [arXiv:1005.0012](https://arxiv.org/abs/1005.0012).
+
+9. <span id="mamba"></span>**Mamba: state spaces whose dynamics follow the input.**
+   S4D keeps one fixed set of tones; Mamba lets the step size and the input
+   and output weights change at every sample with the input. Papers:
+   - A. Gu and T. Dao, "Mamba: Linear-Time Sequence Modeling with Selective
+     State Spaces" (2023), [arXiv:2312.00752](https://arxiv.org/abs/2312.00752).
+     Mamba-1: the selective layer and its scan.
+   - T. Dao and A. Gu, "Transformers are SSMs: Generalized Models and
+     Efficient Algorithms Through Structured State Space Duality", ICML 2024,
+     [arXiv:2405.21060](https://arxiv.org/abs/2405.21060). Mamba-2: one real
+     decay per head, computed as matrix products; faster, but no oscillation.
+   - Lahoti et al., "Mamba-3: Improved Sequence Modeling using State Space
+     Principles", ICLR 2026, [arXiv:2603.15569](https://arxiv.org/abs/2603.15569).
+     A complex-valued state with input-dependent rotation.
+
+   Simpler explanations, in the order I would read them:
+   - M. Grootendorst, [A Visual Guide to Mamba and State Space Models](https://newsletter.maartengrootendorst.com/p/a-visual-guide-to-mamba-and-state)
+     (2024). From recurrent networks to S4 to Mamba, almost entirely in
+     diagrams.
+   - K. Ayonrinde, [Mamba Explained](https://thegradient.pub/mamba-explained/),
+     The Gradient (2024). What "selective" means and why it matters.
+   - T. Dao, [State Space Duality (Mamba-2) Part I: The Model](https://tridao.me/blog/2024/mamba2-part1-model/)
+     (2024). The authors' own walk through Mamba-2.
+   - S. Rush, [Mamba: The Hard Way](https://srush.github.io/annotated-mamba/hard.html).
+     The scan written out step by step in code, for when the above is not
+     enough.

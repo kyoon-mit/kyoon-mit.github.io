@@ -33,7 +33,18 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
-    onload="renderMathInElement(document.body, {delimiters: [{left: '\\[', right: '\\]', display: true}, {left: '\\(', right: '\\)', display: false}]});"></script>
+    onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '\\(', right: '\\)', display: false}, {left: '$', right: '$', display: false}]});"></script>
+  {%- endif %}
+  {%- if page.url contains '/projects/bns/' and site.data.glossary %}
+  <script>
+    window.BNS_GLOSSARY_URL = {{ '/projects/bns/definitions/' | relative_url | jsonify }};
+    window.BNS_GLOSSARY = [
+      {%- for t in site.data.glossary -%}
+      {"id": {{ t.id | jsonify }}, "n": {{ t.term | jsonify }}, "a": {{ t.also | jsonify }}, "c": {{ t.case | default: false | jsonify }}, "s": {{ t.short | strip | jsonify }}}{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ];
+  </script>
+  <script defer src="{{ '/assets/js/glossary.js' | relative_url }}"></script>
   {%- endif %}
   {%- feed_meta -%}
 </head>

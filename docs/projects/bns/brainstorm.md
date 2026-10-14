@@ -44,20 +44,73 @@ of 100 heterodynes. See the
   <li class="is-done"><span class="checklist__box" aria-label="done"></span><span class="checklist__text"><b>Learned long kernels, no templates.</b> One layer of 256 free 4 s kernels learned chirp-shaped filters from random noise; 71 to 77% within 1% at SNR 8 to 12 against 17 to 28% for the den-reg. Trained on SNR ≥ 8 only. <a href="{{ u | append: '2026-10-13-learned-long-kernels/' | relative_url }}">13 Oct</a></span></li>
   <li class="is-done"><span class="checklist__box" aria-label="done"></span><span class="checklist__text"><b>The den-reg run with the terms, 800 epochs.</b> Validation flat from epoch 400. Final epoch 7 to 12 points better within 1% at SNR 8 to 16 than epoch 339, 21 to 24 worse above SNR 25, where it pulls loud events toward the middle of the chirp-mass range. <a href="{{ u | append: '2026-10-14-den-reg-final/' | relative_url }}">14 Oct</a></span></li>
   <li class="is-done"><span class="checklist__box" aria-label="done"></span><span class="checklist__text"><b>Signal only, no noise.</b> Free kernels reach 99.7% within 1% on the clean signal; a plain S4D with mean pooling reaches 54% (256 × 256 × 4) and 33% (64 × 32 × 4). <a href="{{ u | append: '2026-10-14-signal-only-test/' | relative_url }}">14 Oct</a></span></li>
+  <li class="is-done"><span class="checklist__box" aria-label="done"></span><span class="checklist__text"><b>A bigger plain S4D: not pursued.</b> On the clean signal, S4D 256 × 256 × 4 (1.06M numbers) reached 54% within 1% against 99.7% for the free kernels, at five times the cost per training step. A bigger S4D would be too large a model for the task. <a href="{{ u | append: '2026-10-14-signal-only-test/' | relative_url }}">14 Oct</a></span></li>
 </ul>
 
 ## Running
 
 <ul class="checklist">
-  <li class="is-running"><span class="checklist__box" aria-label="running"></span><span class="checklist__text"><b>S4D with 256 tones per channel, started inside the signal band</b> (20 to 512 Hz, 4 s memory): the fair comparison with the free kernels. Started 13 Oct. <a href="{{ u | append: '2026-10-13-learned-long-kernels/' | relative_url }}">13 Oct</a></span></li>
-  <li class="is-running"><span class="checklist__box" aria-label="running"></span><span class="checklist__text"><b>S4D width, S4D depth and aframe's ResNet</b> with the same read-out, no templates, no denoiser. Started 12 and 13 Oct. <a href="{{ u | append: '2026-10-13-learned-long-kernels/' | relative_url }}">13 Oct</a></span></li>
+  <li class="is-running"><span class="checklist__box" aria-label="running"></span><span class="checklist__text"><b>Sensitive volume of the den-reg's final epoch (799)</b> on one week of O3b background, to compare with epoch 365 and the template bank. Started 14 Oct.</span></li>
+  <li class="is-running"><span class="checklist__box" aria-label="running"></span><span class="checklist__text"><b>Free kernels stored as time samples</b> instead of a spectrum, on the clean signal and on noisy data: does the spectrum storage matter for training? Started 14 Oct. <a href="{{ '/projects/bns/free-kernel/' | relative_url }}">Free-kernel page</a></span></li>
+  <li class="is-running"><span class="checklist__box" aria-label="running"></span><span class="checklist__text"><b>S4D read-out tests</b> on the clean signal (64 × 32 × 4): a maximum over time instead of the mean; a complex last layer averaged over time; a complex last layer with energy and a maximum, as in the free kernels. Separates the read-out from the kernel. Started 14 Oct.</span></li>
+  <li class="is-running"><span class="checklist__box" aria-label="running"></span><span class="checklist__text"><b>Learned long kernels trained from SNR 4.</b> Started 13 Oct; stopped at epoch 69 when the machine ran out of memory on 14 Oct; resumes from its checkpoint after the sensitive-volume run.</span></li>
+  <li class="is-running"><span class="checklist__box" aria-label="running"></span><span class="checklist__text"><b>S4D started inside the signal band ("band init").</b> Worse than the default start so far (below). Stopped at epoch 76 by the same memory failure; resumes after the sensitive-volume run.</span></li>
+  <li class="is-running"><span class="checklist__box" aria-label="running"></span><span class="checklist__text"><b>S4D width, S4D depth, S4D with 32 and 256 tones, and aframe's ResNet,</b> with the free kernels' read-out. Paused 14 Oct to free memory; resume from their checkpoints after the runs above. <a href="{{ u | append: '2026-10-13-learned-long-kernels/' | relative_url }}">13 Oct</a></span></li>
 </ul>
+
+### S4D band init: why, and what it showed
+
+**What an S4D kernel is.** An S4D layer convolves each channel with a
+kernel that is a sum of damped tones: sine waves, each with its own
+frequency, that fade at their own rate. A channel with state size 256 has
+128 tones. Two numbers matter for each tone: its frequency, and how long it
+lasts (its memory).
+
+**The problem with the default start.** In the den-reg, every tone in a
+channel gets its frequency and its memory from one random step size per
+channel, drawn between 10⁻⁴ and 10. A small step puts all of a channel's
+tones below 20 Hz, where the whitened data has no signal; a large step puts
+them above the highest frequency the data can hold, and makes them fade
+within a few samples. Only channels in a narrow middle range start with
+tones inside the band that last. After 200 epochs of the run with 256 tones
+per channel, 26% of the tones were inside 20 to 512 Hz, 15% lasted longer
+than 1 s, and 7% were both. The formulas are on the
+[derivations page]({{ '/projects/bns/derivations/' | relative_url }}#s4d-tones).
+
+**The motivation.** A 4 s chirp filter needs tones inside the band that last
+for seconds. Fitting 256 tones directly to real waveforms reaches a match of
+0.87 to 0.90, so an S4D kernel can hold most of a chirp. The question was
+whether a better start lets training find such kernels.
+
+**What band init does.** It starts every channel's tones evenly spread over
+20 to 512 Hz (about 1.9 Hz apart, with a random offset per channel) and
+gives every tone a memory of 4 s, the window length. It is the same layer
+with the same number of parameters; only the starting values change.
+
+**What it showed.** It did not help. Fraction of validation events within 1%
+of the true chirp mass, same read-out, power law from SNR 4:
+
+<div markdown="1">
+
+| epochs | band init | default start | free kernels |
+|---|---|---|---|
+| 20 to 39 | 4.0% | 12.4% | 35.3% |
+| 40 to 59 | 5.6% | 15.2% | 36.8% |
+| 60 to 76 | 6.5% | 16.5% | 37.3% |
+
+</div>
+
+Starting inside the band did not help training find chirp-shaped
+combinations of tones. And even a perfect fit of fixed-frequency tones stops
+near a match of 0.9, because each tone keeps one frequency while a chirp's
+frequency rises. That is the reason for the next item: layers whose
+frequency can change with time.
 
 ## To try
 
 <ul class="checklist">
+  <li><span class="checklist__box" aria-label="to do"></span><span class="checklist__text"><b>A layer whose frequency changes with time: Mamba.</b> S4D, S5, LRU and LinOSS have fixed frequencies; Mamba makes the step size depend on the input at every sample. With a complex state, the step sets how fast each oscillator turns, so it can speed up along a rising chirp. Mamba-1's kernel supports a complex state but its released layer uses a real one, and it needs a CUDA build on our machine; Mamba-2 is easier to install but its state only decays, with no oscillation; Mamba-3 (2026) has a complex, input-dependent state. Simpler alternatives that warp time instead: a deformable convolution, or a learned time warp. <a href="{{ '/projects/bns/readings/' | relative_url }}#mamba">Readings</a></span></li>
   <li><span class="checklist__box" aria-label="to do"></span><span class="checklist__text"><b>Heterodyne near the true chirp mass, then the joint denoiser and regressor,</b> small model, 256 Hz anti-aliased, pre-merger window. Scan the chirp-mass error ε = 0, 0.1%, 1%, 3%. This is DINGO's refinement setting in our architecture.</span></li>
-  <li><span class="checklist__box" aria-label="to do"></span><span class="checklist__text"><b>Learned long kernels trained from SNR 4,</b> not only SNR 8.</span></li>
   <li><span class="checklist__box" aria-label="to do"></span><span class="checklist__text"><b>Use the unused kernels:</b> more kernels or re-initialize the dead ones; regularize the kernels (Fu et al. 2023).</span></li>
   <li><span class="checklist__box" aria-label="to do"></span><span class="checklist__text"><b>A χ² test on the learned kernels,</b> a detection score, and the sensitive volume without templates.</span></li>
   <li><span class="checklist__box" aria-label="to do"></span><span class="checklist__text"><b>Heterodyne grid as input channels,</b> the AFRAME mechanism, in the joint model. Needs no chirp mass.</span></li>

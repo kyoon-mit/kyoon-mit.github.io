@@ -587,3 +587,31 @@ ul, ol { margin: 0; }
 .chapter-list__title, .talk__title, .wordmark__name { font-weight: 600; }
 .page__lede, .hero__lede, .note, .plot__caption, .specs dd small,
 .site-footer__muted, .section__note { font-style: normal; }
+
+/* --- Glossary terms (BNS pages) -------------------------------------------- */
+.prose a.term {
+  color: inherit;
+  text-decoration: underline dotted var(--ink-3);
+  text-underline-offset: 3px;
+}
+.prose a.term:hover,
+.prose a.term:focus-visible { color: var(--accent); text-decoration-color: var(--accent); }
+.term-tip {
+  position: absolute;
+  z-index: 50;
+  max-width: min(24rem, calc(100vw - 16px));
+  padding: .6rem .75rem;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--rule-2);
+  border-radius: var(--r);
+  box-shadow: 0 4px 14px var(--rule-2);
+  font-size: .9rem;
+  line-height: 1.45;
+}
+.term-tip strong { color: var(--accent); }
+.glossary__group { margin-top: 2.5rem; }
+.glossary dt { font-weight: 600; margin-top: 1.4rem; scroll-margin-top: 1rem; }
+.glossary dt .glossary__also { font-weight: 400; color: var(--ink-3); font-size: .92em; }
+.glossary dd { margin: .35rem 0 0 0; }
+.glossary .glossary__source { color: var(--ink-2); font-size: .92em; margin-top: .35rem; }
