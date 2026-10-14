@@ -5,6 +5,13 @@ title: Page not found
 summary: That page does not exist — it may have been moved or renamed.
 ---
 
+<script>
+  (function () {
+    var p = location.pathname;
+    if (/^\/thesis(\/|$)/.test(p)) location.replace('{{ '/thesis/' | relative_url }}' + (/^\/thesis\/bns(\/|$)/.test(p) ? '#bns' : ''));
+  })();
+</script>
+
 <p>Try one of these instead:</p>
 
 <ul>

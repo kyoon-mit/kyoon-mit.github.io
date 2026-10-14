@@ -1,0 +1,58 @@
+---
+layout: null
+permalink: /thesis/
+sitemap: false
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'">
+  <title>Thesis · {{ site.title }}</title>
+  <link rel="icon" href="{{ '/assets/img/favicon.svg' | relative_url }}" type="image/svg+xml">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap">
+  <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/thesis/thesis.css' | relative_url }}">
+</head>
+<body class="th-page">
+  <main>
+    <section id="gate" class="gate" hidden>
+      <h1 class="gate__title">This page is protected with a password!</h1>
+      <div class="gba">
+        <div class="gba__side gba__side--left">
+          <div class="dpad" role="group" aria-label="Direction pad">
+            <button type="button" class="dpad__btn dpad__up" data-key="up" aria-label="Up"></button>
+            <button type="button" class="dpad__btn dpad__left" data-key="left" aria-label="Left"></button>
+            <span class="dpad__mid" aria-hidden="true"></span>
+            <button type="button" class="dpad__btn dpad__right" data-key="right" aria-label="Right"></button>
+            <button type="button" class="dpad__btn dpad__down" data-key="down" aria-label="Down"></button>
+          </div>
+        </div>
+        <div class="gba__screen">
+          <canvas id="screen" width="240" height="160" aria-label="Game screen"></canvas>
+          <input id="pw" class="gba__pw" type="password" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" aria-label="Password" hidden>
+        </div>
+        <div class="gba__side gba__side--right">
+          <div class="ab">
+            <button type="button" class="ab__btn ab__btn--b" data-key="b" aria-label="B button">B</button>
+            <button type="button" class="ab__btn ab__btn--a" data-key="a" aria-label="A button">A</button>
+          </div>
+        </div>
+      </div>
+      <p class="gate__help">WASD or arrow keys to move. Space or Enter is A: talk, choose, go on. B goes back, and holding B runs. The buttons work with a click or a tap.</p>
+      <noscript><p class="gate__help">This page needs JavaScript.</p></noscript>
+    </section>
+    <section id="thesis" class="thesis" hidden></section>
+  </main>
+  <script src="{{ '/thesis/sprites.js' | relative_url }}"></script>
+  <script src="{{ '/thesis/lore.js' | relative_url }}"></script>
+  <script src="{{ '/thesis/vault.js' | relative_url }}"></script>
+  <script src="{{ '/thesis/engine.js' | relative_url }}"></script>
+  <script src="{{ '/thesis/world.js' | relative_url }}"></script>
+  <script src="{{ '/thesis/battle.js' | relative_url }}"></script>
+  <script src="{{ '/thesis/main.js' | relative_url }}"></script>
+</body>
+</html>

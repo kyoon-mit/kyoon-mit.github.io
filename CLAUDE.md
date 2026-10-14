@@ -121,6 +121,31 @@ scratchpad and keep `HOME` and gem paths inside it.
 Before pushing, at least check for broken internal links and that new tables
 and figures render.
 
+## Thesis page (password protected)
+
+`/thesis/` (`docs/thesis/`) is a small Gen 3 style game that gates the owner's
+thesis notes. The path west leads to a tree that asks for the password.
+
+- The notes are encrypted in `docs/thesis/vault.json`: PBKDF2-SHA256 with
+  1,000,000 iterations, then AES-256-GCM. No hash of the password is stored;
+  only a correct password decrypts. "Keep logged in" stores a non-extractable
+  key in IndexedDB.
+- The plaintext lives outside the repository, in `../thesis-private/` (one
+  folder per section, Markdown or `.tex` files). It is never committed, and it
+  exists only on the machine where it was written.
+- To update the notes: edit the plaintext, run
+  `uv run --with cryptography tools/thesis_encrypt.py ../thesis-private`, and
+  commit `vault.json`. The tool keeps the salt, so remembered logins stay
+  valid, and it refuses a password that does not open the old vault.
+- Never write the password into a file, a commit message or a log, and never
+  hint at it in the game.
+- The notes are the owner's own thesis writing. Add only bullet points and
+  verified citations when asked; never write thesis prose.
+- `/thesis/bns/` redirects to `/thesis/#bns`, and `404.html` sends every other
+  `/thesis/...` path to `/thesis/`.
+- Sprites and the pixel font come from `tools/thesis_art/` (run `art.py`, see
+  its docstring); do not hand-edit `docs/thesis/sprites.js`.
+
 ## Publishing
 
 - Commit with a plain-English subject line; push only when the owner asks.
