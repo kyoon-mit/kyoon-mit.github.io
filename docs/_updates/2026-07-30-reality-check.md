@@ -1,17 +1,19 @@
 ---
-title: The reality check, a realistic SNR population
+title: "The reality check: a power-law SNR population"
 date: 2026-07-30
 summary: >-
   In aframe, with a correct SNR and a power-law test population, the merger
   regressor that is nearly perfect on uniform SNR collapses toward the prior on
-  most real-looking events. Detection by uncertainty and by a classifier both
-  fall short.
+  most events of that population, 75.5% of which are below SNR 8. Detection by
+  uncertainty and by a classifier both fall short.
 talk:
   title: "BNS-SSM Update"
   venue: "BNS meeting"
   about: >-
-    Reported the move into aframe and what a realistic SNR population did to the merger regressor, set the sensitive volume against the production searches, framed low SNR as the unsolved problem behind heterodyning, and proposed splitting the work into two papers.
+    Reported the move into aframe and what a power-law SNR population did to the merger regressor, set the sensitive volume against the production searches, framed low SNR as the unsolved problem behind heterodyning, and proposed splitting the work into two papers.
 ---
+
+{% include notice-snr-powerlaw.html %}
 
 After CERN the models moved into [aframe](https://github.com/ML4GW/aframe).
 Three changes mattered:
@@ -19,15 +21,24 @@ Three changes mattered:
 - **SNR computed as the search computes it**, with PSDs truncated to the
   waveform band and a verification script against stored values.
 - **A power-law test population.** Uniform SNR over-represents loud events.
-  Real detections follow a steep power law, so most events sit near threshold.
-- **A sensitive-volume pipeline**, which turns any detection statistic into the
-  volume of space the search is sensitive to, so the model can be compared
-  directly with the production pipelines.
+  For sources spread uniformly in volume, the detected SNR has a density
+  proportional to SNR⁻⁴ above threshold, so most detections sit near
+  threshold (Schutz 2011, [arXiv:1102.5421](https://arxiv.org/abs/1102.5421)).
+  Our test population draws SNR with density proportional to SNR⁻³ from 4 to
+  50, a little flatter than that law; 75.5% of it is below SNR 8
+  ([derivation]({{ '/projects/bns/derivations/' | relative_url }}#snr-population)).
+- **A sensitive-volume pipeline**, aframe's (Marx et al. 2025,
+  [arXiv:2403.18661](https://arxiv.org/abs/2403.18661)). It counts simulated
+  signals found at a given false-alarm rate, weighted to a source population
+  (Tiwari 2018, [arXiv:1712.00482](https://arxiv.org/abs/1712.00482)), which
+  turns any detection statistic into the volume of space the search is
+  sensitive to, so the model can be compared directly with the production
+  pipelines.
 
 ## The merger regressor
 
 <dl class="specs">
-  <div><dt>Model</dt><dd>S4D + ResNet14 + MLP<small>S4D 256 × 32 × 4, about 600K</small></dd></div>
+  <div><dt>Model</dt><dd>S4D + ResNet14 + MLP<small>S4D 256 × 32 × 4: <a href="{{ '/projects/bns/derivations/' | relative_url }}#early-s4d-count">593,920</a></small></dd></div>
   <div><dt>Parameters</dt><dd>1.7 M</dd></div>
   <div><dt>Input</dt><dd>4 s merger window</dd></div>
   <div><dt>Training</dt><dd>About 7.5 days<small>H200, three restarts</small></dd></div>
@@ -42,22 +53,30 @@ Three changes mattered:
 
 On the uniform test set, 80% or more of events above SNR 11 were within 2%. On
 the power-law set the predicted uncertainty of most signals overlapped that of
-pure background, because most of those signals are at SNR 4 to 8.
+pure background, because 75.5% of those signals are at SNR 4 to 8
+([derivation]({{ '/projects/bns/derivations/' | relative_url }}#snr-population)).
 
 ## Sensitive volume
 
 Using the negative predicted uncertainty as the score, integrated over a 0.5 s
 boxcar, the sensitive volume for a one-week background came out roughly an
-order of magnitude below the matched-filter searches (MBTA, PyCBC, GstLAL) at
-every mass bin tested. A pure S4D classifier trained for detection did no
-better. Its time-slide AUROC at a false-positive rate of 1e-3 levelled off near
-0.526.
+order of magnitude below the O3 volumes of the matched-filter searches MBTA
+(Aubin et al. 2021, [arXiv:2012.11512](https://arxiv.org/abs/2012.11512)),
+PyCBC (Usman et al. 2016, [arXiv:1508.02357](https://arxiv.org/abs/1508.02357))
+and GstLAL (Messick et al. 2017,
+[arXiv:1604.04324](https://arxiv.org/abs/1604.04324)) at every mass bin
+tested. Their volumes are from the GWTC-3 sensitivity release
+([Zenodo 7890437](https://zenodo.org/records/7890437)). A pure S4D
+classifier trained for detection did no better. Its time-slide AUROC at a
+false-positive rate of 1e-3 levelled off near 0.526.
 
 ## Other observations
 
 1. A ResNet34 regressor matched some of the S4D metrics but trained much more
    slowly.
-2. LinOSS failed with the identical learning-rate schedule; it later needed its
+2. LinOSS (Rusch and Rus 2025,
+   [arXiv:2410.03943](https://arxiv.org/abs/2410.03943)) failed with the
+   identical learning-rate schedule; it later needed its
    own learning rate for the state-space parameters.
 3. Group norm trained noticeably better than layer norm at batch size 64.
 4. No pre-merger configuration matched the merger runs.

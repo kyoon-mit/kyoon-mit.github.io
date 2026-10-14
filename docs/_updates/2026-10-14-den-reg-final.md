@@ -4,13 +4,15 @@ date: 2026-10-14
 summary: >-
   The joint denoiser and regressor with the shape and amplitude terms,
   trained from SNR 8, finished its 800 epochs on 11 October. Validation
-  stopped improving near epoch 400. On 25,000 test signals per population,
+  stopped improving near epoch 400. On 24,982 test signals per population,
   the final epoch is 7 to 12 points better within 1% at SNR 8 to 16 than
-  epoch 339, and 21 to 24 points worse above SNR 25, where it pulls loud
+  epoch 339, and 21 to 23 points worse above SNR 25, where it pulls loud
   events toward the middle of the chirp-mass range.
 ---
 
 {%- assign u = '/projects/bns/updates/' -%}
+
+{% include notice-snr-powerlaw.html %}
 
 ## The run
 
@@ -80,14 +82,16 @@ signal windows per population). Chirp mass within 1 / 2%:
 
 The same in all three populations:
 
-- **SNR 8 to 16 improves:** 7 to 12 points within 1%, 6 to 13 within 2%.
-  Most events in a power-law population are here, so the power-law totals
-  go up by 3 to 5 points.
+- **SNR 8 to 16 improves:** 7 to 12 points within 1%, 5 to 13 within 2%.
+  This band holds 77% of the power law from SNR 8 and 19% of the power law
+  from SNR 4, whose other events are mostly below SNR 8 (75%;
+  [derivation]({{ '/projects/bns/derivations/' | relative_url }}#late-snr-bands)),
+  so the power-law totals go up by 2 to 5 points.
 - **Above SNR 16 it gets worse:** at SNR 25 to 50, within 1% falls from 78 to
   80% to 56 to 57%, and within 2% from 98 to 99% to 81 to 83%. The uniform
-  population has the most loud events, so its total falls (62 / 81% to
-  49 / 72%).
-- **Below SNR 8** it moves by 1 to 3 points.
+  population has the most loud events (54% above SNR 25, against 2% for the
+  power law from 4 and 8% for the power law from 8), so its total falls (62 / 81% to 49 / 72%).
+- **Below SNR 8** it moves by 1 to 2 points.
 
 ## Loud events are pulled toward the middle
 
@@ -100,20 +104,22 @@ The same in all three populations:
 At SNR 25 to 50 the final epoch overestimates light systems (+3% at
 1.0 M☉) and underestimates heavy ones (−0.7% at 2.6 M☉). Epoch 339 stays
 between −0.5% and +0.9% everywhere. The scatter is about the same at both epochs (1σ
-of 0.5 to 0.8%), so the loss at high SNR is this bias, not noise. Below
+of 0.5 to 0.8%), so the drop at high SNR is this bias, not noise. Below
 1.3 M☉ only 1% of loud events at epoch 799 are within 1%, against 81% at
 epoch 339. I do not yet know why longer training does this.
 
 ## Sensitive volume
 
 Measured on 14 October the same way as for epoch 365 on 9 and 10 October:
-one week of O3b background (579,108 s, with 72 time-shifted copies of the
-two detectors' data), simulated BNS signals injected throughout, the negative
-predicted chirp-mass uncertainty (−σ) as the detection statistic, and no time
-integration. One week can measure false-alarm rates down to one per
-579,108 s, 54 per year. The volume is computed with aframe's tools (Marx et
-al. 2025, [arXiv:2403.18661](https://arxiv.org/abs/2403.18661)), which weight
-the injections as in Tiwari 2018
+72,609 s of O3b data from both detectors (9 stretches within 1.6 days),
+each repeated with 8 time shifts, so 72 time-shifted copies and 579,108 s
+(6.7 days) of background in all; simulated BNS signals injected throughout;
+the negative predicted chirp-mass uncertainty (−σ) as the detection
+statistic; and no time integration. This background can measure
+false-alarm rates down to one per 579,108 s, 54 per year. The volume is
+computed with aframe's tools (Marx et al. 2025,
+[arXiv:2403.18661](https://arxiv.org/abs/2403.18661)), which weight the
+injections as in Tiwari 2018
 ([arXiv:1712.00482](https://arxiv.org/abs/1712.00482)). The O3 pipelines'
 volumes come from the LIGO–Virgo–KAGRA O3 search-sensitivity injection release
 that accompanies GWTC-3 ([Zenodo 7890437](https://zenodo.org/records/7890437)).
@@ -137,7 +143,7 @@ volume estimate:
    src="/assets/img/bns/2026-10-14/den_reg_sv_ep799.png"
    alt="Sensitive volume against false-alarm rate for four equal-mass BNS systems: den-reg epochs 799 and 365, the template bank with the chi-squared test, MBTA and PyCBC"
    label="Sensitive volume against false-alarm rate"
-   caption="One week of O3b background. Points with error bars: our statistics; lines: the O3 pipelines MBTA and PyCBC. Same scale in every panel." %}
+   caption="579,108 s (6.7 days) of time-shifted O3b background. Points with error bars: our statistics; lines: the O3 pipelines MBTA and PyCBC. Same scale in every panel." %}
 
 - **Epoch 799 against epoch 365:** larger by a factor of 1.6 at 1.8 + 1.8 M☉
   and 1.5 at 2.0 + 2.0 M☉, each 2.1 combined standard errors; at 1.4 + 1.4 and
@@ -148,12 +154,15 @@ volume estimate:
 ## What it means
 
 - Neither checkpoint is better everywhere; the choice depends on which SNR
-  range matters. For a search, SNR 8 to 16 matters most, which favors
-  epoch 799.
+  range matters. For a search, SNR 8 to 16 matters most: if sources are
+  spread uniformly in volume, 87.5% of the events above SNR 8 are below 16
+  ([derivation]({{ '/projects/bns/derivations/' | relative_url }}#late-snr-bands)).
+  That favors epoch 799.
 - The comparisons of
   [13 October]({{ u | append: '2026-10-13-learned-long-kernels/' | relative_url }})
-  already list both epochs. The learned long kernels stay 2.3 to 3 times
-  ahead of the final den-reg within 1% at SNR 8 to 12.
+  already list both epochs. The learned long kernels stay 2.6 to 2.9 times
+  ahead of the final den-reg within 1% at SNR 8 to 12 (71, 72 and 77% in the
+  three populations, against 27, 25 and 28%).
 
 ## Standard test plots, epoch 799
 

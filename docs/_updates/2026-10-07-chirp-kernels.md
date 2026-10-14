@@ -13,16 +13,24 @@ summary: >-
 {%- assign u = '/projects/bns/updates/' -%}
 
 The [matched-filter benchmark]({{ u | append: '2026-10-07-matched-filter-benchmark/' | relative_url }})
-showed that the 4 s window holds the chirp mass to 2% for almost every event
-above SNR 8, and our network gets 16 to 29% there. This entry works out why,
-starting from what one S4D layer computes, and ends with a layer designed
-for the job. Every symbol is defined where it first appears.
+showed that on the same 4 s windows a plain template bank puts 96 to 99% of
+events at SNR 8 to 12 within 2% of the true chirp mass, and our network 16
+to 29%. This entry works out why, starting from what one S4D layer computes,
+and ends with a layer designed for the job. Every symbol is defined where it
+first appears.
 
 Figures use a toy setup: a Newtonian chirp (defined in section 2) sampled at
-2048 samples per second, in a 4 s window of white noise. White noise is what
-the network sees, because the detector data is whitened before it reaches
-the network: divided, frequency by frequency, by the typical noise level, so
-that the noise becomes equally strong at all frequencies.
+2048 samples per second, kept between 20 and 900 Hz, in a 4 s window of
+white noise. The network sees whitened data: the detector data divided,
+frequency by frequency, by an estimate of the noise level. If the noise is
+stationary and Gaussian with that spectrum, whitened noise is white, with
+independent samples of mean 0 and variance 1 (Allen et al. 2012, FINDCHIRP,
+[arXiv:gr-qc/0509116](https://arxiv.org/abs/gr-qc/0509116); Abbott et al.
+2020, [arXiv:1908.11170](https://arxiv.org/abs/1908.11170)). Real detector
+noise is only close to that: its spectrum drifts and it has short loud
+glitches (Abbott et al. 2020), and our whitening filter cuts frequencies
+below 20 Hz, so the data is not white there. The figures and arguments below
+assume the ideal case.
 
 ## 1. What an S4D layer computes
 
@@ -72,8 +80,9 @@ $$y$$. $$\square$$
 
 **S4D makes $$A$$ diagonal.** In general $$A$$ is a full matrix, so every
 state number can feed every other one. S4D (the "D" stands for diagonal; Gu,
-Gupta, Goel and Ré, 2022) keeps only the diagonal: each state number evolves
-on its own. The diagonal entries are complex numbers, one per state:
+Gupta, Goel and Ré 2022, [arXiv:2206.11893](https://arxiv.org/abs/2206.11893))
+keeps only the diagonal: each state number evolves on its own. The diagonal
+entries are complex numbers, one per state:
 
 $$
 a_n = -\alpha_n + i\,\omega_n , \qquad n = 1, \dots, N,
@@ -133,11 +142,11 @@ $$
 
 where $$\mathrm{Re}$$ takes the real part, $$\lvert\beta\rvert$$ is the size
 of $$\beta$$ and $$\arg\beta$$ its angle. That is one real damped cosine: one
-tone. Because the data and the kernel are real, the states come in such
-conjugate pairs. Our runs set `d_state` = 64 state numbers per channel, so
-32 pairs, 32 tones. The code stores one member of each pair and takes twice
-the real part instead of adding the partner, which by the identity above is
-the same thing.
+tone. S4D builds its real kernel this way: it keeps half the states and
+takes twice the real part of their sum, which by the identity above is the
+same as adding each state's conjugate partner (Gu et al. 2022, section 3).
+Our runs set `d_state` = 64 state numbers per channel, so 32 pairs, 32
+tones.
 
 **From continuous time to samples.** The data comes in samples, at a
 sampling rate $$f_s$$ = 2048 per second. The code evaluates the kernel once
@@ -151,8 +160,10 @@ $$
 K_\ell = 2\,\mathrm{Re}\sum_{n=1}^{N/2} C_n \frac{e^{\Delta t\, a_n}-1}{a_n}\, e^{\Delta t\, a_n \ell}.
 $$
 
-The factor $$(e^{\Delta t\, a_n}-1)/a_n$$ is the standard way of turning the
-continuous equation into a per-sample one (it plays the role of $$B_n$$).
+The factor $$(e^{\Delta t\, a_n}-1)/a_n$$ comes from holding the input
+constant over each step and solving the state equation across it (the
+zero-order hold; Gu et al. 2022, section 3.1). It plays the role of $$B_n$$
+([derivation]({{ '/projects/bns/derivations/' | relative_url }}#ck-s4d-step)).
 
 {% include figure.html
    src="/assets/img/bns/2026-10-07/chirp-kernel/s4d_kernel.png"
@@ -163,37 +174,51 @@ continuous equation into a per-sample one (it plays the role of $$B_n$$).
 **From the symbols to the code.** The learned parameters of one S4D channel:
 
 - `A_imag`, one per state: the frequency $$\omega_n$$. In hertz the tone is
-  at $$\Delta t\,\omega_n\, f_s / 2\pi$$. Initialized at $$\omega_n = \pi n$$,
-  an evenly spaced comb.
-- `log_A_real`, one per state: the decay, $$\alpha_n = e^{\texttt{log\_A\_real}}$$.
-- `log_dt`, one per channel: the step, $$\Delta t = e^{\texttt{log\_dt}}$$.
+  at $$\Delta t\,\omega_n\, f_s / 2\pi$$, as long as $$\Delta t\,\omega_n < \pi$$
+  ([derivation]({{ '/projects/bns/derivations/' | relative_url }}#ck-s4d-step)).
+  Initialized at $$\omega = 0, \pi, 2\pi, \dots, (N/2-1)\pi$$, an evenly
+  spaced comb (the S4D-Lin start; Gu et al. 2022, section 4 and Listing 1).
+- `log_A_real`, one per state: the decay, $$\alpha_n = e^{\texttt{log\_A\_real}}$$,
+  initialized at $$1/2$$.
+- `log_dt`, one per channel: the step, $$\Delta t = e^{\texttt{log\_dt}}$$,
+  drawn at the start log-uniformly between two bounds ($$10^{-4}$$ and 10 in
+  our den-reg runs).
 - `C`, one complex number per state: each tone's loudness and starting phase.
 
 `d_model` = 128 means 128 channels, each with its own 32 tones. Channels are
 mixed only after the convolution, by a layer that combines channels sample
 by sample. So one channel's kernel is a sum of at most 32 tones.
 
-**Memory.** A tone with decay $$\alpha_n$$ has shrunk by a factor $$e$$
-after about $$1/(\Delta t\,\alpha_n)$$ samples. In our trained models the
-median is 13 to 46 samples, 6 to 22 ms. The inspiral we need to integrate
-lasts seconds.
+**Memory.** Per sample, a tone's size is multiplied by
+$$e^{-\Delta t\,\alpha_n}$$, so it has shrunk by a factor $$e$$ after
+exactly $$1/(\Delta t\,\alpha_n)$$ samples
+([derivation]({{ '/projects/bns/derivations/' | relative_url }}#ck-s4d-step)).
+I read this off the trained network of the benchmark (the den-reg run at
+epoch 630; 12 S4D layers of 128 channels with 32 tones each). The median
+per layer is 16.5 to 134.2 samples, 8.06 to 65.50 ms; over all layers it is
+31.3 samples, 15.28 ms. In each layer 4.6 to 11.9% of the tones last longer
+than the 4 s window. The inspiral we need to integrate lasts seconds.
 
 ## 2. What the data holds: a chirp
 
 **Symbols.**
 
 - $$\tau$$ is the time left until the merger, in seconds.
-- $$\mathcal{M}$$ is the **chirp mass**, a combination of the two star
-  masses that controls how fast the orbit shrinks, in solar masses
+- $$\mathcal{M}$$ is the **chirp mass**,
+  $$\mathcal{M} = (m_1 m_2)^{3/5}/(m_1+m_2)^{1/5}$$ for star masses $$m_1$$
+  and $$m_2$$, which controls how fast the orbit shrinks, in solar masses
   ($$M_\odot$$).
 - $$G$$ is Newton's gravitational constant and $$c$$ the speed of light.
-  $$G\mathcal{M}/c^3$$ is the chirp mass expressed as a time: about 6 μs for
-  $$1.2\,M_\odot$$.
+  $$G\mathcal{M}/c^3$$ is the chirp mass expressed as a time: 5.911 μs for
+  $$1.2\,M_\odot$$, from $$GM_\odot/c^3$$ = 4.925491 μs (the IAU 2015
+  nominal solar mass parameter and the exact speed of light; Prša et al.
+  2016, [arXiv:1605.09788](https://arxiv.org/abs/1605.09788)).
 - $$f(\tau)$$ is the wave's frequency in hertz, and $$\Phi(\tau)$$ its phase
   in radians.
 
 Far from the merger, Newtonian gravity plus energy loss to gravitational
-waves gives
+waves gives (Maggiore 2008, *Gravitational Waves*, Vol. 1, chapter 4;
+Sathyaprakash and Schutz 2009, [arXiv:0903.0338](https://arxiv.org/abs/0903.0338))
 
 $$
 f(\tau) = \frac{1}{8\pi}\left(\frac{5}{\tau}\right)^{3/8}\left(\frac{G\mathcal{M}}{c^3}\right)^{-5/8},
@@ -201,21 +226,33 @@ f(\tau) = \frac{1}{8\pi}\left(\frac{5}{\tau}\right)^{3/8}\left(\frac{G\mathcal{M
 \Phi(\tau) = -2\left(\frac{\tau\, c^3}{5\,G\mathcal{M}}\right)^{5/8}.
 $$
 
-The phase is the accumulated angle, $$2\pi$$ times the integral of the
-frequency. The signal in one detector is $$h(t) = \mathcal{A}(\tau)\cos\Phi(\tau)$$,
-where $$\mathcal{A}(\tau)$$ is the amplitude, growing as $$\tau^{-1/4}$$
-toward the merger.
+The phase is the accumulated angle: $$d\Phi/dt = 2\pi f$$, with
+$$\Phi = 0$$ at the merger. The signal in one detector is
+$$h(t) = \mathcal{A}(\tau)\cos\Phi(\tau)$$, where $$\mathcal{A}(\tau)$$ is
+the amplitude, growing as $$\tau^{-1/4}$$ toward the merger (same sources;
+[derivation]({{ '/projects/bns/derivations/' | relative_url }}#ck-chirp)).
 
-The chirp mass sets how fast the frequency sweeps. Over a 4 s window the
-signal goes through hundreds of cycles, and a 1% change in $$\mathcal{M}$$
-shifts the phase near merger by many radians. That accumulated phase is
-where the chirp mass is measured.
+The chirp mass sets how fast the frequency sweeps. In the last 4 s the
+signal goes through 305 (at $$2.75\,M_\odot$$) to 636 (at $$0.85\,M_\odot$$)
+cycles ([derivation]({{ '/projects/bns/derivations/' | relative_url }}#cycles)).
+Since $$\Phi \propto \mathcal{M}^{-5/8}$$, a 1% change in $$\mathcal{M}$$
+changes the phase accumulated over those 4 s by 0.62%: 12 to 25 radians, 20
+for $$1.2\,M_\odot$$
+([derivation]({{ '/projects/bns/derivations/' | relative_url }}#ck-chirp)).
+That accumulated phase is where the chirp mass is measured. A search also
+fits the merger time and phase, which absorbs part of the shift; section 6
+shows what remains.
+
+In the figure below both frequency curves stop at the toy setup's 900 Hz
+cut, because the Newtonian formula has no end of its own. A real inspiral
+ends at a frequency set by the total mass, not the chirp mass
+([derivation]({{ '/projects/bns/derivations/' | relative_url }}#ck-chirp)).
 
 {% include figure.html
    src="/assets/img/bns/2026-10-07/chirp-kernel/chirp.png"
    alt="A BNS chirp waveform in its last 0.4 seconds, and the frequency against time for chirp masses 1.2 and 1.8"
    label="A BNS chirp"
-   caption="Top: the waveform in its last 0.4 s. Bottom: its frequency against time in the 4 s window; heavier systems sweep faster and merge at a lower frequency." %}
+   caption="Top: the waveform in its last 0.4 s. Bottom: its frequency against time in the 4 s window. The heavier system starts lower (62 Hz against 80 Hz) and sweeps faster. Both curves stop at the 900 Hz cut of the toy setup." %}
 
 ## 3. The optimal way to find it: the matched filter
 
@@ -223,7 +260,7 @@ where the chirp mass is measured.
 
 - The whitened data is $$u(t) = h(t) + \eta(t)$$: the signal $$h$$ plus
   noise $$\eta$$, where each noise sample is independent with mean 0 and
-  variance 1 (that is what whitening achieves).
+  variance 1 (ideal whitened noise, as assumed at the top).
 - A **linear filter** is a fixed list of weights $$w(t)$$. Its score on the
   data is the inner product $$\langle w, u\rangle = \sum_t w(t)\,u(t)$$,
   summing over the samples.
@@ -231,7 +268,8 @@ where the chirp mass is measured.
   part divided by the standard deviation of its noise part.
 
 **Claim.** The SNR is largest when the filter has the same shape as the
-signal, $$w \propto h$$. This is the **matched filter**.
+signal, $$w \propto h$$. This is the **matched filter** (for stationary
+Gaussian noise; FINDCHIRP, cited above).
 
 **Proof.** The signal part of the score is $$\langle w, h\rangle$$. The noise
 part is $$\sum_t w(t)\eta(t)$$, a sum of independent unit-variance terms
@@ -269,34 +307,55 @@ $$
 
 **Why this removes the phase.** A signal with phase $$\varphi$$ is
 $$\mathcal{A}\cos(\Phi+\varphi) = \cos\varphi\, h_c - \sin\varphi\, h_s$$
-(the angle-addition formula). The two quadratures are orthogonal with equal
-size $$\lVert h\rVert$$ (the size of a template, $$\lVert h\rVert = \sqrt{\langle h, h\rangle}$$), so at the merger the two outputs are
+(the angle-addition formula). If the two quadratures are orthogonal with
+equal size $$\lVert h\rVert$$ (the size of a template, $$\lVert h\rVert = \sqrt{\langle h, h\rangle}$$), then at the merger the two outputs are
 $$\lVert h\rVert^2\cos\varphi$$ and $$-\lVert h\rVert^2\sin\varphi$$, and the
 sum of their squares is $$\lVert h\rVert^4$$ whatever $$\varphi$$ is. $$\square$$
 
-**Then the maximum over time.** The energy peaks at the true merger time, so
-the final statistic is $$\max_t e(t)$$.
+The condition holds exactly when $$h_s$$ is made from $$h_c$$ by the
+Hilbert transform (Oppenheim and Schafer 2010, *Discrete-Time Signal
+Processing*), and approximately for $$\mathcal{A}\cos\Phi$$ and
+$$\mathcal{A}\sin\Phi$$, because $$\mathcal{A}$$ changes little over one
+cycle. For the toy chirps their normalized overlap is at most 0.0013 and
+their squared sizes differ by at most 0.47%
+([derivation]({{ '/projects/bns/derivations/' | relative_url }}#ck-quadratures)).
+
+**Then the maximum over time.** Without noise, the energy is largest at the
+true merger time: by Cauchy–Schwarz again, no shifted template overlaps the
+signal more than the aligned one
+([derivation]({{ '/projects/bns/derivations/' | relative_url }}#ck-quadratures)).
+With noise, the largest energy over time is the matched-filter statistic for
+an unknown arrival time (FINDCHIRP), so the final statistic is
+$$\max_t e(t)$$.
 
 So a matched filter is three steps: a **convolution**, an **energy**, a
 **maximum over time**. S4D has the first. Our network does not have the
 other two: after the convolution it applies a GELU (a smooth version of
-"keep positive values, zero the rest"), and at the end it averages over time,
-which cancels an oscillating signal instead of accumulating it.
+"keep positive values, zero the rest"), and at the end it averages over
+time. Over an oscillating output, the average cancels the part that is
+linear in the signal; only the small positive mean the GELU leaves survives
+([derivation]({{ '/projects/bns/derivations/' | relative_url }}#ck-gelu-mean)).
 
 ### Why it gains so much: coherent addition
 
 Multiply the data by $$e^{-i\Phi(t)}$$, which undoes the signal's rotation
-(this is called dechirping), and add up $$m$$ samples. Every signal sample
-now points the same way, so their sum grows like $$m$$. Noise samples point
-in random directions, so their sum grows only like $$\sqrt{m}$$. The ratio
-grows like $$\sqrt{m}$$: this is why seconds of weak signal add up to a clear
-detection.
+(this is called dechirping), and add up $$m$$ samples. The signal part of
+each product is half the amplitude plus a term that keeps turning and
+nearly cancels in the sum. So for a constant amplitude the signal part of
+the sum grows like $$m$$; a chirp's amplitude rises toward the merger, so
+there it grows faster. The noise part is a sum of $$m$$ independent
+unit-variance terms, of typical size $$\sqrt{m}$$. For a constant amplitude
+the ratio grows like $$\sqrt{m}$$: this is why seconds of weak signal add up
+to a clear detection
+([derivation]({{ '/projects/bns/derivations/' | relative_url }}#ck-coherent)).
+The figure also weights each sample by the template's amplitude, which
+makes the full sum the two quadrature outputs of the matched filter above.
 
 {% include figure.html
    src="/assets/img/bns/2026-10-07/chirp-kernel/coherent_sum.png"
    alt="Magnitude of the running sum of dechirped data against time, for signal plus noise and for noise only"
    label="Coherent addition"
-   caption="Size of the running sum of dechirped data, from the start of the window. With a signal of SNR 10, dechirped by the correct chirp, it grows steadily. With noise only, it wanders." %}
+   caption="Size of the running sum of the data times the conjugate of the unit-size complex template (cosine quadrature minus i times sine quadrature), from the start of the window. With a signal of SNR 10 and the correct chirp, it grows toward the SNR, faster near the merger. With noise only, it wanders." %}
 
 ## 4. Why damped tones fit Project 8 and not BNS
 
@@ -309,46 +368,71 @@ Each Fourier coefficient $$\hat h_q$$ ($$q$$ numbers them) is one tone that
 lasts the whole window. Sort the tones by power $$\lvert \hat h_q\rvert^2$$,
 keep the strongest $$k$$, and measure how well those $$k$$ tones reproduce
 the signal. Because Fourier tones are orthogonal, the best approximation
-with $$k$$ of them keeps exactly the strongest $$k$$, and its **match** (its
-overlap with the signal, 1 for a perfect copy) is
+with $$k$$ of them keeps exactly the strongest $$k$$ (by Parseval's theorem;
+[derivation]({{ '/projects/bns/derivations/' | relative_url }}#ck-fourier-tones)),
+and its **match** (its overlap with the signal, 1 for a perfect copy) is
 
 $$
 \text{match}(k) = \sqrt{\frac{\sum_{\text{strongest } k} \lvert \hat h_q\rvert^2}{\sum_{\text{all } q} \lvert \hat h_q\rvert^2}} .
 $$
 
+Both signals in the first plot are complex (the Project 8 record as
+$$I + iQ$$, the chirp as $$\mathcal{A}e^{i\Phi}$$), so each tone is one
+complex exponential. For a real signal, as in the second plot, a tone is the
+pair of coefficients at $$\pm f$$: one real cosine, as in S4D.
+
 This counts undamped tones on the Fourier grid; S4D's tones can also fade
 and sit at any frequency, so the count is an indication of scale, not an
-exact number for S4D. The gap it shows, single digits against hundreds, is
-far larger than that difference.
+exact number for S4D. For BNS, freeing the tones did not change the
+picture: in fits to whitened chirps on
+[12 October]({{ u | append: '2026-10-12-template-bank-network/' | relative_url }}),
+32 tones that could fade and sit anywhere (matrix-pencil fits) reached a
+match of 0.20 to 0.29, against 0.25 to 0.33 for the strongest 32 Fourier
+tones, and stayed below 0.92 even with 2,048
+([derivation]({{ '/projects/bns/derivations/' | relative_url }}#ck-fourier-tones)).
 
 {% include figure.html
    src="/assets/img/bns/2026-10-07/chirp-kernel/p8_vs_bns_tones.png"
    alt="Match with the signal against the number of fixed tones kept, for 50 Project 8 signals and four BNS chirps"
    label="Tones needed: Project 8 against BNS"
-   caption="A Project 8 signal reaches 90% with a median of 3 tones (1 to 6). A 4 s BNS chirp needs about 590 (480 to 740). One S4D channel has 32." %}
+   caption="A match of 0.9 takes a median of 3 tones (1 to 6) for 50 noise-free records of our Project 8 test set, and 476 to 744 (median 593.5) for four toy BNS chirps of 4 s with chirp mass 1.0 to 2.4 M☉. One S4D channel has 32." %}
 
-**Project 8.** A trapped electron's signal is a nearly constant tone: a
-carrier plus a few sidebands, with constant amplitude over the whole record.
-It already has the shape of an S4D state, so a handful of long-memory states
-at the right frequencies is its matched filter. And the PhyTS baseline feeds
-the network the Fourier transform of the record: for a tone, the Fourier
-transform is itself a bank of tone filters, and the signal's whole energy
-lands in one bin. The front end does the coherent addition before the
-network sees anything; the network only has to find the peak and avoid the
-sidebands. Our own Project 8 runs fed the raw time series instead, and did
-worse than a plain spectrum peak, which fits this picture.
+**Project 8.** A trapped electron's signal is a narrow-band tone whose
+frequency rises slowly as the electron radiates, with sidebands from its
+motion along the trap (Asner et al. 2015,
+[arXiv:1408.5362](https://arxiv.org/abs/1408.5362)). Over one of our records
+it is close to a few steady tones: 1 to 6 Fourier tones give a match of 0.9
+(figure above). That is already the shape of an S4D state, so a handful of
+long-memory states at the right frequencies can hold its matched filter. An
+internal baseline feeds the network the Fourier transform of the record
+instead. Each Fourier coefficient is the overlap of the record with one
+steady tone, which is the matched filter for a tone at that frequency, so
+81% of the signal's energy lands in 1 to 6 bins. The front end does the
+coherent addition before the network sees anything; the network only has to
+find the peak and avoid the sidebands. Our own Project 8 runs fed the raw
+time series instead, and did worse than a plain spectrum peak
+([7 October]({{ u | append: '2026-10-07-why-denoising-does-not-detect/' | relative_url }})),
+which fits this picture.
 
 **BNS.** A chirp is not a tone. Its frequency sweeps, so a tone at one
 frequency overlaps it only during the moment the chirp passes that
-frequency. Building a chirp takes hundreds of tones, roughly its duration
-times its bandwidth. A channel with 32 tones can hold a blurred sketch of a
-chirp at best, and with 6 to 22 ms of memory, not even that.
+frequency. Tones that last the 4 s window are 0.25 Hz apart, so a chirp
+needs close to one tone per 0.25 Hz of the band that holds its energy. For
+the toy chirp at $$1.2\,M_\odot$$, 81% of the energy (a match of 0.9) lies
+between 80.1 and 247.6 Hz, 670 tones wide; the measured count is 689
+([derivation]({{ '/projects/bns/derivations/' | relative_url }}#ck-fourier-tones)).
+One channel has 32 tones. Fitted to four whitened BNS chirps, the best of
+three fitting methods kept a match of 0.25 to 0.33 with 32
+([12 October]({{ u | append: '2026-10-12-template-bank-network/' | relative_url }})).
+These are the best fits found, not proven limits. And in the trained
+network the median memory per layer is 8.06 to 65.50 ms (section 1), far
+shorter than a 4 s chirp.
 
 {% include figure.html
    src="/assets/img/bns/2026-10-07/chirp-kernel/tones_vs_chirp.png"
    alt="Left: match against number of tones for one chirp. Right: spectrogram of the chirp with horizontal lines at fixed tone frequencies"
    label="A tone meets a chirp only briefly"
-   caption="Left: one chirp, 689 tones for 90% and 2,470 for 99%. Right: the chirp's frequency over time (darker is stronger); each fixed tone (dashed line) crosses its track at one moment only." %}
+   caption="Left: the real toy chirp at 1.2 M☉, tones counted as real cosines: 689 for a match of 0.9 and 2,470 for 0.99. Right: the chirp's frequency over time (darker is stronger). Each fixed tone (dashed line) at 95, 170 or 300 Hz crosses its track at one moment only; the one at 40 Hz, below the chirp's 80 Hz start, never does." %}
 
 ## 5. The proposal: chirp kernels
 
@@ -364,7 +448,8 @@ physical chirp.
   **learned** (how exactly to parameterize it is an open choice, below).
 - $$\tau_\ell = \ell / f_s$$ is the time before merger that lag $$\ell$$
   corresponds to. The kernel is the chirp read backwards from its merger, so
-  that lag 0 is the merger.
+  that lag 0 is the merger. (The code below uses $$(\ell + 1)/f_s$$, so that
+  the amplitude $$\tau^{-1/4}$$ stays finite at lag 0.)
 - $$K^{(c)}_j$$ and $$K^{(s)}_j$$ are the two quadratures of kernel $$j$$.
 
 $$
@@ -399,40 +484,57 @@ $$\log E_1, \dots, \log E_J$$ to the chirp mass and its uncertainty.
    src="/assets/img/bns/2026-10-07/chirp-kernel/architecture.png"
    alt="Block diagram: whitened strain, chirp-kernel convolution, energy summed over detectors, maximum over time, small MLP giving chirp mass and sigma"
    label="The proposed layer"
-   caption="Only each kernel's chirp mass and envelope are learned: a few numbers each, instead of the thousands a free-form filter would need." %}
+   caption="Only each kernel's chirp mass and envelope are learned: one chirp mass plus the envelope's parameters per kernel, against 8,192 weights (one per lag) for a free-form 4 s kernel at 2048 Hz." %}
 
-What one kernel produces on data containing a signal at SNR 10:
+What one kernel produces on data containing a signal at SNR 10, in one
+detector. On noise alone, where the kernel overlaps the data fully, its
+energy has mean 2 and exceeds a value $$x$$ with probability $$e^{-x/2}$$ at
+any one time (0.7% for 10). Over many samples the largest value is higher:
+for $$N$$ independent samples its expected value is
+$$2(\ln N + 0.577)$$, which is 16.4 for the 2,048 samples of one second.
+Neighbouring samples are correlated, and the measured value is lower
+(caption;
+[derivation]({{ '/projects/bns/derivations/' | relative_url }}#ck-noise)).
 
 {% include figure.html
    src="/assets/img/bns/2026-10-07/chirp-kernel/kernel_output.png"
    alt="Energy output of one chirp kernel against time: a sharp spike at the merger for the right chirp mass, a smaller earlier bump for a kernel 1 percent off, and noise only"
    label="One chirp kernel's output"
-   caption="Energy e(t) of one kernel over the last second of the window. At the true chirp mass it spikes at the merger (dotted line). A kernel 1% off peaks lower and earlier: chirp mass and merger time partly trade off. Noise only: the same kernel at the true chirp mass on a separate stretch of pure noise; its energy averages 2 (each normalized quadrature gives a unit-variance output on noise) and reaches 10 to 15 only by chance." %}
+   caption="Energy e(t) of one kernel over the last second of the window, one detector. At the true chirp mass it spikes at the merger (dotted line). A kernel 1% off peaks lower and earlier (without noise: match 0.40, 33 ms early): chirp mass and merger time partly trade off. Noise only: the same kernel at the true chirp mass on a separate stretch of pure noise. On 400 such noise windows, the largest energy in this last second had median 13.9, with 10% and 90% points at 11.4 and 17.3." %}
 
 ## 6. One correct kernel, or many?
 
-For a single event whose chirp mass is known, one kernel at that chirp mass
-is all you need: it is the matched filter (section 3) and recovers the full
-SNR.
+For a single event whose waveform is known, one kernel equal to that
+waveform is all you need: it is the matched filter (section 3) and recovers
+the full SNR. A Newtonian kernel at the right chirp mass recovers less,
+because the real waveform differs from it (weakness 3): on 300 noise-free
+benchmark signals, the best of 512 Newtonian kernels had a median match of
+0.80 ([8 October]({{ u | append: '2026-10-08-chirp-kernels-work/' | relative_url }})).
 
 But the layer is fixed once trained, and events arrive with any chirp mass
-from 0.85 to 2.75 $$M_\odot$$. A kernel responds strongly only to events
-within a few tenths of a percent of its own chirp mass:
+from 0.85 to 2.75 $$M_\odot$$ (the range of our injection set). A kernel's
+response falls below half once the event's chirp mass is 0.6% below or
+0.19% above its own
+([derivation]({{ '/projects/bns/derivations/' | relative_url }}#ck-tuning)):
 
 {% include figure.html
    src="/assets/img/bns/2026-10-07/chirp-kernel/tuning_curves.png"
    alt="Response of three fixed kernels at chirp masses 1.15, 1.20 and 1.25 against the event chirp mass: each a narrow peak at its own value"
    label="Each kernel's tuning curve"
-   caption="Noise-free response (match, 1 = perfect) of three fixed kernels to events across a range of chirp masses. Each peaks sharply at its own chirp mass and falls below 0.5 within about 1% on the low side and a few tenths of a percent on the high side." %}
+   caption="Noise-free response (match, 1 = perfect) of three fixed kernels to events across a range of chirp masses. Each peaks sharply at its own chirp mass and falls below 0.5 at 0.58 to 0.60% below it and 0.18 to 0.19% above it. Below, it falls slowly (0.23 to 0.24 at 2.96% below); above, it drops at once." %}
 
 So one fixed kernel fails twice:
 
-1. **It misses most events.** An event between kernels gets a weak response
-   from all of them.
+1. **It misses most events.** Its response is above half over a band 0.78%
+   wide in chirp mass, while events span a factor 3.2, from 0.85 to 2.75
+   $$M_\odot$$. With several kernels, an event between them gets a weak
+   response from all of them.
 2. **It cannot measure the chirp mass.** Its single number, $$E_j$$, mixes
    two unknowns: how loud the signal is, and how close its chirp mass is to
-   the kernel's. A loud signal slightly off and a weak signal right on give
-   the same number.
+   the kernel's. Without noise its peak is the SNR squared times the match
+   squared ([derivation]({{ '/projects/bns/derivations/' | relative_url }}#peak-energy)),
+   so a loud signal slightly off and a weak signal right on give the same
+   number.
 
 There are two ways around this:
 
@@ -440,8 +542,8 @@ There are two ways around this:
   always close, and the *pattern* of the $$J$$ responses locates the chirp
   mass: the loudness scales all of them together, while the chirp mass
   decides which one is largest. How few kernels suffice depends on how well
-  the network $$g$$ can interpolate between them; a template bank with no
-  interpolation used 613.
+  the network $$g$$ can interpolate between them; the benchmark's template
+  bank, with no interpolation, used 613.
 - **One kernel adjusted per event.** Move its chirp mass until its response
   peaks. That is fitting, not a fixed layer, and because the peak is narrow
   it needs a starting point already close, so in practice it is the second
@@ -452,9 +554,12 @@ There are two ways around this:
 An S4D layer can be computed in two equivalent ways:
 
 - **The recurrent view.** Step through the samples one at a time, updating
-  the $$N$$ state numbers. This needs only the current state, so it can run
-  on a live stream. It works because the kernel is a sum of a few damped
-  tones, each of which a single state number can generate step by step.
+  the $$N$$ state numbers. Each state follows
+  $$x_\ell = e^{\Delta t\, a_n} x_{\ell-1} + \frac{e^{\Delta t\, a_n}-1}{a_n}\, u_\ell$$:
+  one multiplication and one addition per sample, which generates its
+  damped tone
+  ([derivation]({{ '/projects/bns/derivations/' | relative_url }}#ck-s4d-step)).
+  This needs only the current state, so it can run on a live stream.
 - **The convolution view.** Build the whole kernel $$K_\ell$$ once, then
   convolve it with the input using the fast Fourier transform (FFT): a
   convolution becomes a multiplication in the frequency domain. This is how
@@ -462,14 +567,19 @@ An S4D layer can be computed in two equivalent ways:
 
 The chirp kernel keeps the convolution view exactly: the kernel module
 returns a tensor of the same shape, and the same FFT convolution applies it.
-The layer is still linear and time-invariant, which is what makes the
-merger-time search free: shifting the signal in time shifts the output by
-the same amount, so the maximum over time finds it wherever it is.
+The convolution is still linear and time-invariant, and the energy acts on
+its output sample by sample. That is what makes the merger-time search
+free: shifting the signal in time shifts $$e_j(t)$$ by the same amount
+(away from the window's edges), so the maximum over time finds it wherever
+it is.
 
-It gives up the recurrent view. A chirp is not a sum of a few damped tones
-(section 4), so no small state can generate it step by step. That matters
-only for streaming sample by sample; on fixed 4 s windows, which is how we
-use the model, the convolution view is all we need. Strictly, the result is
+It gives up the recurrent view. Generating a kernel step by step takes at
+least as many states as the kernel's structure demands
+([derivation]({{ '/projects/bns/derivations/' | relative_url }}#ck-states)),
+and a chirp demands many: the best fits we found with 32 tones keep a match
+of 0.25 to 0.33 (section 4). That matters only for streaming sample by
+sample; on fixed 4 s windows, which is how we use the model, the convolution
+view is all we need. Strictly, the result is
 a long-convolution layer with a physical kernel, not a state-space model.
 
 ## 8. A code sketch
@@ -481,14 +591,16 @@ k = self.kernel(L=L)                              # kernel, (channels, L)
 k_f = torch.fft.rfft(k, n=2 * L)                  # kernel in frequency
 u_f = torch.fft.rfft(u, n=2 * L)                  # input in frequency
 y = torch.fft.irfft(u_f * k_f, n=2 * L)[..., :L]  # convolution
+y = y + u * self.D.unsqueeze(-1)                  # skip term
 y = self.activation(y)                            # GELU
+y = self.output_linear(self.dropout(y))           # mix channels
 ```
 
 The chirp version swaps the kernel module, keeps the same three FFT lines,
 and replaces the GELU with the energy:
 
 ```python
-TSUN = 4.925491e-6  # G * (1 solar mass) / c^3, in seconds
+TSUN = 4.925491e-6  # G * (1 solar mass) / c^3, in seconds (IAU 2015 nominal)
 
 
 class ChirpKernel(nn.Module):
@@ -553,44 +665,61 @@ MLP to the chirp mass and its uncertainty.
    src="/assets/img/bns/2026-10-07/chirp-kernel/match_vs_mc.png"
    alt="Best match over time against kernel chirp mass offset, sharply peaked at zero with a long tail on one side"
    label="Match against kernel chirp mass"
-   caption="The best match over time between a signal and a kernel, as the kernel's chirp mass moves away from the true one. Sharp near zero, small and nearly flat elsewhere." %}
+   caption="The best match over time between a signal and a kernel, as the kernel's chirp mass moves away from the true one. Sharp near zero. A heavier kernel keeps a slowly falling partial match (0.40 at +1%, 0.24 at +3%); a lighter one drops below 0.25 by -0.25% and below 0.11 past -1%." %}
 
-1. **Narrow peaks, weak gradients.** A kernel's response falls off within a
-   fraction of a percent of its chirp mass (the tuning curves above). A
-   kernel far from every training event gets almost no signal about which way
-   to move. Spreading the initial chirp masses and using a soft maximum
-   should help; whether the kernels move at all is the first thing to check.
-
-
+1. **Narrow peaks, weak gradients.** A kernel's response falls to half
+   within 0.6% below and 0.19% above its chirp mass (the tuning curves
+   above). A kernel far from every training event gets little signal about
+   which way to move. Spreading the initial chirp masses and using a soft
+   maximum should help; whether the kernels move at all is the first thing
+   to check.
 2. **Chirp mass and merger time trade off.** A kernel slightly off in chirp
    mass still finds a partial match by shifting its merger time (the earlier
-   peak in the kernel-output figure, and the long tail above). Peak heights
-   alone may confuse "slightly off" with "weaker".
+   peak in the kernel-output figure, 33 ms early for a kernel 1% heavy, and
+   the long tail above). Peak heights alone may confuse "slightly off" with
+   "weaker".
 3. **The Newtonian phase is approximate.** Real BNS signals have phase
-   corrections that depend on the mass ratio, the spins and, near merger,
-   tidal effects. Over hundreds of cycles a small phase error adds up, so a
-   kernel at exactly the right chirp mass can still lose match. Higher-order
-   phase terms would fix this at the cost of more kernel parameters.
-4. **Only the chirp mass is in the kernel.** Mass ratio and spin barely
-   enter, so the layer says little about them.
+   corrections that depend on the mass ratio and the spins (Cutler and
+   Flanagan 1994, [arXiv:gr-qc/9402014](https://arxiv.org/abs/gr-qc/9402014))
+   and on the stars' tidal deformation (Flanagan and Hinderer 2008,
+   [arXiv:0709.1915](https://arxiv.org/abs/0709.1915)). Over 305 to 636
+   cycles a small phase error adds up, so a kernel at exactly the right
+   chirp mass can still lose match (median 0.80 on noise-free benchmark
+   signals, section 6). Higher-order phase terms would fix this at the cost
+   of more kernel parameters.
+4. **Only the chirp mass is in the kernel.** The mass ratio and the spins
+   enter the phase only through the higher-order terms the kernel leaves out
+   (Cutler and Flanagan 1994), so the layer says little about them.
 5. **Coverage.** The kernels must tile the whole range finely enough that
    every event is near one. If too few, the head must interpolate from weak,
    partial matches, which may cap the precision.
 6. **Glitches.** The energy responds to any loud transient that resembles
-   part of a chirp. The benchmark's template bank gave glitches scores of 30
-   to 300 with no veto. Searches add consistency tests; this layer has none.
+   part of a chirp. In the benchmark, with no veto, a handful of windows
+   with loud glitches scored 30 to 300 on the template bank. Searches add
+   signal-consistency tests (Allen 2005,
+   [arXiv:gr-qc/0405045](https://arxiv.org/abs/gr-qc/0405045); Babak et al.
+   2013, [arXiv:1208.3491](https://arxiv.org/abs/1208.3491)); this layer has
+   none.
 7. **Look-elsewhere.** Taking the maximum over many kernels and all times
-   raises the score of pure noise (the bank's noise floor was about 6.3).
-   More kernels, higher floor.
+   raises the score of pure noise. For $$N$$ independent tries the expected
+   largest energy is $$2(\ln N + 0.577)$$, so each doubling of the number of
+   kernels raises it by at most $$2\ln 2 = 1.39$$
+   ([derivation]({{ '/projects/bns/derivations/' | relative_url }}#ck-noise)).
+   The benchmark's bank (613 templates, all times, two detectors) gave
+   empty windows a best network SNR with median 6.27 and 99th percentile
+   7.73.
 8. **Sparse gradient from the hard maximum.** Only one time sample per kernel
-   per event receives any gradient.
-9. **Whitening assumption.** The matched filter is optimal for noise that is
-   stationary and Gaussian after whitening. Real detector noise is neither,
-   exactly.
+   per event receives any gradient: the derivative of a maximum is zero for
+   every entry but the largest.
+9. **Whitening assumption.** The matched filter is optimal for stationary
+   Gaussian noise (FINDCHIRP). Real detector noise drifts and has glitches;
+   away from them it is close to stationary and Gaussian (Abbott et al.
+   2020).
 10. **No streaming.** It loses S4D's recurrent view (section 7).
 
 ## Status
 
 Nothing here has been trained yet. The test is direct: on the same windows
-as the benchmark, does a chirp-kernel layer move the SNR 8 to 12 accuracy
-from about 20% toward the bank's 95%?
+as the benchmark, does a chirp-kernel layer move the fraction of SNR 8 to 12
+events within 2% from the network's 16 to 29% toward the template bank's 96
+to 99%?

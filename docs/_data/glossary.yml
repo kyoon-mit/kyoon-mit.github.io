@@ -1,0 +1,2132 @@
+# Definitions for the BNS pages. Each entry:
+#   id      anchor on the definitions page
+#   term    the name, as it appears in text (also matched for automatic links)
+#   also    other spellings matched for automatic links
+#   case    true if matching must respect capital letters (acronyms that are words)
+#   group   section on the definitions page
+#   short   one or two plain sentences, shown on hover
+#   def     longer definition (optional; the page shows short if absent)
+#   source  citation or quoted wording
+
+# --- Gravitational waves ------------------------------------------------------
+
+- id: binary-neutron-star
+  term: binary neutron star
+  also: [binary neutron stars, BNS, neutron-star binary]
+  group: Gravitational waves
+  short: >-
+    Two neutron stars orbiting each other. Gravitational radiation carries
+    away orbital energy, so they spiral together and finally merge; the last
+    minutes are visible to ground-based detectors.
+  source: >-
+    Maggiore, *Gravitational Waves*, Vol. 1 (2008), chapter 4; the first
+    detection: Abbott et al., Phys. Rev. Lett. 119, 161101 (2017),
+    [arXiv:1710.05832](https://arxiv.org/abs/1710.05832).
+
+- id: compact-binary
+  term: compact binary
+  also: [compact binaries, compact binary coalescence, compact binary coalescences]
+  group: Gravitational waves
+  short: >-
+    Two compact objects, neutron stars or black holes, in orbit around each
+    other.
+  source: >-
+    Maggiore, *Gravitational Waves*, Vol. 1 (2008), chapter 4.
+
+- id: strain
+  term: strain
+  also: [detector strain]
+  group: Gravitational waves
+  short: >-
+    The fractional change in length of a detector's arms caused by a passing
+    gravitational wave, h = ΔL/L. It is the detector's data stream.
+  source: >-
+    Creighton and Anderson, *Gravitational-Wave Physics and Astronomy*
+    (2011); Aasi et al., "Advanced LIGO", Class. Quantum Grav. 32, 074001
+    (2015), [arXiv:1411.4547](https://arxiv.org/abs/1411.4547).
+
+- id: waveform
+  term: waveform
+  also: [waveforms]
+  group: Gravitational waves
+  short: >-
+    The strain signal predicted for a source with given masses, spins,
+    distance and orientation, computed from general relativity.
+  source: >-
+    Maggiore, *Gravitational Waves*, Vol. 1 (2008), chapter 4.
+
+- id: inspiral
+  term: inspiral
+  also: [inspirals, early inspiral]
+  group: Gravitational waves
+  short: >-
+    The long phase before merger in which the two bodies spiral toward each
+    other; the frequency and amplitude of the waves rise slowly.
+  source: >-
+    Sathyaprakash and Schutz, Living Rev. Relativ. 12, 2 (2009), [arXiv:0903.0338](https://arxiv.org/abs/0903.0338).
+
+- id: merger
+  term: merger
+  also: [mergers, coalescence, coalescences]
+  group: Gravitational waves
+  short: >-
+    The moment the two bodies touch and become one; the end of the chirp.
+  source: >-
+    Sathyaprakash and Schutz, Living Rev. Relativ. 12, 2 (2009), [arXiv:0903.0338](https://arxiv.org/abs/0903.0338).
+
+- id: pre-merger
+  term: pre-merger
+  also: [Pre-merger]
+  group: Gravitational waves
+  short: >-
+    Before the merger. A pre-merger window is a stretch of data that ends
+    before the stars touch, used to estimate parameters early.
+  source: >-
+    Sachdev et al., Astrophys. J. Lett. 905, L25 (2020), [arXiv:2008.04288](https://arxiv.org/abs/2008.04288).
+
+- id: early-warning
+  term: early warning
+  also: [early-warning]
+  group: Gravitational waves
+  short: >-
+    Detecting a binary neutron star before it merges, so telescopes can be
+    pointed at it in time to see the light of the merger.
+  source: >-
+    Cannon et al., Astrophys. J. 748, 136 (2012),
+    [arXiv:1107.2665](https://arxiv.org/abs/1107.2665); Sachdev et al.,
+    Astrophys. J. Lett. 905, L25 (2020),
+    [arXiv:2008.04288](https://arxiv.org/abs/2008.04288).
+
+- id: chirp
+  term: chirp
+  also: [chirps, chirp-like, chirp-shaped]
+  group: Gravitational waves
+  short: >-
+    The signal of an inspiral: a wave whose frequency and amplitude both rise
+    with time, like a bird's chirp when played as sound.
+  source: >-
+    Maggiore, *Gravitational Waves*, Vol. 1 (2008), chapter 4.
+
+- id: chirp-mass
+  term: chirp mass
+  also: [chirp masses, chirp-mass, Chirp mass]
+  group: Gravitational waves
+  short: >-
+    The combination 𝓜 = (m₁m₂)^(3/5) / (m₁+m₂)^(1/5) of the two masses. At
+    leading order it alone sets how fast the frequency rises, so it is the
+    best-measured mass parameter.
+  source: >-
+    Cutler and Flanagan, Phys. Rev. D 49, 2658 (1994),
+    [arXiv:gr-qc/9402014](https://arxiv.org/abs/gr-qc/9402014); Maggiore,
+    *Gravitational Waves*, Vol. 1 (2008), chapter 4.
+
+- id: mass-ratio
+  term: mass ratio
+  also: [mass ratios, mass-ratio, Mass ratio]
+  group: Gravitational waves
+  short: >-
+    q = m₂/m₁ ≤ 1, the lighter mass over the heavier. It enters the waveform
+    only beyond leading order, so it is measured much less well than the
+    chirp mass.
+  source: >-
+    Cutler and Flanagan, Phys. Rev. D 49, 2658 (1994),
+    [arXiv:gr-qc/9402014](https://arxiv.org/abs/gr-qc/9402014); Poisson and
+    Will, Phys. Rev. D 52, 848 (1995),
+    [arXiv:gr-qc/9502040](https://arxiv.org/abs/gr-qc/9502040).
+
+- id: spin
+  term: spin
+  also: [spins]
+  group: Gravitational waves
+  short: >-
+    The rotation of each body, measured as a dimensionless number χ between
+    −1 and 1 for the component along the orbit's axis. Spins change the
+    phase of the waveform and can be confused with mass.
+  source: >-
+    Poisson and Will, Phys. Rev. D 52, 848 (1995), [arXiv:gr-qc/9502040](https://arxiv.org/abs/gr-qc/9502040).
+
+- id: effective-spin
+  term: effective spin
+  also: [χ_eff]
+  group: Gravitational waves
+  short: >-
+    χ_eff = (m₁χ₁ + m₂χ₂)/(m₁ + m₂): the mass-weighted spin along the orbital
+    axis, the spin combination best measured from an inspiral.
+  source: >-
+    Ajith et al., Phys. Rev. Lett. 106, 241101 (2011), [arXiv:0909.2867](https://arxiv.org/abs/0909.2867).
+
+- id: post-newtonian
+  term: post-Newtonian
+  also: [3.5PN, PN order]
+  group: Gravitational waves
+  short: >-
+    An expansion of the orbit and the waveform in powers of v/c. The leading
+    (Newtonian) term sets the chirp by the chirp mass alone; higher terms
+    bring in the mass ratio, the spins and the stars' tidal deformation.
+  source: >-
+    Blanchet, Living Rev. Relativ. 17, 2 (2014),
+    [arXiv:1310.1528](https://arxiv.org/abs/1310.1528); Buonanno et al.,
+    Phys. Rev. D 80, 084043 (2009),
+    [arXiv:0907.0700](https://arxiv.org/abs/0907.0700).
+
+- id: tidal-effects
+  term: tidal effects
+  also: [tidal deformation]
+  group: Gravitational waves
+  short: >-
+    The deformation of each neutron star by the other's gravity near merger,
+    which changes the phase of the last cycles.
+  source: >-
+    Flanagan and Hinderer, Phys. Rev. D 77, 021502(R) (2008), [arXiv:0709.1915](https://arxiv.org/abs/0709.1915).
+
+- id: taylorf2
+  term: TaylorF2
+  case: true
+  group: Gravitational waves
+  short: >-
+    A waveform model for the inspiral written directly as a function of
+    frequency, using the post-Newtonian phase.
+  source: >-
+    Buonanno et al., Phys. Rev. D 80, 084043 (2009), [arXiv:0907.0700](https://arxiv.org/abs/0907.0700).
+
+- id: imrphenompv2
+  term: IMRPhenomPv2
+  case: true
+  group: Gravitational waves
+  short: >-
+    A waveform model covering inspiral, merger and ringdown of binary black
+    holes with precessing spins. It has no tidal effects.
+  source: >-
+    Hannam et al., Phys. Rev. Lett. 113, 151101 (2014), [arXiv:1308.3271](https://arxiv.org/abs/1308.3271).
+
+- id: solar-mass
+  term: M☉
+  case: true
+  group: Gravitational waves
+  short: >-
+    One solar mass, the unit in which stellar masses are quoted. GM☉/c³ =
+    4.925491 μs, the solar mass expressed as a time.
+  source: >-
+    Prša et al., "Nominal values for selected solar and planetary quantities:
+    IAU 2015 Resolution B3", Astron. J. 152, 41 (2016),
+    [arXiv:1605.09788](https://arxiv.org/abs/1605.09788).
+
+- id: gw170817
+  term: GW170817
+  case: true
+  group: Gravitational waves
+  short: >-
+    The first binary neutron star merger seen in gravitational waves, on 17
+    August 2017, also observed across the electromagnetic spectrum.
+  source: >-
+    Abbott et al., Phys. Rev. Lett. 119, 161101 (2017),
+    [arXiv:1710.05832](https://arxiv.org/abs/1710.05832); Abbott et al.,
+    Astrophys. J. Lett. 848, L12 (2017),
+    [arXiv:1710.05833](https://arxiv.org/abs/1710.05833).
+
+- id: multimessenger
+  term: multimessenger astronomy
+  also: [multimessenger, Multimessenger]
+  group: Gravitational waves
+  short: >-
+    Observing the same event with gravitational waves and with light or
+    particles. Binary neutron star mergers can be seen both ways.
+  source: >-
+    Abbott et al., Astrophys. J. Lett. 848, L12 (2017), [arXiv:1710.05833](https://arxiv.org/abs/1710.05833).
+
+- id: electromagnetic-follow-up
+  term: electromagnetic follow-up
+  group: Gravitational waves
+  short: >-
+    Pointing telescopes at the sky region of a gravitational-wave event to
+    catch its light.
+  source: >-
+    Sachdev et al., Astrophys. J. Lett. 905, L25 (2020), [arXiv:2008.04288](https://arxiv.org/abs/2008.04288).
+
+- id: sky-localization
+  term: sky localization
+  also: [Sky localization, sky-localization, sky position]
+  group: Gravitational waves
+  short: >-
+    Estimating where on the sky a source is, mainly from the differences in
+    arrival time between detectors.
+  source: >-
+    Fairhurst, New J. Phys. 11, 123006 (2009), [arXiv:0908.2356](https://arxiv.org/abs/0908.2356).
+
+- id: sky-ring
+  term: sky ring
+  also: [ring on the sky, two-detector sky ring]
+  group: Gravitational waves
+  short: >-
+    With two detectors the arrival-time difference Δt = (d/c) cos θ fixes
+    only the angle θ to the line joining them, so the source can be anywhere
+    on a ring on the sky.
+  source: >-
+    Fairhurst, New J. Phys. 11, 123006 (2009), [arXiv:0908.2356](https://arxiv.org/abs/0908.2356).
+
+- id: detector-baseline
+  term: detector baseline
+  group: Gravitational waves
+  short: >-
+    The line joining two detectors.
+  source: >-
+    Fairhurst, New J. Phys. 11, 123006 (2009), [arXiv:0908.2356](https://arxiv.org/abs/0908.2356).
+
+# --- Detectors and data ---------------------------------------------------------
+
+- id: ligo
+  term: LIGO
+  case: true
+  group: Detectors and data
+  short: >-
+    The Laser Interferometer Gravitational-Wave Observatory: two
+    interferometers with 4 km arms, at Hanford (Washington) and Livingston
+    (Louisiana).
+  source: >-
+    Aasi et al., "Advanced LIGO", Class. Quantum Grav. 32, 074001 (2015), [arXiv:1411.4547](https://arxiv.org/abs/1411.4547).
+
+- id: h1
+  term: H1
+  case: true
+  group: Detectors and data
+  short: >-
+    The LIGO detector at Hanford, Washington.
+  source: >-
+    Aasi et al., Class. Quantum Grav. 32, 074001 (2015), [arXiv:1411.4547](https://arxiv.org/abs/1411.4547).
+
+- id: l1
+  term: L1
+  case: true
+  group: Detectors and data
+  short: >-
+    The LIGO detector at Livingston, Louisiana.
+  source: >-
+    Aasi et al., Class. Quantum Grav. 32, 074001 (2015), [arXiv:1411.4547](https://arxiv.org/abs/1411.4547).
+
+- id: light-travel-time
+  term: light travel time
+  group: Detectors and data
+  short: >-
+    The time light takes between the two LIGO sites, 10 ms: the largest delay
+    a real signal can have between them.
+  source: >-
+    Abbott et al., Phys. Rev. Lett. 116, 061102 (2016),
+    [arXiv:1602.03837](https://arxiv.org/abs/1602.03837), which gives the
+    intersite propagation time as 10 ms.
+
+- id: o3
+  term: O3
+  also: [O3a, O3b, third observing run]
+  case: true
+  group: Detectors and data
+  short: >-
+    The third observing run of LIGO and Virgo, 1 April 2019 to 27 March 2020.
+    O3a is the part before 1 October 2019, O3b the part from 1 November 2019.
+  source: >-
+    LIGO, Virgo and KAGRA, "Open data from the third observing run",
+    Astrophys. J. Suppl. 267, 29 (2023),
+    [arXiv:2302.03676](https://arxiv.org/abs/2302.03676).
+
+- id: gwosc
+  term: GWOSC
+  case: true
+  group: Detectors and data
+  short: >-
+    The Gravitational Wave Open Science Center, which publishes LIGO, Virgo
+    and KAGRA data. Our detector noise comes from it.
+  source: >-
+    Astrophys. J. Suppl. 267, 29 (2023), [arXiv:2302.03676](https://arxiv.org/abs/2302.03676).
+
+- id: gwtc-3
+  term: GWTC-3
+  case: true
+  group: Detectors and data
+  short: >-
+    The third LIGO–Virgo–KAGRA catalog of compact binary mergers, covering
+    O3. Its released injection sets give the search pipelines' sensitive
+    volumes we compare against.
+  source: >-
+    Phys. Rev. X 13, 041039 (2023),
+    [arXiv:2111.03606](https://arxiv.org/abs/2111.03606); O3 search
+    sensitivity estimates, [Zenodo 7890437](https://zenodo.org/records/7890437).
+
+- id: psd
+  term: power spectral density
+  also: [PSD, PSDs, noise spectrum]
+  group: Detectors and data
+  short: >-
+    How strong the detector noise is at each frequency, averaged over time.
+    It is estimated from the data by averaging the spectra of many short
+    stretches.
+  source: >-
+    Welch, IEEE Trans. Audio Electroacoust. 15, 70 (1967); Creighton and
+    Anderson, *Gravitational-Wave Physics and Astronomy* (2011).
+
+- id: whitening
+  term: whitening
+  also: [whitened, whiten, Whitened]
+  group: Detectors and data
+  short: >-
+    Dividing the data, frequency by frequency, by the noise amplitude (the
+    square root of the power spectral density), so the noise becomes equally
+    strong at all frequencies and, if it is stationary and Gaussian, independent
+    with unit variance from sample to sample.
+  source: >-
+    Allen et al., FINDCHIRP, Phys. Rev. D 85, 122006 (2012), [arXiv:gr-qc/0509116](https://arxiv.org/abs/gr-qc/0509116).
+
+- id: highpass
+  term: highpass
+  also: [highpassed, high-pass]
+  group: Detectors and data
+  short: >-
+    A filter that removes frequencies below a cutoff. Our data is highpassed at
+    20 Hz, below which detector noise is very large.
+  source: >-
+    Oppenheim and Schafer, *Discrete-Time Signal Processing*, 3rd ed. (2010).
+
+- id: nyquist
+  term: Nyquist frequency
+  also: [Nyquist]
+  case: true
+  group: Detectors and data
+  short: >-
+    Half the sampling rate: the highest frequency a sampled signal can hold.
+    At 2048 samples per second it is 1024 Hz. Higher frequencies fold back
+    onto lower ones (aliasing).
+  source: >-
+    Oppenheim and Schafer, *Discrete-Time Signal Processing*, 3rd ed. (2010).
+
+- id: downsampling
+  term: downsampling
+  also: [downsampled]
+  group: Detectors and data
+  short: >-
+    Keeping fewer samples per second. It removes every frequency above the new
+    Nyquist frequency.
+  source: >-
+    Oppenheim and Schafer, *Discrete-Time Signal Processing*, 3rd ed. (2010).
+
+- id: anti-aliasing
+  term: anti-aliased
+  also: [anti-aliasing]
+  group: Detectors and data
+  short: >-
+    Filtered before downsampling, so frequencies above the new Nyquist
+    frequency are removed instead of folding onto lower ones.
+  source: >-
+    Oppenheim and Schafer, *Discrete-Time Signal Processing*, 3rd ed. (2010).
+
+- id: stationary
+  term: stationary noise
+  also: [stationary, non-stationary]
+  group: Detectors and data
+  short: >-
+    Noise whose statistics, such as its spectrum, do not change with time.
+    Real detector noise is only approximately stationary.
+  source: >-
+    Abbott et al., Class. Quantum Grav. 37, 055002 (2020), [arXiv:1908.11170](https://arxiv.org/abs/1908.11170).
+
+- id: glitch
+  term: glitch
+  also: [glitches, Glitches]
+  group: Detectors and data
+  short: >-
+    A short, loud burst of non-Gaussian noise in a detector, from
+    instrumental or environmental causes. Glitches can mimic signals.
+  source: >-
+    Davis et al., Class. Quantum Grav. 38, 135014 (2021), [arXiv:2101.11673](https://arxiv.org/abs/2101.11673).
+
+- id: background
+  term: background
+  also: [backgrounds]
+  group: Detectors and data
+  short: >-
+    Detector data with no known signal. We inject simulated signals into it,
+    and use it to measure how often noise alone scores as high as a candidate.
+  source: >-
+    Was et al., Class. Quantum Grav. 27, 015005 (2010), [arXiv:0906.2120](https://arxiv.org/abs/0906.2120).
+
+- id: injection
+  term: injection
+  also: [injections, injected, inject, injects]
+  group: Detectors and data
+  short: >-
+    Adding a simulated signal (a waveform) to real detector noise, to test a
+    method on cases where the true answer is known.
+  source: >-
+    Marx et al., Phys. Rev. D 111, 042010 (2025), [arXiv:2403.18661](https://arxiv.org/abs/2403.18661).
+
+- id: time-slide
+  term: time slide
+  also: [time slides, time-slide, time-shifted, time shifts]
+  group: Detectors and data
+  short: >-
+    Shifting one detector's data in time against the other's by more than the
+    light travel time, so any coincidence between them is accidental. It turns
+    one stretch of data into many independent stretches of pure noise.
+  source: >-
+    Was et al., Class. Quantum Grav. 27, 015005 (2010), [arXiv:0906.2120](https://arxiv.org/abs/0906.2120).
+
+- id: snr-population
+  term: power law
+  also: [power-law, power-law population, index −3]
+  group: Detectors and data
+  short: >-
+    Our populations draw SNR with probability density ∝ SNR⁻³ (ml4gw's power
+    law with index −3) between a minimum (4 or 8) and a maximum. Sources
+    spread uniformly in space give a steeper density, ∝ SNR⁻⁴.
+  def: >-
+    Our validation and test populations draw each injection's SNR with
+    probability density ∝ SNR⁻³ ("power law, index −3") between a minimum
+    (SNR 4 or 8) and a maximum (50 or 100). From SNR 4 this puts 75% of events
+    below SNR 8. Sources spread uniformly in space give a steeper density,
+    ∝ SNR⁻⁴, so that the fraction louder than a given SNR falls as SNR⁻³; that
+    population puts 87.5% of events from SNR 4 below SNR 8. Ours therefore has
+    relatively more loud events than nature.
+  source: >-
+    ml4gw's PowerLaw documentation: "p(x) ≈ x^α ... a universal distribution
+    of signal-to-noise ratios (SNRs) from uniformly volume distributed sources
+    p(ρ) = 3ρ₀³/ρ⁴"; Schutz, Class. Quantum Grav. 28, 125023 (2011),
+    [arXiv:1102.5421](https://arxiv.org/abs/1102.5421).
+
+- id: ml4gw
+  term: ml4gw
+  case: true
+  group: Detectors and data
+  short: >-
+    A Python library of GPU tools for gravitational-wave machine learning
+    (data loading, whitening, waveforms, network layers), used by aframe and
+    by us.
+  source: >-
+    Marx et al., Phys. Rev. D 111, 042010 (2025), [arXiv:2403.18661](https://arxiv.org/abs/2403.18661).
+
+# --- Searching for signals ------------------------------------------------------
+
+- id: snr
+  term: signal-to-noise ratio
+  also: [SNR, SNRs, SNR², signal-to-noise]
+  group: Searching for signals
+  short: >-
+    How strong a signal is relative to the noise. For whitened data it is the
+    square root of the signal's summed squared amplitude, ρ² = Σ s(t)², the
+    largest value any filter can recover.
+  source: >-
+    Allen et al., FINDCHIRP, Phys. Rev. D 85, 122006 (2012),
+    [arXiv:gr-qc/0509116](https://arxiv.org/abs/gr-qc/0509116); see also the
+    [derivations page](/projects/bns/derivations/#peak-energy).
+
+- id: network-snr
+  term: network SNR
+  case: false
+  group: Searching for signals
+  short: >-
+    The SNR combined over detectors, ρ² = ρ²(H1) + ρ²(L1).
+  source: >-
+    Allen et al., FINDCHIRP, Phys. Rev. D 85, 122006 (2012), [arXiv:gr-qc/0509116](https://arxiv.org/abs/gr-qc/0509116).
+
+- id: matched-filter
+  term: matched filter
+  also: [matched filtering, matched-filter, Matched filtering, matched-filtering, Matched-filter]
+  group: Searching for signals
+  short: >-
+    Correlating the data with the expected signal shape (a template), weighted
+    by the noise spectrum. For a known signal in stationary Gaussian noise it
+    gives the highest possible SNR.
+  source: >-
+    Creighton and Anderson, *Gravitational-Wave Physics and Astronomy*
+    (2011), chapter 7; Allen et al., FINDCHIRP, Phys. Rev. D 85, 122006
+    (2012), [arXiv:gr-qc/0509116](https://arxiv.org/abs/gr-qc/0509116).
+
+- id: template
+  term: template
+  also: [templates]
+  group: Searching for signals
+  short: >-
+    One predicted waveform, for one set of source parameters, used as a
+    matched filter.
+  source: >-
+    Owen, Phys. Rev. D 53, 6749 (1996), [arXiv:gr-qc/9511032](https://arxiv.org/abs/gr-qc/9511032).
+
+- id: template-bank
+  term: template bank
+  also: [template banks, template-bank]
+  group: Searching for signals
+  short: >-
+    A set of templates covering the range of possible sources, dense enough
+    that every real signal is close to one of them.
+  source: >-
+    Owen, Phys. Rev. D 53, 6749 (1996),
+    [arXiv:gr-qc/9511032](https://arxiv.org/abs/gr-qc/9511032); Owen and
+    Sathyaprakash, Phys. Rev. D 60, 022002 (1999),
+    [arXiv:gr-qc/9808076](https://arxiv.org/abs/gr-qc/9808076).
+
+- id: match
+  term: match
+  also: [match of, match to]
+  only_also: true
+  group: Searching for signals
+  short: >-
+    The normalized overlap between two waveforms, maximized over arrival time
+    and phase: 1 for the same shape, 0 for unrelated ones. A filter with match
+    m to a signal recovers the fraction m of its SNR.
+  source: >-
+    Owen, Phys. Rev. D 53, 6749 (1996),
+    [arXiv:gr-qc/9511032](https://arxiv.org/abs/gr-qc/9511032); see the
+    [derivations page](/projects/bns/derivations/#peak-energy).
+
+- id: overlap
+  term: overlap
+  also: [overlap rho, scale-free overlap, the overlap, its overlap, overlap with, overlap of, overlap between, normalized overlap]
+  only_also: true
+  group: Searching for signals
+  short: >-
+    On our pages: the normalized inner product between the denoised output and
+    the true waveform, ⟨a, b⟩ / (|a| |b|); 1 means the same shape, whatever the
+    size.
+  source: >-
+    Owen, Phys. Rev. D 53, 6749 (1996), [arXiv:gr-qc/9511032](https://arxiv.org/abs/gr-qc/9511032).
+
+- id: snr-time-series
+  term: SNR time series
+  group: Searching for signals
+  short: >-
+    The output of a matched filter as a function of time. It peaks when the
+    template lines up with a signal.
+  source: >-
+    Allen et al., FINDCHIRP, Phys. Rev. D 85, 122006 (2012), [arXiv:gr-qc/0509116](https://arxiv.org/abs/gr-qc/0509116).
+
+- id: quadrature
+  term: quadrature
+  also: [quadratures, two-quadrature]
+  group: Searching for signals
+  short: >-
+    A cosine and a sine version of the same waveform, 90° apart in phase.
+    Filtering with both and adding the squares makes the result independent of
+    the signal's unknown phase.
+  source: >-
+    Allen et al., FINDCHIRP, Phys. Rev. D 85, 122006 (2012), [arXiv:gr-qc/0509116](https://arxiv.org/abs/gr-qc/0509116).
+
+- id: chi-squared-test
+  term: χ² test
+  also: [chi-squared test, χ² glitch test]
+  group: Searching for signals
+  short: >-
+    A check that a candidate's SNR is spread over frequency bands the way a
+    real chirp's would be. A glitch puts its SNR in a few bands and fails.
+  source: >-
+    Allen, Phys. Rev. D 71, 062001 (2005), [arXiv:gr-qc/0405045](https://arxiv.org/abs/gr-qc/0405045).
+
+- id: newsnr
+  term: χ²-reweighted SNR
+  also: [χ²-reweighted SNR², newSNR, reweighted SNR]
+  group: Searching for signals
+  short: >-
+    The SNR lowered according to how badly a candidate fails the χ² test;
+    the ranking statistic of PyCBC searches.
+  source: >-
+    Babak et al., Phys. Rev. D 87, 024033 (2013), [arXiv:1208.3491](https://arxiv.org/abs/1208.3491).
+
+- id: signal-consistency
+  term: signal-consistency test
+  also: [signal-consistency tests, signal-consistency vetoes, consistency tests, glitch veto]
+  group: Searching for signals
+  short: >-
+    Any check that a candidate looks like a real signal and not a glitch,
+    such as the χ² test.
+  source: >-
+    Allen, Phys. Rev. D 71, 062001 (2005), [arXiv:gr-qc/0405045](https://arxiv.org/abs/gr-qc/0405045).
+
+- id: search-pipeline
+  term: search pipeline
+  also: [search pipelines, matched-filter searches, matched-filter pipelines, production searches]
+  group: Searching for signals
+  short: >-
+    The full software chain that scans detector data for signals and assigns
+    each candidate a significance.
+  source: >-
+    Usman et al., Class. Quantum Grav. 33, 215004 (2016), [arXiv:1508.02357](https://arxiv.org/abs/1508.02357).
+
+- id: mbta
+  term: MBTA
+  case: true
+  group: Searching for signals
+  short: >-
+    Multi-Band Template Analysis, a matched-filter search pipeline used by
+    LIGO–Virgo–KAGRA in O3.
+  source: >-
+    Aubin et al., Class. Quantum Grav. 38, 095004 (2021), [arXiv:2012.11512](https://arxiv.org/abs/2012.11512).
+
+- id: pycbc
+  term: PyCBC
+  case: true
+  group: Searching for signals
+  short: >-
+    A matched-filter search pipeline and software library used by LIGO–Virgo–KAGRA.
+  source: >-
+    Usman et al., Class. Quantum Grav. 33, 215004 (2016), [arXiv:1508.02357](https://arxiv.org/abs/1508.02357).
+
+- id: gstlal
+  term: GstLAL
+  case: true
+  group: Searching for signals
+  short: >-
+    A matched-filter search pipeline used by LIGO–Virgo–KAGRA.
+  source: >-
+    Messick et al., Phys. Rev. D 95, 042001 (2017), [arXiv:1604.04324](https://arxiv.org/abs/1604.04324).
+
+- id: findchirp
+  term: FINDCHIRP
+  case: true
+  group: Searching for signals
+  short: >-
+    The standard algorithm for matched filtering of inspiral signals.
+  source: >-
+    Allen et al., Phys. Rev. D 85, 122006 (2012), [arXiv:gr-qc/0509116](https://arxiv.org/abs/gr-qc/0509116).
+
+- id: aframe
+  term: aframe
+  also: [AFRAME, Aframe]
+  group: Searching for signals
+  short: >-
+    A machine-learning search pipeline for compact binaries from the ML4GW
+    group; a neural network scores whitened strain continuously. We use its
+    code base and its sensitive-volume tools.
+  source: >-
+    Marx et al., Phys. Rev. D 111, 042010 (2025),
+    [arXiv:2403.18661](https://arxiv.org/abs/2403.18661); its binary neutron
+    star version: Gupta et al. (2026),
+    [arXiv:2607.01372](https://arxiv.org/abs/2607.01372).
+
+- id: ml4gw-group
+  term: ML4GW
+  case: true
+  group: Searching for signals
+  short: >-
+    Machine Learning for Gravitational Waves, a group building
+    machine-learning tools and pipelines for LIGO, including aframe and ml4gw.
+  source: >-
+    Marx et al., Phys. Rev. D 111, 042010 (2025), [arXiv:2403.18661](https://arxiv.org/abs/2403.18661).
+
+- id: dingo
+  term: DINGO
+  also: [DINGO-BNS]
+  case: true
+  group: Searching for signals
+  short: >-
+    Neural networks that give the full posterior of a source's parameters in
+    seconds. DINGO-BNS is its binary neutron star version.
+  source: >-
+    Dax et al., Phys. Rev. Lett. 127, 241103 (2021),
+    [arXiv:2106.12594](https://arxiv.org/abs/2106.12594); Dax et al., Nature
+    639, 49 (2025), [arXiv:2407.09602](https://arxiv.org/abs/2407.09602).
+
+- id: heterodyne
+  term: heterodyning
+  also: [heterodyne, heterodyned, heterodynes, Heterodyne, Heterodyning, dechirping, dechirped]
+  group: Searching for signals
+  short: >-
+    Multiplying the data by the conjugate of the expected chirp phase for an
+    assumed chirp mass. If the guess is close, the chirp becomes a slowly
+    varying signal that is much easier to process.
+  source: >-
+    Dax et al., Nature 639, 49 (2025),
+    [arXiv:2407.09602](https://arxiv.org/abs/2407.09602); Gupta et al. (2026),
+    [arXiv:2607.01372](https://arxiv.org/abs/2607.01372); the related relative
+    binning: Zackay, Dai and Venumadhav (2018),
+    [arXiv:1806.08792](https://arxiv.org/abs/1806.08792).
+
+- id: search-trigger
+  term: search trigger
+  also: [triggers]
+  group: Searching for signals
+  short: >-
+    A candidate event flagged by a search pipeline, with rough parameters such
+    as the chirp mass of the template that found it.
+  source: >-
+    Usman et al., Class. Quantum Grav. 33, 215004 (2016), [arXiv:1508.02357](https://arxiv.org/abs/1508.02357).
+
+- id: detection-statistic
+  term: detection statistic
+  also: [ranking statistic, detection score]
+  group: Searching for signals
+  short: >-
+    The single number a search assigns to each stretch of data; higher means
+    more signal-like. How often pure noise reaches a value sets its
+    false-alarm rate.
+  source: >-
+    Usman et al., Class. Quantum Grav. 33, 215004 (2016), [arXiv:1508.02357](https://arxiv.org/abs/1508.02357).
+
+- id: far
+  term: false-alarm rate
+  also: [false alarm rate, False-alarm rate, FAR]
+  case: true
+  group: Searching for signals
+  short: >-
+    How often pure noise produces a score at least as high as a candidate's,
+    per year of data, measured on background with time slides.
+  source: >-
+    Was et al., Class. Quantum Grav. 27, 015005 (2010), [arXiv:0906.2120](https://arxiv.org/abs/0906.2120).
+
+- id: sensitive-volume
+  term: sensitive volume
+  also: [sensitive-volume, Sensitive volume]
+  group: Searching for signals
+  short: >-
+    The volume of space within which a search detects a given population of
+    sources at a chosen false-alarm rate: the population-averaged detection
+    probability times volume. Larger is better.
+  source: >-
+    Tiwari, Class. Quantum Grav. 35, 145009 (2018),
+    [arXiv:1712.00482](https://arxiv.org/abs/1712.00482); our tools: Marx et
+    al., Phys. Rev. D 111, 042010 (2025),
+    [arXiv:2403.18661](https://arxiv.org/abs/2403.18661).
+
+- id: threshold
+  term: detection threshold
+  also: [threshold]
+  group: Searching for signals
+  short: >-
+    The score or SNR above which a candidate counts as a detection.
+  source: >-
+    Schutz, Class. Quantum Grav. 28, 125023 (2011), [arXiv:1102.5421](https://arxiv.org/abs/1102.5421).
+
+- id: look-elsewhere
+  term: look-elsewhere effect
+  also: [Look-elsewhere]
+  group: Searching for signals
+  short: >-
+    Searching over many templates and times raises the largest score found in
+    pure noise, so a statistic must be compared with noise searched the same
+    way.
+  source: >-
+    Gross and Vitells, Eur. Phys. J. C 70, 525 (2010), [arXiv:1005.1891](https://arxiv.org/abs/1005.1891).
+
+- id: boxcar
+  term: boxcar
+  also: [time integration]
+  group: Searching for signals
+  short: >-
+    Averaging a score over a sliding window of fixed length before applying a
+    threshold.
+  source: >-
+    Marx et al., Phys. Rev. D 111, 042010 (2025), [arXiv:2403.18661](https://arxiv.org/abs/2403.18661).
+
+# --- Signal processing ----------------------------------------------------------
+
+- id: convolution
+  term: convolution
+  also: [convolutions, convolve, convolves, convolved]
+  group: Signal processing
+  short: >-
+    Sliding a filter along the data and, at each position, summing the
+    products: y(t) = Σ_ℓ k(ℓ) x(t − ℓ).
+  source: >-
+    Oppenheim and Willsky, *Signals and Systems*, 2nd ed. (1997), chapter 2.
+
+- id: kernel
+  term: kernel
+  also: [kernels]
+  group: Signal processing
+  short: >-
+    The filter in a convolution: the list of weights k(ℓ) applied to the input
+    at each delay ℓ.
+  source: >-
+    Oppenheim and Willsky, *Signals and Systems*, 2nd ed. (1997), chapter 2.
+
+- id: lag
+  term: lag
+  also: [lags]
+  group: Signal processing
+  short: >-
+    How far back in time an input sample lies from the output time; the ℓ in a
+    convolution.
+  source: >-
+    Oppenheim and Willsky, *Signals and Systems*, 2nd ed. (1997), chapter 2.
+
+- id: lti
+  term: linear time-invariant
+  also: [linear and time-invariant, linear time-invariant systems]
+  group: Signal processing
+  short: >-
+    A system whose response to a sum is the sum of responses, and whose
+    response to a delayed input is the same response delayed. Every such
+    system is a convolution.
+  source: >-
+    Oppenheim and Willsky, *Signals and Systems*, 2nd ed. (1997), chapter 2.
+
+- id: fourier-transform
+  term: Fourier transform
+  also: [FFT, fast Fourier transform, inverse FFT, Fourier transforms]
+  group: Signal processing
+  short: >-
+    Writing a signal as a sum of sinusoids of different frequencies. The fast
+    Fourier transform (FFT) computes it in N log N steps. A convolution becomes
+    a multiplication after a Fourier transform.
+  source: >-
+    Oppenheim and Willsky, *Signals and Systems*, 2nd ed. (1997), section 4.4.
+
+- id: dft
+  term: DFT
+  case: true
+  group: Signal processing
+  short: >-
+    The discrete Fourier transform, here computed directly for a few frequencies instead of with the FFT.
+  source: >-
+    Oppenheim and Schafer, *Discrete-Time Signal Processing*, 3rd ed. (2010).
+
+- id: frequency-bin
+  term: frequency bin
+  also: [frequency bins]
+  group: Signal processing
+  short: >-
+    One frequency of a discrete Fourier transform; bins are spaced by 1/(duration), 0.25 Hz for 4 s.
+  source: >-
+    Oppenheim and Schafer, *Discrete-Time Signal Processing*, 3rd ed. (2010).
+
+- id: magnitude-spectrum
+  term: magnitude spectrum
+  also: [log magnitude spectrum, log-spectrum, log magnitude]
+  group: Signal processing
+  short: >-
+    The size of each Fourier component of a signal, ignoring its phase.
+  source: >-
+    Oppenheim and Schafer, *Discrete-Time Signal Processing*, 3rd ed. (2010).
+
+- id: spectrogram
+  term: spectrogram
+  also: [spectrograms]
+  group: Signal processing
+  short: >-
+    A picture of a signal's frequency content over time, made from the Fourier transforms of short successive pieces.
+  source: >-
+    Oppenheim and Schafer, *Discrete-Time Signal Processing*, 3rd ed. (2010).
+
+- id: analytic-signal
+  term: analytic signal
+  also: [analytic signals, Analytic signals]
+  group: Signal processing
+  short: >-
+    A complex signal with only positive frequencies. Its real and imaginary
+    parts are a cosine-like and sine-like pair of equal energy, so its
+    magnitude does not depend on the phase.
+  source: >-
+    Oppenheim and Schafer, *Discrete-Time Signal Processing*, 3rd ed. (2010), chapter on discrete Hilbert transforms.
+
+- id: hilbert-transform
+  term: Hilbert transform
+  also: [Hilbert transforms]
+  group: Signal processing
+  short: >-
+    The operation that shifts every frequency component of a signal by 90°, turning cosines into sines.
+  source: >-
+    Oppenheim and Schafer, *Discrete-Time Signal Processing*, 3rd ed. (2010).
+
+- id: filter-energy
+  term: peak energy
+  also: [energy 2|y|²]
+  group: Signal processing
+  short: >-
+    On our pages, the energy of a complex filter's output is 2|y|², the sum of
+    the squared cosine and sine responses; its maximum over time is the peak
+    energy. For a unit-norm filter it equals the SNR² of the signal it matches.
+  source: >-
+    Derived on the [derivations page](/projects/bns/derivations/#peak-energy).
+
+- id: coherent
+  term: coherent addition
+  also: [coherently, integrate weak evidence coherently]
+  group: Signal processing
+  short: >-
+    Adding samples whose phases agree, so the signal part of the sum grows like
+    the number of samples N while the noise part grows only like √N.
+  source: >-
+    Creighton and Anderson, *Gravitational-Wave Physics and Astronomy* (2011), chapter 7.
+
+- id: svd
+  term: singular-value decomposition
+  also: [SVD]
+  group: Signal processing
+  short: >-
+    Factoring a matrix into orthogonal patterns ordered by importance. Applied
+    to a template bank, it finds a few basis filters that reproduce all the
+    templates.
+  source: >-
+    Cannon et al., Phys. Rev. D 82, 044025 (2010), [arXiv:1005.0012](https://arxiv.org/abs/1005.0012).
+
+- id: pole
+  term: pole
+  also: [poles, complex poles]
+  group: Signal processing
+  short: >-
+    In a sum of damped tones, the complex number z = e^(Δt A) that sets one
+    tone's frequency (its angle) and decay (its size). A pole with |z| < 1 is
+    stable: the tone fades.
+  source: >-
+    Oppenheim and Schafer, *Discrete-Time Signal Processing*, 3rd ed. (2010).
+
+- id: matrix-pencil
+  term: matrix-pencil method
+  group: Signal processing
+  short: >-
+    A standard method for fitting a signal as a sum of damped complex exponentials.
+  source: >-
+    Hua and Sarkar, IEEE Trans. ASSP 38, 814 (1990).
+
+- id: taper
+  term: taper
+  group: Signal processing
+  short: >-
+    Bringing a signal's ends smoothly to zero, to avoid the sharp edges that spread power across frequencies.
+  source: >-
+    Harris, Proc. IEEE 66, 51 (1978).
+
+- id: iq
+  term: I and Q
+  case: true
+  group: Signal processing
+  short: >-
+    In-phase and quadrature: the two channels of a radio receiver, the cosine
+    and sine parts of a signal relative to a reference frequency.
+  source: >-
+    Oppenheim and Schafer, *Discrete-Time Signal Processing*, 3rd ed. (2010).
+
+# --- Statistics -----------------------------------------------------------------
+
+- id: prior
+  term: the prior
+  also: [a prior, broad prior, chirp-mass prior, prior chirp mass, Mass prior]
+  group: Statistics
+  short: >-
+    The probability distribution of a parameter before seeing the data. Here,
+    the range of chirp masses in the simulated population; an estimator that
+    learns nothing returns its middle.
+  source: >-
+    Thrane and Talbot, Publ. Astron. Soc. Aust. 36, e010 (2019), [arXiv:1809.02293](https://arxiv.org/abs/1809.02293).
+
+- id: posterior
+  term: posterior
+  also: [posteriors, Posterior]
+  group: Statistics
+  short: >-
+    The probability distribution of a parameter after seeing the data: prior
+    times likelihood, normalized.
+  source: >-
+    Thrane and Talbot, Publ. Astron. Soc. Aust. 36, e010 (2019), [arXiv:1809.02293](https://arxiv.org/abs/1809.02293).
+
+- id: likelihood
+  term: likelihood
+  group: Statistics
+  short: >-
+    The probability of the observed data given parameter values, read as a function of the parameters.
+  source: >-
+    Thrane and Talbot, Publ. Astron. Soc. Aust. 36, e010 (2019), [arXiv:1809.02293](https://arxiv.org/abs/1809.02293).
+
+- id: parameter-estimation
+  term: parameter estimation
+  also: [Parameter Estimation, Bayesian parameter estimation]
+  group: Statistics
+  short: >-
+    Inferring a source's parameters (masses, spins, distance, sky position) as a
+    posterior distribution, usually by stochastic sampling of the likelihood.
+  source: >-
+    Veitch et al., Phys. Rev. D 91, 042003 (2015),
+    [arXiv:1409.7215](https://arxiv.org/abs/1409.7215); Ashton et al.,
+    Astrophys. J. Suppl. 241, 27 (2019),
+    [arXiv:1811.02042](https://arxiv.org/abs/1811.02042).
+
+- id: stochastic-sampling
+  term: stochastic sampling
+  group: Statistics
+  short: >-
+    Drawing random samples from a posterior, for example by Markov chain Monte Carlo; accurate but slow.
+  source: >-
+    Ashton et al., Astrophys. J. Suppl. 241, 27 (2019), [arXiv:1811.02042](https://arxiv.org/abs/1811.02042).
+
+- id: normalizing-flow
+  term: normalizing flow
+  also: [normalizing flows]
+  group: Statistics
+  short: >-
+    A neural network that represents a probability distribution as an
+    invertible transformation of a simple one, so it can be sampled and
+    evaluated exactly.
+  source: >-
+    Papamakarios et al., J. Mach. Learn. Res. 22(57), 1 (2021), [arXiv:1912.02762](https://arxiv.org/abs/1912.02762).
+
+- id: neural-posterior-estimation
+  term: neural posterior estimation
+  also: [Neural Posterior Estimation]
+  group: Statistics
+  short: >-
+    Training a network, often a normalizing flow, on simulations so that it outputs the posterior directly.
+  source: >-
+    Dax et al., Phys. Rev. Lett. 127, 241103 (2021), [arXiv:2106.12594](https://arxiv.org/abs/2106.12594).
+
+- id: amortized-inference
+  term: amortized inference
+  group: Statistics
+  short: >-
+    Paying the cost once, in training, so that each new event is analysed by a single fast network evaluation.
+  source: >-
+    Cranmer, Brehmer and Louppe, PNAS 117, 30055 (2020), [arXiv:1911.01429](https://arxiv.org/abs/1911.01429).
+
+- id: cramer-rao
+  term: Cramér–Rao bound
+  also: [Cramér–Rao estimate]
+  group: Statistics
+  short: >-
+    The smallest variance any unbiased estimator can reach: the inverse of the
+    Fisher information. Real errors reach it only at high SNR.
+  source: >-
+    Vallisneri, Phys. Rev. D 77, 042001 (2008),
+    [arXiv:gr-qc/0703086](https://arxiv.org/abs/gr-qc/0703086); Cutler and
+    Flanagan, Phys. Rev. D 49, 2658 (1994),
+    [arXiv:gr-qc/9402014](https://arxiv.org/abs/gr-qc/9402014).
+
+- id: fisher-matrix
+  term: Fisher matrix
+  also: [Fisher information]
+  group: Statistics
+  short: >-
+    The expected curvature of the log-likelihood around the true parameters.
+    Its inverse approximates the parameters' covariance at high SNR.
+  source: >-
+    Vallisneri, Phys. Rev. D 77, 042001 (2008), [arXiv:gr-qc/0703086](https://arxiv.org/abs/gr-qc/0703086).
+
+- id: z-score
+  term: z-score
+  also: [z-scores]
+  group: Statistics
+  short: >-
+    (estimate − true value) / σ for one event. If the predicted σ are right,
+    z-scores have mean 0 and standard deviation 1; that is necessary but not
+    sufficient for calibration.
+  source: >-
+    Kuleshov, Fenner and Ermon, ICML 2018, [arXiv:1807.00263](https://arxiv.org/abs/1807.00263).
+
+- id: calibration
+  term: calibrated
+  also: [calibration, well calibrated]
+  group: Statistics
+  short: >-
+    A predicted uncertainty is calibrated if errors of that size occur at the
+    predicted rate, for example 68% of events within ±1σ.
+  source: >-
+    Kuleshov, Fenner and Ermon, ICML 2018,
+    [arXiv:1807.00263](https://arxiv.org/abs/1807.00263); see the
+    [derivations page](/projects/bns/derivations/#calibration).
+
+- id: roc
+  term: ROC curve
+  also: [ROC curves, ROC]
+  case: true
+  group: Statistics
+  short: >-
+    Receiver operating characteristic: the fraction of signals found against
+    the fraction of noise falsely flagged, as the threshold varies.
+  source: >-
+    Fawcett, Pattern Recognition Letters 27, 861 (2006).
+
+- id: auc
+  term: AUC
+  also: [AUROC]
+  case: true
+  group: Statistics
+  short: >-
+    The area under the ROC curve: 1 for perfect separation of signal from
+    noise, 0.5 for chance. It equals the probability that a random signal
+    scores higher than a random noise sample.
+  source: >-
+    Fawcett, Pattern Recognition Letters 27, 861 (2006).
+
+- id: false-positive-rate
+  term: false-positive rate
+  also: [false-positive rates]
+  group: Statistics
+  short: >-
+    The fraction of noise-only inputs that a test wrongly flags as signal.
+  source: >-
+    Fawcett, Pattern Recognition Letters 27, 861 (2006).
+
+# --- Machine learning -----------------------------------------------------------
+
+- id: neural-network
+  term: neural network
+  also: [neural networks]
+  group: Machine learning
+  short: >-
+    A function built from layers of simple operations (weighted sums followed
+    by fixed nonlinear functions), whose weights are fitted to data.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: parameters
+  term: learned numbers
+  also: [trainable parameters]
+  group: Machine learning
+  short: >-
+    The weights of a network that training adjusts. "Parameters" on our pages
+    means these, unless it means the physical parameters of a source.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: regression
+  term: regression
+  also: [regressor, regressors, regressed, regresses, regress]
+  group: Machine learning
+  short: >-
+    Training a network to output a number, here the chirp mass, rather than a class.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: classifier
+  term: classifier
+  also: [classifiers]
+  group: Machine learning
+  short: >-
+    A network trained to output the probability of each of several classes, for example signal or noise.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: loss
+  term: loss
+  also: [the loss, loss function, denoiser loss, validation loss, losses]
+  only_also: true
+  group: Machine learning
+  short: >-
+    The number training tries to make small; it measures how wrong the network's outputs are.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: gradient
+  term: gradient
+  also: [gradients]
+  group: Machine learning
+  short: >-
+    The derivative of the loss with respect to each weight. Training moves the
+    weights a small step against it.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: epoch
+  term: epoch
+  also: [epochs]
+  group: Machine learning
+  short: >-
+    One pass of training over a fixed number of batches. In our recent runs an
+    epoch is 1,564 batches of 32 windows (50,048 windows), with signals
+    injected fresh each time.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: batch
+  term: batch
+  also: [batches, batch size]
+  group: Machine learning
+  short: >-
+    A group of examples processed together in one training step.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: training-step
+  term: training step
+  also: [optimizer step, optimizer steps]
+  group: Machine learning
+  short: >-
+    One update of the weights from one batch.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: validation
+  term: validation
+  also: [validation set, validates, validated]
+  group: Machine learning
+  short: >-
+    Measuring a network during training on data it does not train on, to
+    follow its progress and pick a checkpoint. Our validation uses O3a noise.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: test-set
+  term: test set
+  also: [test sets, standard test, test population]
+  group: Machine learning
+  short: >-
+    Data kept apart from training and validation, used once at the end. Our
+    standard test uses O3b noise and three SNR populations.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: checkpoint
+  term: checkpoint
+  also: [checkpoints]
+  group: Machine learning
+  short: >-
+    The saved weights of a network at one epoch.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: learning-rate
+  term: learning rate
+  also: [learning-rate schedule, learning rates]
+  group: Machine learning
+  short: >-
+    The size of the step training takes against the gradient. A schedule
+    changes it during training.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: warm-restart-cosine
+  term: warm-restart cosine schedule
+  also: [warm restarts, cosine schedule]
+  group: Machine learning
+  short: >-
+    A learning-rate schedule that falls along a cosine curve and then jumps
+    back up, with each cycle longer than the last.
+  source: >-
+    Loshchilov and Hutter, ICLR 2017, [arXiv:1608.03983](https://arxiv.org/abs/1608.03983).
+
+- id: reduce-on-plateau
+  term: reduce-on-plateau schedule
+  also: [reduce on plateau]
+  group: Machine learning
+  short: >-
+    A learning-rate schedule that lowers the rate when a monitored validation number stops improving.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: adamw
+  term: AdamW
+  case: true
+  group: Machine learning
+  short: >-
+    The optimizer we use: Adam, which scales each weight's step by running averages of its gradient, with weight decay applied separately.
+  source: >-
+    Loshchilov and Hutter, ICLR 2019, [arXiv:1711.05101](https://arxiv.org/abs/1711.05101).
+
+- id: overfitting
+  term: overfitting
+  group: Machine learning
+  short: >-
+    Fitting the particular training examples instead of the pattern behind them, so performance on new data gets worse.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: regularization
+  term: regularization
+  also: [regularize, Regularize]
+  group: Machine learning
+  short: >-
+    Any addition to training that discourages overly complex solutions, for example a penalty on large or rough weights.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: initialization
+  term: initialization
+  also: [Initialization]
+  group: Machine learning
+  short: >-
+    The weights a network starts from before training.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: fine-tuning
+  term: fine-tuning
+  also: [fine-tune, fine-tuned, Fine-tuning]
+  group: Machine learning
+  short: >-
+    Continuing to train an already trained network on different data.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: pretraining
+  term: pretraining
+  also: [pretrained, pre-training]
+  group: Machine learning
+  short: >-
+    Training a network first on one task or data set, before fine-tuning it on another.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: transfer-learning
+  term: transfer learning
+  group: Machine learning
+  short: >-
+    Reusing what a network learned on one task to help on another, usually by pretraining and fine-tuning.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: curriculum
+  term: curriculum
+  also: [SNR curriculum]
+  group: Machine learning
+  short: >-
+    Training on easy examples first and harder ones later; here, loud signals first and quieter ones later.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: inference
+  term: inference time
+  group: Machine learning
+  short: >-
+    When a trained network is used on new data, as opposed to training time.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: forward-pass
+  term: forward pass
+  group: Machine learning
+  short: >-
+    One evaluation of a network on its input, from input to output.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: hidden-layer
+  term: hidden layer
+  also: [hidden layers, hidden unit, hidden units]
+  group: Machine learning
+  short: >-
+    A layer between a network's input and its output; its values are hidden units.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: channel
+  term: channel
+  also: [channels]
+  group: Machine learning
+  short: >-
+    One of the parallel signals inside a network layer. A layer with 256
+    channels carries 256 time series side by side.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: activations
+  term: activations
+  group: Machine learning
+  short: >-
+    The values a network computes inside its layers for a given input; training keeps them in memory to compute gradients.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: head
+  term: linear head
+  also: [MLP head, read-out, readout]
+  group: Machine learning
+  short: >-
+    The last layer or layers of a network, which turn its features into the outputs.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: pooling
+  term: pooling
+  also: [mean pooling, max pooling, mean pool, max pool, pooling layer]
+  group: Machine learning
+  short: >-
+    Reducing a time series to one number per channel, by its mean (mean
+    pooling) or its maximum (max pooling) over time.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016), chapter 9.
+
+- id: standardization
+  term: standardize
+  also: [standardized, Standardizing, standardization]
+  group: Machine learning
+  short: >-
+    Subtracting the mean and dividing by the standard deviation, so the numbers
+    have mean 0 and spread 1.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: softmax
+  term: softmax
+  group: Machine learning
+  short: >-
+    Turning a list of scores sⱼ into probabilities pⱼ = e^(sⱼ) / Σₖ e^(sₖ),
+    positive and summing to 1.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016), section 6.2.
+
+- id: logits
+  term: logits
+  also: [logit]
+  group: Machine learning
+  short: >-
+    The raw scores a network outputs before a softmax turns them into probabilities.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016), section 6.2.
+
+- id: softplus
+  term: softplus
+  group: Machine learning
+  short: >-
+    The function log(1 + eˣ), a smooth version of max(0, x); used to keep a predicted variance positive.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016), section 6.2.
+
+- id: cross-entropy
+  term: cross-entropy
+  also: [Cross-entropy]
+  group: Machine learning
+  short: >-
+    The loss −Σⱼ qⱼ log pⱼ between a target distribution q and the predicted
+    probabilities p; smallest when p equals q.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016), section 6.2.
+
+- id: soft-target
+  term: soft target
+  group: Machine learning
+  short: >-
+    A target distribution spread over several classes, here a narrow bump around the true chirp mass, instead of a single class.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: gaussian-nll
+  term: Gaussian likelihood
+  also: [Gaussian negative log-likelihood, Gaussian NLL]
+  group: Machine learning
+  short: >-
+    A loss for a network that outputs a mean μ and a variance σ²:
+    ½ [log σ² + (y − μ)² / σ²]. It rewards being right and being honest about
+    the error.
+  source: >-
+    Nix and Weigend, Proc. IEEE ICNN 1994, vol. 1, 55.
+
+- id: beta-nll
+  term: β-weighted Gaussian likelihood
+  also: [β-NLL, beta-NLL]
+  group: Machine learning
+  short: >-
+    The Gaussian likelihood loss multiplied by σ^(2β), with no gradient through
+    that factor; it keeps the mean from being neglected where σ is large. We
+    use β = 0.3.
+  source: >-
+    Seitzer et al., ICLR 2022, [arXiv:2203.09168](https://arxiv.org/abs/2203.09168).
+
+- id: mean-square-loss
+  term: mean-square loss
+  also: [squared-error loss, mean squared error]
+  group: Machine learning
+  short: >-
+    The average of (prediction − target)²; it is minimized by predicting the average target given the input.
+  source: >-
+    Bishop, *Pattern Recognition and Machine Learning* (2006), section 1.5.5.
+
+- id: cnn
+  term: CNN
+  also: [CNNs, convolutional neural network, convolutional neural networks]
+  case: true
+  group: Machine learning
+  short: >-
+    A convolutional neural network: layers of short learned convolutions with nonlinear functions between them.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016), chapter 9.
+
+- id: resnet
+  term: ResNet
+  also: [ResNet14, ResNet34]
+  case: true
+  group: Machine learning
+  short: >-
+    A convolutional network whose layers add their input to their output (residual connections), which lets it be very deep. aframe uses one.
+  source: >-
+    He et al., CVPR 2016, [arXiv:1512.03385](https://arxiv.org/abs/1512.03385).
+
+- id: mlp
+  term: MLP
+  case: true
+  group: Machine learning
+  short: >-
+    Multilayer perceptron: a few fully connected layers with nonlinear functions between them.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016), chapter 6.
+
+- id: gelu
+  term: GELU
+  case: true
+  group: Machine learning
+  short: >-
+    A smooth version of "keep positive values, set negative ones to zero", applied after each S4D layer.
+  source: >-
+    Hendrycks and Gimpel (2016), [arXiv:1606.08415](https://arxiv.org/abs/1606.08415).
+
+- id: group-norm
+  term: group norm
+  also: [Group norm, GroupNorm, group normalization]
+  group: Machine learning
+  short: >-
+    Rescaling a layer's values to mean 0 and spread 1 within groups of channels, for each example separately.
+  source: >-
+    Wu and He, ECCV 2018, [arXiv:1803.08494](https://arxiv.org/abs/1803.08494).
+
+- id: layer-norm
+  term: layer norm
+  also: [layer normalization]
+  group: Machine learning
+  short: >-
+    Rescaling a layer's values to mean 0 and spread 1 across all its channels, for each example separately.
+  source: >-
+    Ba, Kiros and Hinton (2016), [arXiv:1607.06450](https://arxiv.org/abs/1607.06450).
+
+- id: film
+  term: FiLM
+  case: true
+  group: Machine learning
+  short: >-
+    Feature-wise linear modulation: conditioning a network on extra inputs by letting them scale and shift each channel.
+  source: >-
+    Perez et al., AAAI 2018, [arXiv:1709.07871](https://arxiv.org/abs/1709.07871).
+
+- id: conditioning
+  term: conditioned on
+  also: [conditions on, conditioning]
+  group: Machine learning
+  short: >-
+    Giving a network extra information as input, such as the true parameters or a rough chirp mass.
+  source: >-
+    Perez et al., AAAI 2018, [arXiv:1709.07871](https://arxiv.org/abs/1709.07871).
+
+- id: attention
+  term: attention
+  also: [attention-based, transformer, transformers, Transformers]
+  group: Machine learning
+  short: >-
+    A layer in which every output position takes a weighted average over all
+    input positions; its cost grows with the square of the sequence length.
+    Transformers are built from it.
+  source: >-
+    Vaswani et al., NIPS 2017, [arXiv:1706.03762](https://arxiv.org/abs/1706.03762).
+
+- id: receptive-field
+  term: receptive field
+  group: Machine learning
+  short: >-
+    The stretch of input that can influence one output value of a network.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016), chapter 9.
+
+- id: encoder
+  term: encoder
+  also: [encoders]
+  group: Machine learning
+  short: >-
+    The part of a network that turns the raw input into internal features.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: recurrent-network
+  term: recurrent network
+  also: [recurrent networks, recurrent neural network, RNN]
+  group: Machine learning
+  short: >-
+    A network that reads a sequence one step at a time, keeping a memory (state) that it updates at each step.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016), chapter 10.
+
+- id: diffusion
+  term: diffusion
+  also: [diffusion model]
+  group: Machine learning
+  short: >-
+    A generative network that learns to turn noise into realistic samples, here a possible prior over clean waveforms.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016), chapter 20.
+
+- id: gpu
+  term: GPU
+  also: [GPUs, GPU memory, H200, A100]
+  case: true
+  group: Machine learning
+  short: >-
+    Graphics processing unit: the processor networks are trained on. H200 and A100 are NVIDIA models.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016), chapter 12.
+
+- id: cuda
+  term: CUDA
+  case: true
+  group: Machine learning
+  short: >-
+    NVIDIA's programming platform for GPUs; some layers need code compiled for it.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016), chapter 12.
+
+- id: wandb
+  term: Weights and Biases
+  also: [wandb]
+  group: Machine learning
+  short: >-
+    A web service that records training runs and their metrics; our live-runs page reads from it.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+- id: data-loader
+  term: data loader
+  also: [loader, background loader]
+  group: Machine learning
+  short: >-
+    The part of the training code that reads and assembles the examples for each batch.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016).
+
+# --- State-space models ---------------------------------------------------------
+
+- id: state-space-model
+  term: state space model
+  also: [state space models, state-space model, state-space models, state space layer, state-space layer, SSM, SSMs]
+  group: State-space models
+  short: >-
+    A layer that keeps a small internal state x and updates it with each input
+    sample, x' = A x + B u, reading out y = C x. When A, B, C are fixed it is
+    a long convolution.
+  source: >-
+    Gu, Goel and Ré, ICLR 2022, [arXiv:2111.00396](https://arxiv.org/abs/2111.00396).
+
+- id: s4
+  term: S4
+  case: true
+  group: State-space models
+  short: >-
+    Structured State Spaces, the state space layer that made long sequences practical by computing its kernel quickly.
+  source: >-
+    Gu, Goel and Ré, ICLR 2022, [arXiv:2111.00396](https://arxiv.org/abs/2111.00396).
+
+- id: s4d
+  term: S4D
+  case: true
+  group: State-space models
+  short: >-
+    The diagonal version of S4. Each channel's kernel is a sum of damped tones;
+    our networks stack S4D layers.
+  source: >-
+    Gu, Gupta, Goel and Ré, NeurIPS 2022, [arXiv:2206.11893](https://arxiv.org/abs/2206.11893).
+
+- id: tone
+  term: tone
+  also: [tones, damped tone, damped tones]
+  group: State-space models
+  short: >-
+    A sine wave at one fixed frequency. A damped tone also fades, by the same
+    factor every sample. An S4D kernel is a sum of damped tones, each with its
+    own frequency and fading time.
+  source: >-
+    Gu, Gupta, Goel and Ré, NeurIPS 2022,
+    [arXiv:2206.11893](https://arxiv.org/abs/2206.11893), section 3; formulas
+    on the [derivations page](/projects/bns/derivations/#s4d-tones).
+
+- id: state-size
+  term: state size
+  also: [d_state]
+  group: State-space models
+  short: >-
+    The number of state values per channel of an S4D layer; a channel with
+    state size N has N/2 tones.
+  source: >-
+    Gu, Gupta, Goel and Ré, NeurIPS 2022, [arXiv:2206.11893](https://arxiv.org/abs/2206.11893).
+
+- id: hidden-state
+  term: hidden state
+  group: State-space models
+  short: >-
+    The internal numbers a state space layer keeps as its memory of the input so far.
+  source: >-
+    Gu, Goel and Ré, ICLR 2022, [arXiv:2111.00396](https://arxiv.org/abs/2111.00396).
+
+- id: step-size
+  term: step size
+  also: [timestep, Δt, dt]
+  group: State-space models
+  short: >-
+    How much of the tones' own time passes between two samples. It scales all
+    of a channel's frequencies and fading rates together.
+  source: >-
+    Gu, Gupta, Goel and Ré, NeurIPS 2022,
+    [arXiv:2206.11893](https://arxiv.org/abs/2206.11893); see the
+    [derivations page](/projects/bns/derivations/#s4d-tones).
+
+- id: s4d-lin
+  term: S4D-Lin
+  case: true
+  group: State-space models
+  short: >-
+    The standard starting values for S4D: tone n starts with decay ½ and
+    frequency πn, one random step size per channel.
+  source: >-
+    Gu, Gupta, Goel and Ré, NeurIPS 2022,
+    [arXiv:2206.11893](https://arxiv.org/abs/2206.11893), Listing 1:
+    "A = -0.5 + 1j * np.pi * np.arange(N//2) # S4D-Lin initialization".
+
+- id: s4d-size
+  term: S4D 256 × 256 × 4
+  also: [256 × 256 × 4, 64 × 32 × 4, S4D 64 × 32 × 4, 256 × 32 × 4, 128/6, 128/4, 64/4]
+  group: State-space models
+  short: >-
+    Our shorthand for an S4D network's size: channels × state size × layers,
+    or channels/layers. 256 × 256 × 4 is 256 channels, state size 256, 4 layers.
+  source: >-
+    Our notation.
+
+- id: s5
+  term: S5
+  case: true
+  group: State-space models
+  short: >-
+    A state space layer with one shared multi-input, multi-output state, computed by a parallel scan.
+  source: >-
+    Smith, Warrington and Linderman, ICLR 2023, [arXiv:2208.04933](https://arxiv.org/abs/2208.04933).
+
+- id: lru
+  term: LRU
+  case: true
+  group: State-space models
+  short: >-
+    Linear recurrent unit: a recurrent layer with a fixed diagonal complex state update, close to S4D.
+  source: >-
+    Orvieto et al., ICML 2023, [arXiv:2303.06349](https://arxiv.org/abs/2303.06349).
+
+- id: linoss
+  term: LinOSS
+  case: true
+  group: State-space models
+  short: >-
+    State space layers built from driven harmonic oscillators, each with a fixed
+    learned frequency.
+  source: >-
+    Rusch and Rus, ICLR 2025, [arXiv:2410.03943](https://arxiv.org/abs/2410.03943).
+
+- id: mamba
+  term: Mamba
+  also: [Mamba-1, Mamba-2, Mamba-3]
+  case: true
+  group: State-space models
+  short: >-
+    State space layers whose step size and input and output weights change at
+    every sample with the input ("selective"), so their dynamics follow the
+    data.
+  source: >-
+    Gu and Dao (2023), [arXiv:2312.00752](https://arxiv.org/abs/2312.00752);
+    Dao and Gu, ICML 2024, [arXiv:2405.21060](https://arxiv.org/abs/2405.21060);
+    Lahoti et al., ICLR 2026, [arXiv:2603.15569](https://arxiv.org/abs/2603.15569).
+
+- id: selective
+  term: selective
+  also: [selectivity]
+  group: State-space models
+  short: >-
+    Of a state space layer, having coefficients that depend on the current input.
+  source: >-
+    Gu and Dao (2023), [arXiv:2312.00752](https://arxiv.org/abs/2312.00752).
+
+- id: scan
+  term: selective scan
+  also: [its scan]
+  group: State-space models
+  short: >-
+    Computing a recurrence over a whole sequence in parallel on a GPU, used when a layer is not a fixed convolution.
+  source: >-
+    Gu and Dao (2023), [arXiv:2312.00752](https://arxiv.org/abs/2312.00752).
+
+- id: long-convolution
+  term: long convolution
+  also: [long convolutions, long-convolution layer, long kernel, long kernels]
+  group: State-space models
+  short: >-
+    A convolution whose kernel is as long as the input, here 4 s.
+  source: >-
+    Fu et al., ICML 2023, [arXiv:2302.06646](https://arxiv.org/abs/2302.06646).
+
+# --- This project ---------------------------------------------------------------
+
+- id: denoiser
+  term: denoiser
+  also: [denoising, denoised, Denoising]
+  group: This project
+  short: >-
+    A network trained to output the clean injected waveform from noisy whitened strain.
+  source: >-
+    Our method; see the update of [8 September](/projects/bns/updates/2026-09-08-denoiser-loss/).
+
+- id: den-reg
+  term: den-reg
+  also: [joint denoiser and regressor, joint model]
+  group: This project
+  short: >-
+    Our joint denoiser and regressor: an S4D denoiser followed by an S4D
+    chirp-mass regressor, trained together.
+  source: >-
+    Our method; see the update of [29 September](/projects/bns/updates/2026-09-29-den-reg-and-project-8/).
+
+- id: shape-amplitude-terms
+  term: shape and amplitude terms
+  also: [shape term, amplitude term]
+  group: This project
+  short: >-
+    Two terms in the denoiser's loss: one rewards the right shape (the overlap
+    with the true waveform, whatever the size), one pins the output's size to
+    the true size.
+  source: >-
+    Our method; see the update of [9 October](/projects/bns/updates/2026-10-09-shape-and-amplitude-terms/).
+
+- id: gain
+  term: least-squares gain
+  also: [realized gain]
+  group: This project
+  short: >-
+    The ratio of the denoised output's size to the true waveform's size.
+  source: >-
+    Our measurement; see the update of [8 September](/projects/bns/updates/2026-09-08-denoiser-loss/).
+
+- id: within-percent
+  term: within 1%
+  also: [within 2%, within 5%, within 10%]
+  group: This project
+  short: >-
+    The fraction of events whose estimated chirp mass is within 1% (or 2, 5,
+    10%) of the true one; our main accuracy measure.
+  source: >-
+    Our measure.
+
+- id: reference-events
+  term: reference events
+  also: [reference event]
+  group: This project
+  short: >-
+    A fixed set of events plotted the same way for every run, so runs can be compared by eye.
+  source: >-
+    Our method; see the [live runs](/projects/bns/live/) page.
+
+- id: free-kernel
+  term: free kernels
+  also: [free kernel, free-kernel, learned long kernels, Learned long kernels]
+  group: This project
+  short: >-
+    Convolution kernels as long as the window whose every value is learned,
+    with no formula behind them; one layer of them, with energy and a maximum
+    over time, is our free-kernel network.
+  source: >-
+    Our method; see the [free-kernel page](/projects/bns/free-kernel/).
+
+- id: chirp-kernel
+  term: chirp kernels
+  also: [chirp kernel, chirp-kernel]
+  group: This project
+  short: >-
+    Kernels that are physical chirps with a learned chirp mass each, instead of sums of damped tones.
+  source: >-
+    Our method; see the update of [7 October](/projects/bns/updates/2026-10-07-chirp-kernels/).
+
+- id: band-init
+  term: band init
+  also: [band initialization]
+  group: This project
+  short: >-
+    Starting an S4D layer with every tone inside 20 to 512 Hz and lasting 4 s,
+    instead of the standard S4D-Lin start.
+  source: >-
+    Our method; see the [brainstorm page](/projects/bns/brainstorm/) and the [derivations page](/projects/bns/derivations/#s4d-tones).
+
+- id: oracle
+  term: oracle
+  group: This project
+  short: >-
+    A test that gives the network information the real problem never provides,
+    such as the true parameters or the noise-free signal, to see what is
+    possible at best.
+  source: >-
+    Our usage.
+
+- id: arm
+  term: arms
+  also: [arm]
+  group: This project
+  short: >-
+    The runs of one comparison that differ in a single setting, each called an arm.
+  source: >-
+    Our usage.
+
+- id: sharp-core
+  term: sharp core
+  group: This project
+  short: >-
+    The subset of events, picked by the network's own small predicted
+    uncertainty, whose errors are much smaller than the overall spread.
+  source: >-
+    Our usage; see the update of [29 September](/projects/bns/updates/2026-09-29-den-reg-and-project-8/).
+
+- id: recipe
+  term: Project 8 recipe
+  also: [recipe]
+  group: This project
+  short: >-
+    Training settings taken from the Project 8 work: each signal shown several
+    times per epoch with fresh noise, a larger model, and both chirp mass and
+    mass ratio as targets.
+  source: >-
+    Our usage; see the update of [1 October](/projects/bns/updates/2026-10-01-recipe-on-bns/).
+
+# --- Project 8 ------------------------------------------------------------------
+
+- id: project-8
+  term: Project 8
+  group: Project 8
+  short: >-
+    An experiment that aims to measure the neutrino mass from the energies of
+    single electrons in tritium decay, read from their cyclotron radiation.
+  source: >-
+    Ashtari Esfahani et al., Phys. Rev. Lett. 131, 102502 (2023),
+    [arXiv:2212.05048](https://arxiv.org/abs/2212.05048).
+
+- id: cres
+  term: CRES
+  also: [cyclotron radiation]
+  case: true
+  group: Project 8
+  short: >-
+    Cyclotron radiation emission spectroscopy: measuring an electron's energy
+    from the frequency of the radiation it emits while circling in a magnetic
+    field.
+  source: >-
+    Monreal and Formaggio, Phys. Rev. D 80, 051301(R) (2009),
+    [arXiv:0904.2860](https://arxiv.org/abs/0904.2860); Asner et al., Phys.
+    Rev. Lett. 114, 162501 (2015),
+    [arXiv:1408.5362](https://arxiv.org/abs/1408.5362).
+
+- id: carrier
+  term: carrier frequency
+  also: [carrier]
+  group: Project 8
+  short: >-
+    The main frequency of the electron's radiation, set by its energy and the magnetic field.
+  source: >-
+    Asner et al., Phys. Rev. Lett. 114, 162501 (2015), [arXiv:1408.5362](https://arxiv.org/abs/1408.5362).
+
+- id: sideband
+  term: sidebands
+  also: [sideband, axial sidebands]
+  group: Project 8
+  short: >-
+    Weaker frequencies on either side of the carrier, caused by the electron's motion back and forth along the trap.
+  source: >-
+    Ashtari Esfahani et al., J. Phys. G 44, 054004 (2017), [arXiv:1703.02037](https://arxiv.org/abs/1703.02037).
+
+- id: pitch-angle
+  term: pitch angle
+  group: Project 8
+  short: >-
+    The angle between the electron's velocity and the magnetic field; it sets how far the electron travels along the trap.
+  source: >-
+    Ashtari Esfahani et al., J. Phys. G 44, 054004 (2017), [arXiv:1703.02037](https://arxiv.org/abs/1703.02037).
+
+- id: zero-order-hold
+  term: zero-order hold
+  group: Signal processing
+  short: >-
+    Turning a continuous-time system into a per-sample one by assuming the
+    input stays constant between samples.
+  source: >-
+    Oppenheim and Schafer, *Discrete-Time Signal Processing*, 3rd ed. (2010);
+    used for S4D in Gu et al. 2022, [arXiv:2206.11893](https://arxiv.org/abs/2206.11893).
+
+- id: parseval
+  term: Parseval's theorem
+  also: [Parseval]
+  case: true
+  group: Signal processing
+  short: >-
+    A signal's total energy is the same whether summed over time or over its
+    Fourier components.
+  source: Oppenheim and Schafer, *Discrete-Time Signal Processing*, 3rd ed. (2010).
+
+- id: hankel-matrix
+  term: Hankel matrix
+  also: [Hankel]
+  case: true
+  group: Signal processing
+  short: >-
+    A matrix whose entry (i, j) depends only on i + j. Built from a kernel, its
+    rank is the smallest number of states that can generate that kernel.
+  source: Kailath, *Linear Systems* (1980).
+
+- id: stationary-phase
+  term: stationary phase
+  also: [stationary-phase approximation]
+  group: Signal processing
+  short: >-
+    An approximation for the Fourier transform of a slowly changing
+    oscillation: each frequency is dominated by the moment the signal passes
+    through it.
+  source: Cutler and Flanagan, Phys. Rev. D 49, 2658 (1994), [arXiv:gr-qc/9402014](https://arxiv.org/abs/gr-qc/9402014).
+
+- id: aliasing
+  term: aliasing
+  also: [aliases, aliased]
+  group: Signal processing
+  short: >-
+    A frequency above the Nyquist frequency appearing, after sampling, as a
+    lower frequency.
+  source: Oppenheim and Schafer, *Discrete-Time Signal Processing*, 3rd ed. (2010).
+
+- id: last-stable-orbit
+  term: last stable orbit
+  also: [innermost stable circular orbit, ISCO]
+  group: Gravitational waves
+  short: >-
+    The smallest circular orbit that is stable in general relativity; the
+    inspiral ends near it and the merger begins. Its frequency depends on the
+    total mass.
+  source: Maggiore, *Gravitational Waves*, Vol. 1 (2008), chapter 4.
+
+- id: data-processing-inequality
+  term: data-processing inequality
+  group: Statistics
+  short: >-
+    No processing of data can increase the information it holds about a
+    parameter: for any function g, I(θ; g(x)) ≤ I(θ; x). A denoiser cannot add
+    information.
+  source: Cover and Thomas, *Elements of Information Theory*, 2nd ed. (2006), section 2.8.
+
+- id: binomial-sd
+  term: binomial standard deviation
+  group: Statistics
+  short: >-
+    The scatter of a measured fraction p from n events by chance alone,
+    √(p(1 − p)/n).
+  source: Bishop, *Pattern Recognition and Machine Learning* (2006), section 2.1.
+
+- id: uniform-in-volume
+  term: uniform in volume
+  also: [uniformly in space, uniform in space, spread uniformly in space]
+  group: Gravitational waves
+  short: >-
+    Sources spread with constant density through space. Their SNRs then have
+    density ∝ SNR⁻⁴; the fraction louder than a given SNR falls as SNR⁻³.
+  source: >-
+    Schutz, Class. Quantum Grav. 28, 125023 (2011),
+    [arXiv:1102.5421](https://arxiv.org/abs/1102.5421); see the
+    [derivations page](/projects/bns/derivations/#snr-population).
+
+- id: leading-order
+  term: leading order
+  also: [leading-order, Newtonian order]
+  group: Gravitational waves
+  short: >-
+    The first, Newtonian, term of the post-Newtonian expansion; at this order
+    the chirp depends on the masses only through the chirp mass.
+  source: Maggiore, *Gravitational Waves*, Vol. 1 (2008), chapter 4.
+
+- id: cyclotron-frequency
+  term: cyclotron frequency
+  group: Project 8
+  short: >-
+    The frequency at which a charged particle circles in a magnetic field,
+    f = eB/(2πγm); for an electron it falls as its energy rises.
+  source: Monreal and Formaggio, Phys. Rev. D 80, 051301(R) (2009), [arXiv:0904.2860](https://arxiv.org/abs/0904.2860).
+
+- id: axial-frequency
+  term: axial frequency
+  also: [axial motion]
+  group: Project 8
+  short: >-
+    The frequency of the electron's back-and-forth motion along the trap;
+    it modulates the carrier and creates the sidebands.
+  source: Ashtari Esfahani et al., J. Phys. G 44, 054004 (2017), [arXiv:1703.02037](https://arxiv.org/abs/1703.02037).

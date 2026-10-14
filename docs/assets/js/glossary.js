@@ -21,8 +21,8 @@
   function link(root, terms, base) {
     var forms = [];
     terms.forEach(function (t) {
-      [t.n].concat(t.a || []).forEach(function (form) {
-        forms.push({ id: t.id, re: new RegExp("(^|[^\\w-])(" + escapeRe(form) + ")(?![\\w-])", t.c ? "" : "i"), len: form.length });
+      (t.o ? [] : [t.n]).concat(t.a || []).forEach(function (form) {
+        forms.push({ id: t.id, re: new RegExp("(^|[^\\w-])(" + escapeRe(form).replace(/ /g, "\\s+") + ")(?![\\w-])", t.c ? "" : "i"), len: form.length });
       });
     });
     var byId = {};
@@ -34,18 +34,25 @@
     nodes.forEach(function (node) {
       if (skipped(node, root)) return;
       var text = node.nodeValue;
-      while (text) {
+      var pos = 0;
+      while (pos < text.length) {
+        // earliest match among all terms, longest at the same start; a span
+        // that belongs to an already linked term is passed over, not split
         var best = null;
+        var rest = text.slice(pos);
         forms.forEach(function (f) {
-          if (done[f.id]) return;
-          var m = f.re.exec(text);
+          var m = f.re.exec(rest);
           if (!m) return;
-          var start = m.index + m[1].length;
-          if (!best || start < best.start || (start === best.start && f.len > best.len)) {
+          var start = pos + m.index + m[1].length;
+          if (!best || start < best.start || (start === best.start && m[2].length > best.len)) {
             best = { id: f.id, start: start, len: m[2].length };
           }
         });
         if (!best) break;
+        if (done[best.id]) {
+          pos = best.start + best.len;
+          continue;
+        }
         done[best.id] = true;
         var after = node.splitText(best.start);
         node = after.splitText(best.len);
@@ -56,6 +63,7 @@
         a.textContent = after.nodeValue;
         after.parentNode.replaceChild(a, after);
         text = node.nodeValue;
+        pos = 0;
       }
     });
     return byId;

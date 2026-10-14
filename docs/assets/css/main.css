@@ -26,6 +26,9 @@
   --accent-wash: #e8eef7;
   --on-accent:   #ffffff;
 
+  --warn:        #b42318;
+  --warn-wash:   #fef3f2;
+
   /* the wash that covers artwork on hover */
   --wash: rgba(11, 30, 58, .9);
 
@@ -615,3 +618,16 @@ ul, ol { margin: 0; }
 .glossary dt .glossary__also { font-weight: 400; color: var(--ink-3); font-size: .92em; }
 .glossary dd { margin: .35rem 0 0 0; }
 .glossary .glossary__source { color: var(--ink-2); font-size: .92em; margin-top: .35rem; }
+
+/* --- Notices --------------------------------------------------------------- */
+.notice {
+  margin: 0 0 2rem;
+  padding: .9rem 1.1rem;
+  border: 2px solid var(--warn);
+  border-radius: var(--r);
+  background: var(--warn-wash);
+  color: var(--ink);
+}
+.notice p { margin: 0 0 .6rem; }
+.notice p:last-child { margin-bottom: 0; }
+.notice .notice__title { font-weight: 600; color: var(--warn); }

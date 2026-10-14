@@ -5,18 +5,24 @@ summary: >-
   Three networks regress chirp mass from the clean whitened signal, with no
   detector noise at all. One layer of learned 4 s kernels reaches 99.7% of
   validation events within 1%; a plain four-layer S4D with mean pooling
-  reaches 54% at about a million parameters and 33% at 51 thousand. On the
+  reaches 54% at 1.06 million parameters and 33% at 51 thousand. On the
   easiest version of the task, the plain S4D is the weaker learner.
 ---
 
 {%- assign u = '/projects/bns/updates/' -%}
 
+{% include notice-snr-powerlaw.html %}
+
 ## Why this test
 
 Without noise, chirp mass can be read from the waveform locally: from its
-frequency and how fast the frequency rises. This test asks whether an
-architecture can learn the map from waveform to chirp mass at all,
-separately from whether it can pull a weak signal out of noise.
+frequency and how fast the frequency rises. To leading order the rate of
+rise depends only on the frequency and the chirp mass (Maggiore 2008,
+*Gravitational Waves*, Vol. 1, chapter 4;
+[derivation]({{ '/projects/bns/derivations/' | relative_url }}#late-chirp-rate)).
+This test asks whether an architecture can learn the map from waveform to
+chirp mass at all, separately from whether it can pull a weak signal out of
+noise.
 
 ## The three runs
 
@@ -24,7 +30,8 @@ Common to all three: the input is the whitened injected waveform alone,
 scaled to an SNR drawn from a power law with index −3 from SNR 4 (the same
 for validation), two detectors at 2048 Hz with no downsampling, 4 s windows,
 50,000 windows per epoch. Each network outputs a mean and a variance for
-chirp mass, trained with a β-weighted Gaussian likelihood (β = 0.3).
+chirp mass, trained with a β-weighted Gaussian likelihood (β = 0.3; Seitzer
+et al. 2022, [arXiv:2203.09168](https://arxiv.org/abs/2203.09168)).
 
 <div markdown="1">
 
@@ -55,8 +62,10 @@ The learning rate first followed a reduce-on-plateau schedule on the
 validation loss. That loss rises as the predicted variance shrinks, so the
 schedule cut the rate while accuracy was still improving
 ([derivation]({{ '/projects/bns/derivations/' | relative_url }}#beta-nll)). The runs were
-resumed from their checkpoints on the warm-restart cosine schedule (S4D
-256 × 256 × 4 from epoch 22, the other two from epoch 42).
+resumed from their checkpoints on the warm-restart cosine schedule
+(Loshchilov and Hutter 2017,
+[arXiv:1608.03983](https://arxiv.org/abs/1608.03983); S4D 256 × 256 × 4
+from epoch 22, the other two from epoch 42).
 
 ## Validation
 
@@ -107,8 +116,10 @@ the root-mean-square error is σ ([derivation]({{ '/projects/bns/derivations/' |
 The free kernels' σ matches their errors (0.80). The RMS ratio, 1.16, is
 above 1 also when every σ is right but σ varies between events, so the mean
 \|error\| ratio is the cleaner test ([derivation]({{ '/projects/bns/derivations/' | relative_url }}#calibration)). Their σ
-is 5.3 and 7.9 times smaller than the two S4D networks'. The large S4D's σ is about a quarter too small; the small S4D's is
-about half its actual error, and the gap widened during training. These are
+is 5.3 and 7.9 times smaller than the two S4D networks'. For a Gaussian
+error, the mean \|error\| implies σ = mean \|error\| / 0.798. The large
+S4D's predicted σ is 0.745 of that, a quarter too small; the small S4D's is
+0.503 of it, half, and the gap widened during training. These are
 averages over all validation events; a per-event check of σ needs the test
 set.
 
@@ -116,7 +127,8 @@ set.
 
 A plain S4D (default initialization, mean over time) learns chirp mass from
 the clean signal worse than one layer of free kernels. 256 × 256 × 4 is
-already a large S4D; a bigger one would be too large a model for this task.
+already a large S4D; in my judgment a bigger one would be too large a model
+for this task.
 
 Running now, to separate the readout from the kernel: the small S4D with a
 maximum over time instead of the mean, the same with a complex last layer

@@ -12,11 +12,17 @@ summary: >-
 
 {%- assign u = '/projects/bns/updates/' -%}
 
+{% include notice-snr-powerlaw.html %}
+
 This follows the [chirp-kernel proposal]({{ u | append: '2026-10-07-chirp-kernels/' | relative_url }})
 and the [matched-filter benchmark]({{ u | append: '2026-10-07-matched-filter-benchmark/' | relative_url }}).
 Throughout, "within 2%" means the predicted chirp mass is within 2% of the
-true one, and validation uses the realistic population: SNR following a
-power law with index −3 from SNR 4.
+true one, and validation draws SNR with probability density proportional to
+SNR⁻³ from 4 to 100. That falls more slowly than the SNR⁻⁴ of sources spread
+uniformly in volume (Schutz 2011,
+[arXiv:1102.5421](https://arxiv.org/abs/1102.5421)), so it has relatively
+more loud events; 75.1% of its events are below SNR 8
+([derivation]({{ '/projects/bns/derivations/' | relative_url }}#snr-population)).
 
 ## The result so far
 
@@ -24,7 +30,7 @@ power law with index −3 from SNR 4.
    src="/assets/img/bns/2026-10-08/ck_training.png"
    alt="Validation fraction within 1 and 2 percent in chirp mass against epoch, at SNR 8 to 12 and over all events, with the matched filter and the previous network as reference lines"
    label="Validation during training (snapshot at epoch 24 of 200)"
-   caption="Left: events at SNR 8 to 12. Right: all validation events, most of which are below SNR 8. Each epoch validates on about 500 signal windows, only about 100 of them at SNR 8 to 12, so the curves are noisy. Snapshot at epoch 24; training continues." %}
+   caption="Left: events at SNR 8 to 12. Right: all validation events, 75.1% of which are below SNR 8. Each epoch validates on 512 windows, 96% of them with a signal; on average 68 are at SNR 8 to 12 (binomial standard deviation 7.7), so the curves are noisy. Snapshot at epoch 24; training continues." %}
 
 <div markdown="1">
 
@@ -36,9 +42,14 @@ power law with index −3 from SNR 4.
 
 </div>
 
-At SNR 8 to 12, the band that decides how far a search can see, the
-network is now at matched-filter accuracy. Before any training, the same
-layer already reaches 87% (section 3); training adds the rest.
+At SNR 8 to 12 the network's validation accuracy is now close to the
+matched filter's. The full test in section 4 puts it at most 3.1 points
+below the matched filter from SNR 10 up, and 8 to 13 points below at SNR 8
+to 10. This band decides most of how far a search can see: for sources
+spread uniformly in volume, 70% of the events above SNR 8 are below SNR 12
+([derivation]({{ '/projects/bns/derivations/' | relative_url }}#snr-population)).
+Before any training, the same layer already reaches 87% (test 3 below);
+training adds the rest.
 
 ## 1. The tests that led here
 
@@ -50,28 +61,35 @@ Every test below was scored on the same SNR 8 to 12 events.
    label="What each test reached"
    caption="Chirp mass within 2% at SNR 8 to 12. Grey: tests that failed. Light blue: our previous best network. Dark blue: chirp kernels choosing the highest-energy kernel, with no training. Green: the matched filter." %}
 
-1. **An S4D layer with an energy and a maximum (A, B, C).** All three
-   learned nothing: each predicted the average chirp mass. With one layer,
-   each kernel is still a sum of 32 tones, which cannot form a chirp (the
-   proposal, section 4), so adding an energy and a maximum could not help.
+1. **An S4D layer with an energy and a maximum (A, B, C).** In 3,000
+   training steps all three learned nothing: each predicted the average
+   chirp mass. With one layer, each kernel is still a sum of 32 tones (the
+   proposal, section 4). In the fits we tried later, 32 tones keep at most
+   25 to 33% of the matched-filter SNR of a whitened BNS chirp
+   ([12 October]({{ u | append: '2026-10-12-template-bank-network/' | relative_url }}#why-the-s4d-could-not-do-this)),
+   so the energy and the maximum had little to work with.
 2. **Chirp kernels with a regression read-out.** A small network mapping
-   the kernels' energies to a single chirp mass reached 5 to 7%, with 32 or
-   with 256 kernels. More kernels did not help, so coverage was not the
-   problem.
-3. **The kernels on their own, no training.** On noise-free signals, the
-   best of 512 Newtonian kernels matches the real waveform at 0.80 and its
-   chirp mass is within 2% of the truth for every event. On noisy windows,
-   just picking the kernel with the highest energy gives **87%** within 2% at
-   SNR 8 to 12. The information was in the layer all along; the regression
-   read-out was throwing it away. A regression with a squared-error loss is
-   pulled toward the average whenever it is unsure, and "pick the best
-   kernel" is not a smooth function it learns easily.
+   the kernels' energies to a single chirp mass reached 4 to 8% (SNR 8 to 10
+   and 10 to 12, power law from 4 and from 8), with 32 or with 256 kernels.
+   More kernels did not help, so coverage was not the problem.
+3. **The kernels on their own, no training.** On 300 noise-free signals,
+   the best of 512 Newtonian kernels matches the real waveform with a median
+   match of 0.80 (10 to 90%: 0.75 to 0.86), and its chirp mass is within 2%
+   of the truth for all 300. On noisy windows, just picking the kernel with
+   the highest energy gives **87%** within 2% at SNR 8 to 12. The information
+   was in the layer all along; the regression read-out was throwing it away.
+   A regression trained with squared error learns the average of the chirp
+   masses that fit its input (Goodfellow, Bengio and Courville 2016, *Deep
+   Learning*, section 6.2.1.2), so when the energies do not single out one
+   chirp mass it answers in between, and "pick the best kernel" is not a
+   smooth function it learns easily.
 4. **A softmax read-out, scored by its weighted mean.** Better, but the
    weighted mean blurs the answer whenever the probability is spread over
    distant kernels.
 5. **A softmax read-out, scored by its most probable kernel.** This is the
-   model below. It starts at the 87% of test 3 and trains up to the
-   matched filter's level.
+   model below. It starts at the 87% of test 3 and trains up to 94 to 97%
+   in validation (epochs 19 to 24), against the matched filter's 96 to 99%
+   on the benchmark.
 
 ## 2. The architecture
 
@@ -97,16 +115,21 @@ K^{(s)}_j(\ell) = \mathcal{A}(\tau_\ell)\sin\Phi(\tau_\ell;\mathcal{M}_j), \qqua
 $$
 
 with $$\Phi(\tau;\mathcal{M}) = -2\,(\tau c^3/5G\mathcal{M})^{5/8}$$ the
-chirp phase and $$\mathcal{A}(\tau) \propto \tau^{-1/4}$$ its amplitude,
+chirp phase and $$\mathcal{A}(\tau) \propto \tau^{-1/4}$$ its amplitude, both
+at leading (Newtonian) order (Maggiore 2008, *Gravitational Waves*, Vol. 1,
+chapter 4;
+[derivation]({{ '/projects/bns/derivations/' | relative_url }}#oct7-chirp-kernels)),
 limited to 20 to 800 Hz with smooth edges. Each kernel is scaled to unit
 size. The 512 chirp masses start evenly spaced in $$\log\mathcal{M}$$ from
-0.85 to 2.75 $$M_\odot$$, about 0.2% apart, and are learned.
+0.85 to 2.75 $$M_\odot$$, 0.230% apart, and are learned. At the same time
+before merger a lighter system is at a higher frequency, and it sweeps
+through each frequency more slowly (same derivation).
 
 {% include figure.html
    src="/assets/img/bns/2026-10-08/ck_kernels.png"
    alt="Three chirp kernels at low, middle and high chirp mass over the last second before merger"
    label="Three of the 512 kernels"
-   caption="The cosine phase over the last second before merger. Lighter systems sweep more slowly and reach higher frequency." %}
+   caption="The cosine phase over the last second before merger. At the same time before merger, a lighter system is at a higher frequency." %}
 
 **Step 2: convolve.** Every detector's strain is convolved with every
 kernel, both phases, using the FFT. The output at time $$t$$ is the strain
@@ -117,7 +140,9 @@ z^{(c)}_{j,D}(t) = \sum_{\ell} K^{(c)}_j(\ell)\, x_D(t-\ell), \qquad z^{(s)}_{j,
 $$
 
 **Step 3: energy.** Square both phases, add them, and add the two
-detectors. This removes the signal's unknown phase:
+detectors. This removes the signal's unknown phase
+([derivation]({{ '/projects/bns/derivations/' | relative_url }}#peak-energy),
+for a pair of kernels in quadrature):
 
 $$
 e_j(t) = \sum_{D} \Big[ z^{(c)}_{j,D}(t)^2 + z^{(s)}_{j,D}(t)^2 \Big].
@@ -126,7 +151,9 @@ $$
 **Step 4: maximum over time.** $$E_j = \max_t e_j(t)$$ is kernel $$j$$'s
 best match anywhere in the window. This removes the unknown merger time.
 There is no average over time anywhere in the network: averaging an
-oscillating output cancels it.
+oscillating output cancels it. Over the 4 s window, a component at 20 Hz or
+above averages to at most 0.4% of its amplitude
+([derivation]({{ '/projects/bns/derivations/' | relative_url }}#oct7-time-average)).
 
 {% include figure.html
    src="/assets/img/bns/2026-10-08/ck_energy_map.png"
@@ -188,6 +215,12 @@ class ChirpKernels(nn.Module):
         return kc / norm, ks / norm  # each (J, length)
 ```
 
+`TSUN` is $$GM_\odot/c^3$$ with the IAU 2015 nominal solar mass parameter,
+$$1.3271244 \times 10^{20}$$ m³ s⁻² (Prša et al. 2016, AJ 152, 41,
+[arXiv:1605.09788](https://arxiv.org/abs/1605.09788)). The `phase` and `f`
+lines are the leading-order phase and frequency
+([derivation]({{ '/projects/bns/derivations/' | relative_url }}#oct7-chirp-kernels)).
+
 The network: convolution, energy, maximum, logits:
 
 ```python
@@ -227,7 +260,8 @@ estimate = log_k[logits.argmax(-1)].exp()
 ## 4. Test on 12,800 windows per population
 
 The epoch-38 checkpoint (the run's best by validation), tested with the standard test step: O3b
-background, half the windows with an injection, three SNR populations.
+background, half the windows with an injection, three SNR populations
+(density ∝ SNR⁻³ from 4 or from 8 up to 50, and uniform from 4 to 50).
 Chirp mass within 1 / 2 / 5 / 10%:
 
 <div markdown="1">
@@ -263,7 +297,7 @@ Chirp mass within 1 / 2 / 5 / 10%:
    src="/assets/img/bns/2026-10-08/test_ep38/snr4_powerlaw_frac_within.png"
    alt="Fraction of events within 1, 2, 5 and 10 percent in chirp mass against SNR, power law from SNR 4"
    label="Power law from SNR 4"
-   caption="The realistic population; most events are below SNR 8." %}
+   caption="Power law from SNR 4: 75.5% of events are below SNR 8." %}
 {% include figure.html
    src="/assets/img/bns/2026-10-08/test_ep38/snr4_powerlaw_pred_vs_true.png"
    alt="Predicted against true chirp mass, power law from SNR 4"
@@ -284,11 +318,13 @@ Chirp mass within 1 / 2 / 5 / 10%:
    caption="Predicted against true chirp mass: median and 1-sigma band." %}
 </div>
 
-From SNR 10 up, 96 to 100% of events are within 2%, matched-filter level, and
-88 to 95% within 1%. Against epoch 24, within 2% is unchanged and within 1%
-is a few points higher, most at SNR 25 to 50 (89 to 93% against 81 to 86%).
-At SNR 6 to 8, half the events are within 2%, against 8% for the previous
-network.
+From SNR 10 up, 96 to 100% of events are within 2%, at most 3.1 points
+below the matched filter on the same populations, and 88 to 95% within 1%.
+At SNR 8 to 10 the gap to the matched filter is 8 to 13 points. Against the
+epoch-24 checkpoint tested the same way, within 2% changes by at most 1.6
+points; within 1% moves by −0.6 to +4.0 points below SNR 25 and rises by 4
+to 8 points at SNR 25 to 50 (89 to 93% against 81 to 86%). At SNR 6 to 8,
+50 to 52% of events are within 2%, against 8% for the previous network.
 
 ## 5. What happened after epoch 38
 
@@ -308,8 +344,9 @@ Validation, 10-epoch running means:
 
 </div>
 
-It held its level to about epoch 60, then slid: within 1% at SNR 8 to 12
-dropped from about 85% to about 70%, while within 2% lost only a few points.
+It held its level to epoch 60, then slid: within 1% at SNR 8 to 12 dropped
+from 86% (epoch 60) to 67 to 71% (epochs 180 and 190), while within 2% went
+only from 92% to 87 to 89%.
 The fine precision is what went. It is not overfitting: every step draws
 fresh injections. Two learned quantities drifted away from "the
 highest-energy kernel wins":
@@ -325,10 +362,14 @@ highest-energy kernel wins":
 </div>
 
 - The kernels are free to move, and nothing keeps them evenly spaced. Gaps
-  of up to 2% opened, and an event in a gap has no kernel within 1%.
+  of up to 2.07% opened, and an event in the middle of such a gap is 1.03%
+  from the nearest kernel.
 - The scale on the bank's energies shrank 28 times, so the decision passed
-  to the learned correction W, a blurrier mapping. Cross-entropy against a
-  soft target rewards hedging when unsure, which pushes s down.
+  to the learned correction W, a blurrier mapping. Cross-entropy is lowest
+  when the predicted probabilities equal the target's (Goodfellow, Bengio and
+  Courville 2016, *Deep Learning*, section 3.13). Averaged over events whose
+  energies look alike but whose chirp masses differ, that is a spread-out
+  distribution, which a smaller s gives.
 
 So the useful checkpoint is an early one, and the next version freezes the
 kernels and keeps the bank's scale fixed. That version is training: frozen
@@ -337,9 +378,11 @@ maximum over time, added to the fixed-scale bank.
 
 ## 6. Caveats
 
-- **Small validation set.** About 100 events per epoch at SNR 8 to 12, so
-  the per-epoch numbers swing by several points. Section 4 uses 12,800
-  windows per population instead.
+- **Small validation set.** 68 events per epoch at SNR 8 to 12 on average,
+  so a fraction near 90% has a binomial standard deviation of 3.6 points
+  from epoch to epoch
+  ([derivation]({{ '/projects/bns/derivations/' | relative_url }}#oct7-val-count)).
+  Section 4 uses 12,800 windows per population instead.
 - **Close to a learned matched filter.** The kernels are physical chirps and
   the read-out picks the best one. What training adds is the placement of
   the kernels and the correction $$W$$; the network did not discover chirps

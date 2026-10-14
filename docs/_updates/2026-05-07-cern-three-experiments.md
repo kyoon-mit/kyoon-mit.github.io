@@ -12,6 +12,8 @@ talk:
     The first public account of the project, argued from simplicity: one small sequence model, strain in, physical parameters and their uncertainties out. It showed three experiments, all from the standalone codebase on uniformly distributed SNR.
 ---
 
+{% include notice-snr-powerlaw.html %}
+
 <p class="note"><strong>Read with care.</strong> These runs predate the move
 into aframe. Training and test SNR were drawn uniformly on 8 to 50, and the
 SNR calculation in this codebase was later found to be incorrect. The numbers
@@ -29,6 +31,12 @@ for what changed.</p>
   <div><dt>Mass prior</dt><dd>Uniform chirp mass<small>1 ≤ m₁, m₂ ≤ 2.5</small></dd></div>
   <div><dt>SNR</dt><dd>Uniform 8 to 50<small>power law −3 for one test</small></dd></div>
 </dl>
+
+The noise is public LIGO data from the third observing run, from the
+Gravitational Wave Open Science Center (LIGO, Virgo and KAGRA 2023,
+[arXiv:2302.03676](https://arxiv.org/abs/2302.03676)). IMRPhenomPv2 is a
+version of the precessing waveform model IMRPhenomP (Hannam et al. 2014,
+[arXiv:1308.3271](https://arxiv.org/abs/1308.3271)).
 
 ## 1. Chirp mass and uncertainty from the merger
 
@@ -54,7 +62,9 @@ the first sign that pre-merger regression is possible at all.
 
 With two detectors, the arrival-time difference fixes only the angle θ
 between the source direction and the detector baseline, so the sky position
-is a ring. A 70K-parameter model regressed a unit vector with a
+is a ring
+([derivation]({{ '/projects/bns/derivations/' | relative_url }}#proj-ring)).
+A 70K-parameter model regressed a unit vector with a
 cosine-similarity loss from 1 second of high-rate strain around the merger.
 Predicted cos θ followed the truth with a wide band, and collapsed to a flat
 guess on noise-only inputs. Three detectors and a pre-merger version were left
@@ -67,5 +77,7 @@ as future work.
    already separates signal from noise.
 3. Pre-merger regression and a two-detector sky ring both looked feasible.
 
-What was missing was a realistic population. That is where the next chapter
-starts.
+What was missing was a test population with most events near the detection
+threshold, as for real detections (Schutz 2011,
+[arXiv:1102.5421](https://arxiv.org/abs/1102.5421)). That is where the next
+chapter starts.

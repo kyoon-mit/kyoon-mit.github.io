@@ -4,12 +4,15 @@ date: 2026-10-09
 summary: >-
   Two otherwise identical joint denoiser and regressor runs, with and without
   the shape (overlap) and amplitude terms in the denoiser loss. With them, the
-  denoised waveform keeps its true size and shape, the overlap with the true
-  waveform triples, and the regressor reaches better chirp-mass accuracy in
-  half the epochs. This corrects my reading of 7 October.
+  denoised output's overlap with the true waveform rises from 0.06 to 0.19,
+  loud reference events are no longer shrunk, and the regressor reaches the
+  other run's chirp-mass accuracy in under half the epochs. This corrects my
+  reading of 7 October.
 ---
 
 {%- assign u = '/projects/bns/updates/' -%}
+
+{% include notice-snr-powerlaw.html %}
 
 ## The two runs
 
@@ -20,8 +23,9 @@ windows carrying a signal. They differ only in the denoiser loss:
 
 - **With:** the time and spectral mixture, plus a **shape term** (the
   overlap between the denoised and the true waveform, which ignores size)
-  at weight 5, and an **amplitude term** (which pins the denoised output's
-  size to the true one) at weight 3.
+  at weight 5, and an **amplitude term** (the squared logarithm of the ratio
+  of the denoised output's size to the true one, which is zero only when the
+  two are equal) at weight 3.
 - **Without:** the time and spectral mixture only.
 
 On [7 October]({{ u | append: '2026-10-07-why-denoising-does-not-detect/' | relative_url }})
@@ -33,32 +37,45 @@ as pure background by mistake. This is the matched comparison.
 
 {% include figure.html
    src="/assets/img/bns/2026-10-09/denoised_waveforms_ep340.png"
-   alt="Denoised waveforms at SNR 50, 20 and 4 for the two runs at epoch 340: without the terms the prediction is shrunk below the true waveform; with them it matches its size and spectrum"
+   alt="Denoised waveforms at SNR 50, 20 and 4 for the two runs at epoch 340: without the terms the prediction at SNR 50 and 20 is shrunk below the true waveform; with them it is close to its size and spectrum"
    label="Reference events at epoch 340"
-   caption="The same three reference events (SNR 50, 20, 4; detector H1) through both networks at epoch 340. Grey: noisy input; black: the true waveform; red: the denoiser's output. Left of each pair: time; right: spectrum. Without the terms (left), the output is a shrunken copy that sits well below the true waveform in both time and spectrum. With them (right), it matches the waveform's size and spectral shape, and still holds a recognizable chirp at SNR 20." %}
+   caption="The same three reference events (SNR 50, 20, 4; detector H1) through both networks at epoch 340. Grey: noisy input; black: the true waveform; red: the denoiser's output. Left of each pair: time; right: spectrum. Without the terms (left), at SNR 50 and 20 the output is a shrunken copy that sits well below the true waveform in both time and spectrum. With them (right), at SNR 50 and 20 it is close to the waveform's size and spectral shape, and still holds a recognizable chirp at SNR 20. At SNR 4 both outputs are larger than the faint true waveform." %}
 
-Without the shape and amplitude terms, the cheapest way for the denoiser to
-lower a time and spectral error at low SNR is to shrink its output: a small
-output can never be far wrong. The shape term rewards matching the
-waveform's form whatever its size, and the amplitude term forbids the
-shrinking.
+Without the shape and amplitude terms, the time-domain part of the loss, a
+mean squared error, favours a shrunken output: for an output whose shape
+has overlap ρ with the true waveform, the size that gives the smallest
+squared error is ρ times the true size
+([derivation]({{ '/projects/bns/derivations/' | relative_url }}#late-shrinkage)).
+The shape term rewards matching the waveform's form whatever its size, and
+the amplitude term is smallest at the true size, so shrinking now costs
+loss.
 
 {% include figure.html
    src="/assets/img/bns/2026-10-09/rho_amp_denoiser.png"
    alt="Validation overlap and gain against epoch for the two runs"
    label="The denoiser"
-   caption="Left: overlap of the denoised output with the true waveform, 0.19 with the terms against 0.06 without. Right: the ratio of output size to true size. 10-epoch running means." %}
+   caption="Left: overlap of the denoised output with the true waveform, 0.19 with the terms against 0.06 without. Right: the gain, the norm of the denoised output divided by the norm of the true waveform, averaged over validation events with a signal. 10-epoch running means." %}
+
+The gain is 1.5 in both runs (1.50 with the terms and 1.46 without at
+epoch 340). It is an average over the validation population, 75% of which
+is below SNR 8
+([derivation]({{ '/projects/bns/derivations/' | relative_url }}#late-snr-bands)),
+and at low SNR the output is larger than the faint true waveform (the SNR 4
+panels above). So the average gain is above 1 in both runs and does not
+show the shrinking of loud events; the overlap and the reference events do.
 
 ## The chirp mass
 
-The regressor reads the denoiser's output, so a cleaner, correctly sized
-waveform helps it:
+The regressor reads the denoiser's output, and it does better with the
+terms:
 
 {% include figure.html
    src="/assets/img/bns/2026-10-09/rho_amp_within.png"
    alt="Validation fraction of events within 1, 2, 5 and 10 percent in chirp mass against epoch for the two runs, on a shared scale"
    label="Validation chirp mass"
-   caption="Fraction of validation events within 1, 2, 5 and 10% of the true chirp mass, same scale in every panel, 10-epoch running means. The run with the terms reaches 20% within 2% by epoch 300; the run without is at 19% after 678 epochs." %}
+   caption="Fraction of validation events within 1, 2, 5 and 10% of the true chirp mass, same scale in every panel, 10-epoch running means. The run with the terms reaches 19.3% within 2% by epoch 300; the run without is at 18.5% at epoch 678." %}
+
+Single epochs:
 
 <div markdown="1">
 
@@ -71,11 +88,16 @@ waveform helps it:
 
 </div>
 
-At matched epochs the run with the terms is 4 to 5 points ahead within 2%,
-and it gets to the same accuracy in about half the epochs. Validation holds
-about 500 events per epoch, so single epochs are noisy; the running means
-and the gap at every epoch from 150 on make the difference clear. The run
-without the terms has been stopped.
+At epochs 200 and 300 the run with the terms is 4 to 5 points ahead within
+2% (1 point at epoch 100). Its 10-epoch mean within 2% first reaches 18.5%,
+the level of the other run at epoch 678, at epoch 228; the run without the
+terms gets there at epoch 478. Each validation epoch has 16 batches of 128
+windows, 96% of them with a signal (about 1,970 events), so a single
+epoch's fraction within 2% has a binomial spread of 0.9 points, and the
+difference between the two runs 1.2 points
+([derivation]({{ '/projects/bns/derivations/' | relative_url }}#late-binomial)).
+The run with the terms is ahead within 2% at all 191 epochs from 150 to
+340, by 3.5 points on average. The run without the terms has been stopped.
 
 ## Against the earlier runs
 
@@ -100,11 +122,12 @@ background, half the windows with an injection. Epoch 339 was tested on
 
 The same pattern in all three populations:
 
-- **Within 2% at SNR 8 to 16** improves by 11 to 14 points, the band that
-  sets how far a search can see.
-- **Within 1% above SNR 16** improves by 13 to 29 points. The 630-epoch run
-  topped out near 50% within 1% even on loud events; this run reaches
-  about 80%.
+- **Within 2% at SNR 8 to 16** improves by 11 to 14 points. If sources are
+  spread uniformly in volume, this band holds 87.5% of the events above a
+  detection threshold of SNR 8
+  ([derivation]({{ '/projects/bns/derivations/' | relative_url }}#late-snr-bands)).
+- **Within 1% above SNR 16** improves by 12 to 28 points. At SNR 25 to 50
+  the 630-epoch run puts 51 to 54% within 1%; this run puts 78 to 80%.
 - **Below SNR 8** almost nothing moves (1 to 4 points).
 
 <div class="plot-pair">

@@ -2,11 +2,14 @@
 title: Denoiser scans, conditioning and heterodyning
 date: 2026-09-23
 summary: >-
-  With the loss repaired, the denoiser reaches an overlap of about 0.8 with the
-  true merger waveform and about 0.9 before the merger. Handing it the true
+  With the loss repaired, the denoiser reaches an overlap of 0.797 with the
+  true merger waveform and 0.900 before the merger, on SNR drawn uniformly
+  from 4 to 100. Handing it the true
   parameters barely helps; heterodyning with the true chirp mass helps more,
   but presupposes it.
 ---
+
+{% include notice-snr-powerlaw.html %}
 
 Two weeks of scans on the 4-second merger window and a 16-second pre-merger
 window, all with the same S4D denoiser (64 wide, 4 layers) and the fixed
@@ -14,10 +17,17 @@ reference events. The figure of merit is the overlap **rho**, the normalized
 inner product between the denoised output and the true whitened waveform.
 
 <p class="note"><strong>Which population.</strong> Unless marked otherwise,
-these runs train and validate on SNR drawn uniformly from 4 to 100, so rho
-here is an average dominated by loud events. On the realistic power-law
-population the same kind of model reaches only about 0.18; see the
-<a href="{{ '/projects/bns/updates/2026-09-29-den-reg-and-project-8/' | relative_url }}">next update</a>.</p>
+these runs train and validate on SNR drawn uniformly from 4 to 100, so 83% of
+events are above SNR 20 and rho here is an average dominated by loud events.
+On a power-law population (SNR density ∝ SNR⁻³ from 4 to 100, which puts 75%
+of events below SNR 8; sources spread uniformly in volume give the steeper
+SNR⁻⁴, Schutz 2011,
+<a href="https://arxiv.org/abs/1102.5421">arXiv:1102.5421</a>;
+<a href="{{ '/projects/bns/derivations/' | relative_url }}#snr-population">derivation</a>),
+the joint model of the
+<a href="{{ '/projects/bns/updates/2026-09-29-den-reg-and-project-8/' | relative_url }}">next update</a>
+reaches a validation rho of only 0.18 (mean over epochs 900 to 1415; 0.20 at
+the epoch tested there).</p>
 
 ## The loss
 
@@ -43,7 +53,8 @@ log of the amplitude ratio. The spectral floor that worked best moved from
 | joint with a chirp-mass regressor | 0.779 | 1000 |
 
 Conditioning the denoiser on the **true** injection parameters through FiLM
-is an oracle the real problem never gets, and it moved rho by less than 0.01.
+is an oracle the real problem never gets, and it moved rho by less than 0.01
+(0.803 and 0.795 against 0.794).
 The joint denoiser and regressor put 71% of validation events within 2% of the
 true chirp mass, and 92% within 5%, on this uniform population.
 
@@ -63,12 +74,27 @@ true chirp mass, and 92% within 5%, on this uniform population.
 
 ## Heterodyning, and how much chirp mass it needs
 
-Heterodyning multiplies the strain by the conjugate of the Newtonian inspiral
-phase for a given chirp mass, so the network sees a slowly varying signal
-instead of a sweeping chirp. On the merger window it lifted rho from about 0.77
-to 0.86 at a comparable epoch. With a chirp-mass error of 0.1% it still reached
-0.873.
+Heterodyning multiplies the Fourier transform of the strain by the conjugate
+of the leading-order (Newtonian) inspiral phase for a given chirp mass, so the
+network sees a slowly varying signal instead of a sweeping chirp. DINGO-BNS
+(Dax et al. 2025, [arXiv:2407.09602](https://arxiv.org/abs/2407.09602)) and
+the AFRAME BNS search (Gupta et al. 2026,
+[arXiv:2607.01372](https://arxiv.org/abs/2607.01372)) use the same operation;
+relative binning (Zackay et al. 2018,
+[arXiv:1806.08792](https://arxiv.org/abs/1806.08792)) rests on the related
+idea that a waveform divided by a nearby reference varies slowly with
+frequency. On the merger window it lifted rho from about 0.77 to 0.86 at a
+comparable epoch. With a Gaussian chirp-mass error of 0.1% (standard
+deviation) it still reached 0.873.
 
-The catch is the error budget. Our regressors' chirp-mass errors are around 3%
-even where they work, more than an order of magnitude above that tolerance, and
-far larger at low SNR. So this works only with an oracle. Inference without heterodyning remains the real target.
+The catch is the error budget. To first order, a chirp-mass error δ leaves a
+residual phase of (5/8) · 2πN · δ across the window, where N is the number of
+cycles in it: for a 1.2 M☉ binary in the last 4 s, 2.0 rad at δ = 0.1% and
+40 rad at δ = 2%
+([derivation]({{ '/projects/bns/derivations/' | relative_url }}#sep-het-phase)).
+Even on this uniform population the joint model misses by more than 2%, 20
+times the 0.1% tested here, on 29% of validation events (71% within 2%, above),
+and below SNR 8 on more than 90% of events
+([next update]({{ '/projects/bns/updates/2026-09-29-den-reg-and-project-8/' | relative_url }})).
+So this works only with an oracle. Inference without heterodyning remains the
+real target.

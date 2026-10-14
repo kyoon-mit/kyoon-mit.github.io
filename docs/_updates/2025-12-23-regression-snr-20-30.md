@@ -49,7 +49,7 @@ tracks the injected one across the full test set.
 ## Fraction of events below an error cutoff, by SNR bin
 
 Binning by SNR separates two effects that an aggregate error figure conflates:
-intrinsic model bias, and the loss of accuracy at low SNR. Each bin reports the
+intrinsic model bias, and the drop in accuracy at low SNR. Each bin reports the
 fraction of events whose relative error falls below a given cutoff.
 
 <div class="plot-full">
