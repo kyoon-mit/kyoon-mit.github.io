@@ -42,6 +42,9 @@ chirp mass, trained with a β-weighted Gaussian likelihood (β = 0.3).
    label="The free-kernel network"
    caption="Signal-only version at 2048 Hz. Only the kernels and the linear head are learned. The kernels are stored as their spectrum in 20 to 1024 Hz and scaled to unit norm. On noisy data (13 October) the same network runs at 1024 Hz (4,096 taps per kernel) and its head has 235 outputs, one per chirp-mass bin, with a softmax." %}
 
+The network, its outputs and its parameters are described on the
+[free-kernel page]({{ '/projects/bns/free-kernel/' | relative_url }}).
+
 The free kernels, with four times the stored parameters of the large S4D,
 train about five times faster per step: 39 ms against 208 ms for a batch of
 32 (S4D 64 × 32 × 4: 28 ms). In the same 9.5 hours on a shared GPU the free
@@ -76,6 +79,35 @@ Mean of the last five validation epochs:
 The free kernels pass 99% within 1% by epoch 27 and stay there. The large
 S4D peaked at 77.8% within 1% at epoch 11 and then fell. The small S4D
 levelled off near 32%.
+
+## Uncertainty
+
+Each network also predicts σ, its own uncertainty on chirp mass. For a
+Gaussian error with the predicted σ, the mean absolute error is 0.80 σ and
+the root-mean-square error is σ. Mean of the last five validation epochs:
+
+<div markdown="1">
+
+| run | mean σ | mean \|error\| | RMS error | \|error\| / σ | RMS error / σ |
+|---|---|---|---|---|---|
+| free kernels | 0.0029 M☉ | 0.0023 M☉ | 0.0033 M☉ | 0.80 | 1.16 |
+| S4D 256 × 256 × 4 | 0.0155 M☉ | 0.0166 M☉ | 0.0195 M☉ | 1.07 | 1.26 |
+| S4D 64 × 32 × 4 | 0.0229 M☉ | 0.0363 M☉ | 0.0478 M☉ | 1.59 | 2.09 |
+
+</div>
+
+{% include figure.html
+   src="/assets/img/bns/2026-10-14/signal_only_val_sigma.png"
+   alt="Predicted sigma and actual mean absolute error against epoch for the three networks, and their ratio"
+   label="Predicted against actual error"
+   caption="Left: predicted σ (solid) and actual mean |error| (dashed), log scale. Right: their ratio; the dotted line is 0.80, a calibrated Gaussian." %}
+
+The free kernels' σ matches their errors (0.80), with a slightly heavier
+tail than a Gaussian (1.16), and is five to eight times smaller than the
+S4D networks'. The large S4D's σ is about a quarter too small; the small S4D's is
+about half its actual error, and the gap widened during training. These are
+averages over all validation events; a per-event check of σ needs the test
+set.
 
 ## Conclusion
 

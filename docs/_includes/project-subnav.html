@@ -8,6 +8,7 @@
 {%- assign u_background = base | append: 'background/' -%}
 {%- assign u_related = base | append: 'related-work/' -%}
 {%- assign u_readings = base | append: 'readings/' -%}
+{%- assign u_freekernel = base | append: 'free-kernel/' -%}
 {%- assign u_live = base | append: 'live/' -%}
 {%- assign u_brain = base | append: 'brainstorm/' -%}
 {%- assign u_updates = base | append: 'updates/' -%}
@@ -24,6 +25,7 @@
         <li><a href="{{ u_background | relative_url }}" class="subnav__link {% if page.url == u_background %}is-current{% endif %}">Background</a></li>
         <li><a href="{{ u_related | relative_url }}" class="subnav__link {% if page.url == u_related %}is-current{% endif %}">Related Work</a></li>
         <li><a href="{{ u_readings | relative_url }}" class="subnav__link {% if page.url == u_readings %}is-current{% endif %}">Readings</a></li>
+        <li><a href="{{ u_freekernel | relative_url }}" class="subnav__link {% if page.url == u_freekernel %}is-current{% endif %}">The free-kernel network</a></li>
       </ul>
     </li>
     <li>

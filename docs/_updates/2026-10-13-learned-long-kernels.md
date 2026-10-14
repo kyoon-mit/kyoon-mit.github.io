@@ -58,7 +58,8 @@ frequencies from 20 to 512 Hz. That makes each kernel complex (a cosine and
 a sine filter), so $|y_c(t)|^2$ does not depend on the signal's phase. In
 CNN terms it is one Conv1d with 256 output channels and kernel size 4096. An
 S4D layer computes the same convolution, but its kernel is generated as a sum
-of damped tones, $k(\ell) = \sum_n C_n z_n^{\ell}$.
+of damped tones, $k(\ell) = \sum_n C_n z_n^{\ell}$. A full description, with a diagram, is on the
+[free-kernel page]({{ '/projects/bns/free-kernel/' | relative_url }}).
 
 ## The learned kernels are chirps
 
