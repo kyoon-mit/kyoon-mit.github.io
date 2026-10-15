@@ -14,6 +14,22 @@ summary: >-
 
 {% include notice-snr-powerlaw.html %}
 
+<div class="notice" role="note">
+<p class="notice__title">Note added 14 October 2026: prior work</p>
+<p>Using gravitational-wave templates as a network's first layer was
+published before this entry: Wang et al., Phys. Rev. D 101, 104003 (2020),
+<a href="https://arxiv.org/abs/1909.13442">arXiv:1909.13442</a> (35 fixed
+templates, the largest output of each, then a convolutional network, for
+detection); Yan et al., Phys. Rev. D 105, 043006 (2022),
+<a href="https://arxiv.org/abs/2104.03961">arXiv:2104.03961</a> (networks that
+"implement matched filtering at initialization and can be trained on data");
+and banks spanning chirp mass alone as network input: Yamamoto et al. 2025,
+<a href="https://arxiv.org/abs/2512.12399">arXiv:2512.12399</a>; Mobilia, Dal
+Canton and Guidi 2026, <a href="https://arxiv.org/abs/2603.09386">arXiv:2603.09386</a>.
+Our chirp kernels differ only in their learned chirp masses and in reading out
+the chirp mass instead of detecting.</p>
+</div>
+
 This follows the [chirp-kernel proposal]({{ u | append: '2026-10-07-chirp-kernels/' | relative_url }})
 and the [matched-filter benchmark]({{ u | append: '2026-10-07-matched-filter-benchmark/' | relative_url }}).
 Throughout, "within 2%" means the predicted chirp mass is within 2% of the

@@ -236,6 +236,27 @@ last. At $f_s = 1024$ Hz with 256 tones: $\Delta t = 0.004$ spaces the tones
 2.05 Hz apart up to 522 Hz with a memory of 0.49 s; a 4 s memory needs
 $\Delta t = 0.00049$, and then all 256 tones lie below 64 Hz.
 
+**Tone $n$ lasts $n$ cycles.** Multiplying the two, $f_n T_n = n$: in S4D-Lin,
+tone $n$ completes exactly $n$ cycles while its amplitude falls by $e$. A tone
+above 20 Hz that lasts 1 s needs $n \ge 20$, and one that lasts 4 s needs
+$n \ge 80$; a channel of 32 tones ($N = 64$) that lasts 1 s reaches 31 Hz at
+most. Covering 20 Hz to $f_{\max}$ with tones that last $T$ needs a spacing of
+at most $1/T$, so about $f_{\max} T$ tones per channel: 512 for 512 Hz and
+1 s, 2,048 for 4 s.
+
+**How many tones start usable.** With $\Delta t$ log-uniform between
+$10^{-4}$ and 10 (the den-reg's range), the fraction of tones that start in
+band (20 Hz to $f_s/2$, not aliased) and last over 1 s is 0.76% for 32 tones
+per channel at 2048 Hz (the den-reg) and 14% for 256 tones per channel at
+1024 Hz (4.2% for over 4 s). After 200 epochs the 256-tone network had 7%
+([13 October]({{ u | append: '2026-10-13-learned-long-kernels/' | relative_url }})).
+
+**Check.** Python: the frequency and memory above applied to the ml4gw
+initialization (`log_A_real = ln 0.5`, `A_imag = pi * n`, `log_dt` uniform in
+$[\ln 10^{-4}, \ln 10]$); an exact integral over $\Delta t$ on a
+200,001-point grid gave 0.76% and 14.1%, and a Monte Carlo over 4,000 channels
+gave 0.7% to 0.9% and 13.8%.
+
 **Band init** sets the two separately, with $\Delta t = 0.01$: $\omega_n =
 2\pi f_n/(f_s\,\Delta t)$ with the $f_n$ evenly over 20 to 512 Hz (a random
 offset per channel), and $a_n = 1/(T f_s \Delta t)$ with $T = 4$ s.
@@ -1935,3 +1956,75 @@ Post-Newtonian corrections add a dependence on mass ratio and spin.
 the formula equals the numerical derivative of $f(\tau)$ (e.g. 7.4663 Hz/s
 at 80 Hz for 1.2 M☉), and the inversion returns the input chirp mass to
 four decimals.
+
+## Adding power instead of amplitude: the $N^{1/4}$ loss {#semi-coherent}
+
+**Claim** (slides, 14 October): at SNR 8, spread over about 600 cycles, each
+cycle carries an SNR of about 0.3; adding the cycles in step gives back 8,
+while adding their powers grows only like $N^{1/4}$.
+
+**Derivation.** Split the matched filter's sum into $N$ pieces that do not
+overlap, with SNRs $\rho_k$ and $\sum_k \rho_k^2 = \rho^2$. If the signal is
+spread evenly, $\rho_k = \rho/\sqrt N$, which is $8/\sqrt{600} = 0.33$. Each
+piece's output is $z_k = \rho_k + n_k$ with independent unit-variance noise
+$n_k$. Added in step ([coherent addition](#ck-coherent)) and divided by
+$\sqrt N$, the signal parts give $\sum_k \rho_k/\sqrt N = \rho$ against unit
+noise. Added
+as powers, $P = \sum_k z_k^2$ has mean $N + \rho^2$ and standard deviation
+about $\sqrt{2N}$, so the signal stands out by $\rho^2/\sqrt{2N}$. To stand out
+by a fixed amount the SNR must grow like $N^{1/4}$: with 600 pieces, about
+$(2 \cdot 600)^{1/4} \approx 6$ times the SNR is needed for the same
+significance as one standard deviation in the coherent sum. Any nonlinearity
+applied to the pieces before they are added (a square, a threshold, a GELU)
+turns the sum into this kind.
+
+**Source.** The same scaling is the standard result for searches that stack
+power from $N$ segments, for example Brady and Creighton 2000, Phys. Rev. D
+61, 082001, [arXiv:gr-qc/9812014](https://arxiv.org/abs/gr-qc/9812014). The
+signal per sample is about 0.09 of the noise at SNR 8 ([signal per
+sample](#proj-per-sample)).
+
+## A time warp that turns a chirp into a tone {#time-warp}
+
+**Claim** (slides, 14 October): in the warped time $\tau = (t_c - t)^{5/8}$ the
+leading-order chirp is a tone whose frequency scales as $\mathcal
+M^{-5/8}$; the warp needs the merger time $t_c$ but not the chirp mass.
+
+**Derivation.** At leading order the gravitational-wave phase is
+([Newtonian chirp](#oct7-chirp-kernels))
+
+$$
+\Phi(t) = \Phi_c - 2\left(\frac{c^3\,(t_c - t)}{5\,G\mathcal M}\right)^{5/8} .
+$$
+
+With $\tau = (t_c - t)^{5/8}$ this is $\Phi = \Phi_c - 2\,(5G\mathcal
+M/c^3)^{-5/8}\,\tau$: linear in $\tau$, so the frequency in $\tau$ is constant
+and proportional to $\mathcal M^{-5/8}$. The amplitude, proportional to
+$(t_c - t)^{-1/4}$, becomes $\tau^{-2/5}$. The chirp mass appears only in the
+tone's frequency, so one warp serves every chirp mass.
+
+**Measurement** (offline, no noise). Fourier tones needed for a match of 0.9
+([definition](#ck-fourier-tones)), counted on a uniform grid in $\tau$:
+
+| signals | before the warp | after the warp |
+|---|---|---|
+| Newtonian chirps of the 7 October set | 476 to 744 | 3 to 6 |
+| four whitened training templates, $t_c$ fitted, up to 300 Hz | 533 to 1,184 | 2 to 7 |
+| the same, $t_c$ at the amplitude peak, up to 900 Hz | 533 to 1,184 | 34 to 63 |
+
+The templates are rows of our training file with detector-frame chirp masses
+1.00, 1.20, 1.50 and 2.00 M☉, whitened with the average noise spectrum of our
+training windows.
+
+**Check.** Python: band-limited interpolation (FFT upsampling by 32, then a
+cubic spline; relative error $10^{-8}$ against the exact trigonometric sum),
+8,192 points in $\tau$ with at least 7 points per cycle; the Newtonian counts
+before the warp reproduce the 7 October values exactly.
+
+**Caveats.** After the warp the noise is no longer the same at every point:
+its density grows with the frequency the signal had there (3.75 times higher
+at 300 Hz than at 80 Hz), so a filter in $\tau$ needs weighting. $t_c$ must be
+known to a few milliseconds (an error of 5 ms doubles to quadruples the count).
+Higher post-Newtonian terms leave a drift: the fitted effective $t_c$ sits
+about 19 ms after the peak, and the frequency in $\tau$ still drifts by 0.5% to
+1% up to 300 Hz and 5% to 6% up to 900 Hz. Not yet tried in training.

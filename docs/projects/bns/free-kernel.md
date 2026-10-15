@@ -12,6 +12,13 @@ summary: >-
 
 {%- assign u = '/projects/bns/updates/' -%}
 
+The layer itself is not new: learned long convolutions are Fu et al., ICML
+2023 ([arXiv:2302.06646](https://arxiv.org/abs/2302.06646)), and storing a
+filter as its spectrum follows Rippel et al. 2015
+([arXiv:1506.03767](https://arxiv.org/abs/1506.03767)). What is ours is the
+use: from a random start, trained on whitened neutron-star data, the kernels
+became chirps.
+
 The free-kernel network is a network with one hidden layer. Each of its 256
 hidden units is a learned filter as long as the 4 s window, applied to the
 whitened strain of both detectors. Results are in the updates of

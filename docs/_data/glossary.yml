@@ -1904,7 +1904,10 @@
     with no formula behind them; one layer of them, with energy and a maximum
     over time, is our free-kernel network.
   source: >-
-    Our method; see the [free-kernel page](/projects/bns/free-kernel/).
+    Learned long convolutions as in Fu et al., ICML 2023,
+    [arXiv:2302.06646](https://arxiv.org/abs/2302.06646), stored as spectra as
+    in Rippel et al. 2015, [arXiv:1506.03767](https://arxiv.org/abs/1506.03767);
+    our use: the [free-kernel page](/projects/bns/free-kernel/).
 
 - id: chirp-kernel
   term: chirp kernels
@@ -1913,7 +1916,12 @@
   short: >-
     Kernels that are physical chirps with a learned chirp mass each, instead of sums of damped tones.
   source: >-
-    Our method; see the update of [7 October](/projects/bns/updates/2026-10-07-chirp-kernels/).
+    A template bank used as a network's first layer, a known idea: Wang et
+    al., Phys. Rev. D 101, 104003 (2020),
+    [arXiv:1909.13442](https://arxiv.org/abs/1909.13442); Yan et al., Phys.
+    Rev. D 105, 043006 (2022), [arXiv:2104.03961](https://arxiv.org/abs/2104.03961).
+    Our version, with learned chirp masses and a chirp-mass read-out: update of
+    [7 October](/projects/bns/updates/2026-10-07-chirp-kernels/).
 
 - id: band-init
   term: band init
@@ -2130,3 +2138,44 @@
     The frequency of the electron's back-and-forth motion along the trap;
     it modulates the carrier and creates the sidebands.
   source: Ashtari Esfahani et al., J. Phys. G 44, 054004 (2017), [arXiv:1703.02037](https://arxiv.org/abs/1703.02037).
+
+- id: time-warp
+  term: time warp
+  also: [time-warp, warped time, warp the time axis]
+  group: Signal processing
+  short: >-
+    Measuring time on a stretched clock. With the clock (t_c - t)^(5/8), a
+    leading-order chirp becomes a steady tone whose pitch gives the chirp
+    mass.
+  source: >-
+    Our derivation, from the Newtonian chirp phase; see the
+    [derivations page](/projects/bns/derivations/#time-warp).
+
+- id: semi-coherent
+  term: semi-coherent
+  also: [incoherent sum, adding powers]
+  only_also: false
+  group: Searching for signals
+  short: >-
+    Adding the powers (squares) of separate pieces of the data instead of
+    adding the pieces themselves in step. Noise then grows almost as fast as
+    the signal, and the sensitivity grows only like the fourth root of the
+    number of pieces.
+  source: >-
+    Brady and Creighton 2000, Phys. Rev. D 61, 082001,
+    [arXiv:gr-qc/9812014](https://arxiv.org/abs/gr-qc/9812014); our
+    [derivation](/projects/bns/derivations/#semi-coherent).
+
+- id: mfcnn
+  term: MFCNN
+  case: true
+  group: Machine learning
+  short: >-
+    A network whose first layer is a set of fixed gravitational-wave templates
+    used as filters, keeping each filter's largest output, followed by an
+    ordinary convolutional network.
+  source: >-
+    Wang et al., Phys. Rev. D 101, 104003 (2020),
+    [arXiv:1909.13442](https://arxiv.org/abs/1909.13442): "we use N_t = 35"
+    templates whose coefficients "are fixed and correspond to a whitened
+    theoretical waveform".

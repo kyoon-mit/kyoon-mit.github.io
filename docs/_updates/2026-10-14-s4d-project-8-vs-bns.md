@@ -50,7 +50,7 @@ records, the Fourier tones needed to reach a match of 0.9 had a median of 3 (1 t
 
 The same measurement for four 4 s BNS chirps gave 476 to 744 Fourier tones
 (median 593.5) for a match of 0.9 ([7 October]({{ u | append: '2026-10-07-chirp-kernels/' | relative_url }})).
-Fitting damped tones of free frequency directly to real waveforms
+Fitting tones directly to real waveforms (the best of three fitting methods; [method]({{ d | relative_url }}#early-tone-fit))
 ([12 October]({{ u | append: '2026-10-12-template-bank-network/' | relative_url }})):
 
 - 32 tones per channel, the den-reg's state size, kept 0.25 to 0.33 of the
