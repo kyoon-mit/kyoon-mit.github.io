@@ -1,10 +1,13 @@
-/* Thesis gate: overworld (maps, movement, NPCs, scripts, password keyboard). */
+/* Thesis gate: overworld (maps, walking, NPCs, encounters, scripts, password keyboard). */
 'use strict';
 window.WORLD = (() => {
-  const { g, draw, text, measure, say, close, choose, yesno, wait, fadeTo, held, pressed, dir, crand, box, C } = TG;
+  const { g, draw, text, measure, say, close, choose, yesno, wait, fadeTo, held, pressed, dir, crand, box } = TG;
   const DX = { up: 0, down: 0, left: -1, right: 1 }, DY = { up: -1, down: 1, left: 0, right: 0 };
   const OPP = { up: 'down', down: 'up', left: 'right', right: 'left' };
   const DIRS = ['up', 'down', 'left', 'right'];
+  const WALK = 14, RUN = 8, TURN = 4;
+  const WHITE = '248,248,248';
+  const st = () => window.STORY;
 
   // ---------------------------------------------------------------- maps
   const SCENES = {
@@ -12,49 +15,48 @@ window.WORLD = (() => {
       map: [
         'TTTTTCCCCCTTTTT',
         'TTTTTCCCCCTTTTT',
-        'TT...CCDCC...TT',
-        'T*........;FFFF',
-        'T....s....;FhPP',
+        'T;;..CCDCC.;;TT',
+        'T;;;......;FFFF',
+        'T;;..s....;FhPP',
         '======.....OPPP',
-        'T;;........FPyP',
-        'T;;......*.FFFF',
-        'T.*.........r.T',
+        'T;;;;......FPyP',
+        'T;;;;;...;;FFFF',
+        'T;;;*....;;;r.T',
         'TTTTTTTTTTTTTTT',
       ],
       warps: [
-        { x: 7, y: 2, to: 'cage', tx: 7, ty: 8, dir: 'up', door: true },
+        { x: 7, y: 2, to: 'cave', tx: 7, ty: 8, dir: 'up' },
         { x: 11, y: 5, to: 'pen', tx: 1, ty: 5, dir: 'right' },
       ],
       edges: [{ x: 0, y: 5, dir: 'left', to: 'forest', tx: 14, ty: 6 }],
       talk: {
-        C: 'Thick iron bars. Something big is snoring inside.',
-        s: '↑ THE CAGE\n→ RABBIT PEN     ← OLD FOREST',
+        C: () => st().caveRock,
+        s: () => st().sign,
         r: 'A big, smooth rock.',
         h: 'A wooden hutch. It smells of hay.',
         y: 'A pile of hay.',
         P: 'The RABBIT PEN. The way in is to the west.',
       },
     },
-    cage: {
+    cave: {
       dark: true,
       map: [
         '###############',
         '##t#########t##',
-        '|____BBBBB____|',
-        '|____BBBBB____|',
-        '|_b__BBBBB___b|',
-        '|____________b|',
-        '|_b___________|',
-        '|_____________|',
-        '|_____________|',
-        '|||||||X|||||||',
+        '#____BBBBB____#',
+        '#____BBBBB____#',
+        '#_b__BBBBB___b#',
+        '#____________b#',
+        '#_b___________#',
+        '#_____________#',
+        '#_____________#',
+        '#######X#######',
       ],
-      warps: [{ x: 7, y: 9, to: 'crossroads', tx: 7, ty: 3, dir: 'down', fromDoor: true }],
+      warps: [{ x: 7, y: 9, to: 'crossroads', tx: 7, ty: 3, dir: 'down' }],
       talk: {
-        '#': 'Cold stone.',
-        t: 'A torch. It crackles.',
-        '|': 'The bars are cold.',
-        b: 'Old bones. Best not to ask.',
+        '#': () => st().cave.wall,
+        t: () => st().cave.torch,
+        b: () => st().cave.bones,
       },
     },
     pen: {
@@ -95,23 +97,93 @@ window.WORLD = (() => {
       edges: [{ x: 14, y: 6, dir: 'right', to: 'crossroads', tx: 0, ty: 5 }],
       talk: { L: 'A mossy log.' },
     },
+    ward: {
+      asylum: true,
+      map: [
+        'WWWWWWWWWWWWWWW',
+        'W,,,,,,,,W,,,^W',
+        'W,WWW,WW,W,WWWW',
+        'W,W,,,,W,W,,,,W',
+        'W,W,WW,W,WWW,WW',
+        'W,,,W,,W,,,,,,W',
+        'WWW,W,WWWWW,WWW',
+        'WZ,,W,,,,,,,,,W',
+        'WZ,,W,WWWWWW,YW',
+        'WWWWWWWWWWWWWWW',
+      ],
+      warps: [{ x: 13, y: 1, to: 'cells', tx: 7, ty: 8, dir: 'up' }],
+      talk: { W: () => st().asylum.wall, Z: () => st().asylum.bed, Y: () => st().asylum.desk },
+    },
+    cells: {
+      asylum: true,
+      map: [
+        'WWWWWWWWWWWWWWW',
+        'WZ,W%,,,,,%W,ZW',
+        'W,,W%,,,,,%W,,W',
+        'W%%W%%%+%%%W%%W',
+        'W,,,,,,,,,,,,,W',
+        'W,,,,,,,,,,,,,W',
+        'WWWWWWWWWWW,WWW',
+        'W,,,,,,,,,,,,,W',
+        'WY,,,W,,,,,,,YW',
+        'WWWWWWW^WWWWWWW',
+      ],
+      warps: [{ x: 7, y: 9, to: 'ward', tx: 12, ty: 1, dir: 'left' }],
+      talk: { W: () => st().asylum.wall, Z: () => st().asylum.bed, Y: () => st().asylum.desk },
+    },
   };
   for (const k in SCENES) {
     const m = SCENES[k].map;
     if (m.length !== 10 || m.some(r => r.length !== 15)) throw new Error('bad map ' + k);
   }
-  const SOLID = new Set(['T', 'F', 'C', 's', 'r', 'h', 'y', 'c', 'o', 'L', 'A', 'B', 'P', '#', 't', '|']);
+  const SOLID = new Set(['T', 'F', 'C', 's', 'r', 'h', 'y', 'c', 'o', 'L', 'A', 'B', 'P', '#', 't', 'W', 'Z', 'Y', '%', '+']);
+
+  // buried rare candies, one per spot per page session
+  const DIG = [
+    ['crossroads', 3, 4], ['crossroads', 10, 2], ['crossroads', 8, 8], ['pen', 2, 2], ['pen', 13, 7],
+    ['forest', 3, 5], ['forest', 12, 7], ['cave', 12, 7],
+  ];
+  const PLACE = { crossroads: 'CROSSROADS', pen: 'RABBIT PEN', forest: 'OLD FOREST', cave: 'CAVE' };
+  const digKey = (s, x, y) => `${s}:${x},${y}`;
+  function digAt(x, y) { return DIG.some(([s, dx, dy]) => s === S.scene && dx === x && dy === y); }
 
   // ---------------------------------------------------------------- state
   const S = {
-    scene: 'crossroads', busy: 0, doorOpen: 0,
+    scene: 'crossroads', busy: 0,
     beast: { awake: false, chapter: 0, started: false, done: false, score: 0, asked: 0 },
-    tree: { awake: false, met: false },
+    tree: { awake: false, met: false, wrong: 0, fire: false },
+    dug: {},
+    asylum: null,
   };
-  const P = { x: 7, y: 5, dir: 'up', moving: false, prog: 0, foot: 0, turn: 0, bump: 0, speed: 1, justMoved: false, hidden: false, sink: 0 };
-  const RAB = { x: 8, y: 4, dir: 'down', moving: false, prog: 0, tx: 8, ty: 4, timer: 90, munch: 0, jump: 0, ox: 0, oy: 0 };
+  const P = { x: 7, y: 5, dir: 'up', moving: false, t: 0, dur: WALK, foot: 0, turn: 0, bump: 0, sink: 0 };
+  const RAB = { x: 8, y: 4, dir: 'down', moving: false, prog: 0, tx: 8, ty: 4, timer: 90, munch: 0, dig: 0, jump: 0, ox: 0, oy: 0 };
   let sc = null, bg = null;
   const FX = [];
+
+  // asylum workers and sisters (fresh on every arrest)
+  function freshAsylum() {
+    const trainers = {};
+    const T = (window.DEX && DEX.trainers) || {};
+    for (const id in T) {
+      const t = T[id];
+      if (t.double) continue;
+      trainers[id] = { id, name: t.name, scene: t.scene, hx: t.x, hy: t.y, hdir: t.dir, x: t.x, y: t.y, dir: t.dir,
+        sight: t.sight, over: t.over, defeated: false, moving: false, t: 0, foot: 0 };
+    }
+    return { trainers, sistersBeaten: false };
+  }
+  function trainersHere() {
+    if (!S.asylum) return [];
+    return Object.values(S.asylum.trainers).filter(t => t.scene === S.scene);
+  }
+  function homeTrainers() {
+    if (!S.asylum) return;
+    for (const t of Object.values(S.asylum.trainers)) {
+      t.x = t.hx; t.y = t.hy; t.dir = t.hdir; t.moving = false; t.t = 0;
+    }
+  }
+  const SISTERS = [{ x: 6, y: 4, over: 'sisp' }, { x: 8, y: 4, over: 'sisd' }];
+  const CIN = { x: 7, y: 2 };
 
   function tileAt(x, y) { return (x < 0 || y < 0 || x > 14 || y > 9) ? null : sc.map[y][x]; }
   function solid(x, y) { const t = tileAt(x, y); return t === null || SOLID.has(t); }
@@ -119,6 +191,12 @@ window.WORLD = (() => {
     if (S.scene !== 'pen') return false;
     return (RAB.x === x && RAB.y === y) || (RAB.moving && RAB.tx === x && RAB.ty === y);
   }
+  function trainerAt(x, y) {
+    return trainersHere().find(t => (t.x === x && t.y === y) || (t.moving && t.x + DX[t.dir] === x && t.y + DY[t.dir] === y)) || null;
+  }
+  function sisterAt(x, y) { return S.scene === 'cells' && SISTERS.some(s => s.x === x && s.y === y); }
+  function npcAt(x, y) { return !!trainerAt(x, y) || sisterAt(x, y) || (S.scene === 'cells' && x === CIN.x && y === CIN.y); }
+  function blocked(x, y) { return solid(x, y) || rabbitHere(x, y) || npcAt(x, y); }
 
   // ---------------------------------------------------------------- tiles
   function grassName(x, y, f) {
@@ -154,12 +232,18 @@ window.WORLD = (() => {
       case 'o': return 'bowl';
       case 'm': return 'mush';
       case 'L': return 'log';
-      case '#': return 'wall';
-      case 't': return 'torch0';
-      case '|': return 'bars';
-      case 'b': return 'bones';
-      case 'X': return 'exitmat';
-      case '_': case 'B': return (x * 3 + y) % 4 ? 'floor' : 'floor2';
+      case '#': return (x * 7 + y * 3) % 3 ? 'cwall' : 'cwall2';
+      case 't': return 'ctorch0';
+      case 'b': return 'cbones';
+      case 'X': return 'cexit';
+      case '_': case 'B': return (x * 3 + y) % 4 ? 'cfloor' : 'cfloor2';
+      case 'W': return 'awall';
+      case ',': return (x * 3 + y) % 4 ? 'afloor' : 'afloor2';
+      case 'Z': return 'abed';
+      case 'Y': return 'adesk';
+      case '%': return 'acell';
+      case '+': return 'acelldoor';
+      case '^': return 'adoorway';
       case '*': return 'flower0';
       default: return grassName(x, y, f);
     }
@@ -177,9 +261,12 @@ window.WORLD = (() => {
     if (!sc.bg) sc.bg = buildBG(sc);
     bg = sc.bg;
     FX.length = 0;
-    if (name === 'pen') { RAB.x = 8; RAB.y = 4; RAB.moving = false; RAB.prog = 0; RAB.timer = 60; RAB.dir = 'down'; RAB.ox = RAB.oy = 0; }
+    if (name === 'pen') { RAB.x = 8; RAB.y = 4; RAB.moving = false; RAB.prog = 0; RAB.timer = 60; RAB.dir = 'down'; RAB.ox = RAB.oy = 0; RAB.dig = 0; }
     if (name === 'forest') initFireflies();
   }
+  function resetP() { P.moving = false; P.t = 0; P.bump = 0; P.turn = 0; P.sink = 0; }
+  function place(name, x, y, d) { loadScene(name); P.x = x; P.y = y; P.dir = d; resetP(); }
+  function teleport(name, x, y, d = 'up') { place(name, x, y, d); }
 
   // ---------------------------------------------------------------- particles
   const flies = [];
@@ -191,13 +278,11 @@ window.WORLD = (() => {
   function spawnZ(x, y) { zzz.push({ x, y, t: 0, big: crand() < 0.5 }); }
 
   // ---------------------------------------------------------------- update
-  let wasMoving = false;
   function update() {
     if (S.busy === 0 || P.moving) updatePlayer();
     updateRabbit();
-    // ambience
     const f = TG.frame;
-    if (S.scene === 'cage' && !S.beast.awake && f % 48 === 0) spawnZ(122 + crand() * 8, 34);
+    if (S.scene === 'cave' && !S.beast.awake && f % 48 === 0) spawnZ(122 + crand() * 8, 34);
     if (S.scene === 'crossroads' && f % 70 === 0) spawnZ(118, 8);
     for (let i = zzz.length - 1; i >= 0; i--) {
       const z = zzz[i]; z.t++; z.x += 0.25; z.y -= 0.35;
@@ -206,75 +291,58 @@ window.WORLD = (() => {
     for (const fl of flies) { fl.p += 0.03; fl.x += Math.cos(fl.p) * fl.s; fl.y += Math.sin(fl.p * 1.3) * fl.s * 0.6; if (fl.x < -4) fl.x = 244; if (fl.x > 244) fl.x = -4; }
     for (let i = FX.length - 1; i >= 0; i--) { const e = FX[i]; e.t++; if (e.life && e.t > e.life) FX.splice(i, 1); }
   }
+  const heldDir = () => dir() || DIRS.find(k => pressed[k]);
   function updatePlayer() {
     if (P.moving) {
-      P.prog += P.speed;
-      if (P.prog >= 16) {
-        P.x += DX[P.dir]; P.y += DY[P.dir]; P.moving = false; P.prog = 0; P.foot ^= 1; P.justMoved = true;
-        onArrive();
-      }
+      P.t += held[P.dir] ? 1 : 2;
+      if (P.t >= P.dur) arrive();
       return;
     }
-    if (P.bump > 0) { P.bump--; if (!dir() || dir() !== P.dir) P.bump = 0; return; }
+    if (P.bump > 0) {
+      P.bump--;
+      if (!dir() || dir() !== P.dir) P.bump = 0;
+      else if (P.bump === 0 && !S.busy) tryMove(P.dir);
+      return;
+    }
     if (S.busy) return;
-    if (pressed.a) { P.justMoved = false; interact(); return; }
-    const d = dir() || DIRS.find(k => pressed[k]);
-    if (!d) { P.turn = 0; P.justMoved = false; return; }
-    if (d !== P.dir) {
-      P.dir = d;
-      if (P.justMoved) { tryMove(d); }
-      else P.turn = 7;
-      return;
-    }
-    if (P.turn > 0) { P.turn--; return; }
+    if (pressed.a) { interact(); return; }
+    const d = heldDir();
+    if (!d) { P.turn = 0; return; }
+    if (d !== P.dir) { P.dir = d; P.turn = TURN; return; }
+    if (P.turn > 0 && --P.turn > 0) return;
     tryMove(d);
   }
   function tryMove(d) {
-    P.justMoved = false;
-    P.speed = held.b ? 2 : 1;
-    const nx = P.x + DX[d], ny = P.y + DY[d];
+    P.dir = d; P.turn = 0;
     const edge = (sc.edges || []).find(e => e.x === P.x && e.y === P.y && e.dir === d);
-    if (edge) { P.moving = true; P.prog = 0; return; }
-    if (solid(nx, ny) || rabbitHere(nx, ny)) { P.bump = 16; return; }
-    const w = (sc.warps || []).find(q => q.x === nx && q.y === ny);
-    if (w && w.door) { run(() => enterDoor(w)); return; }
-    P.moving = true; P.prog = 0;
+    if (!edge && blocked(P.x + DX[d], P.y + DY[d])) { P.bump = 16; return; }
+    P.moving = true; P.t = 0; P.dur = held.b ? RUN : WALK;
   }
-  function onArrive() {
+  function arrive() {
+    P.x += DX[P.dir]; P.y += DY[P.dir]; P.foot ^= 1; P.t = 0; P.moving = false;
     if (P.x < 0 || P.x > 14 || P.y < 0 || P.y > 9) {
       const e = (sc.edges || []).find(q => q.x === P.x - DX[P.dir] && q.y === P.y - DY[P.dir] && q.dir === P.dir);
       if (e) run(() => warp(e.to, e.tx, e.ty, P.dir));
       return;
     }
     const w = (sc.warps || []).find(q => q.x === P.x && q.y === P.y);
-    if (w) run(() => warp(w.to, w.tx, w.ty, w.dir, w.fromDoor));
+    if (w) { run(() => warp(w.to, w.tx, w.ty, w.dir)); return; }
+    spotCheck();
+    if (!S.busy) grassCheck();
+    if (S.busy) return;
+    const d = heldDir();
+    if (d) tryMove(d);
   }
-  async function warp(to, tx, ty, d, fromDoor) {
-    TG.releaseAll();
+  async function warp(to, tx, ty, d) {
     await fadeTo(1, 12, '0,0,0');
-    loadScene(to);
-    P.x = tx; P.y = ty; P.dir = d; P.moving = false; P.prog = 0; P.bump = 0;
-    if (fromDoor) S.doorOpen = 1;
-    await wait(6);
-    await fadeTo(0, 12);
-    if (fromDoor) { await wait(12); S.doorOpen = 0; }
-  }
-  async function enterDoor(w) {
-    S.doorOpen = 1;
-    await wait(10);
-    P.dir = 'up'; P.moving = true; P.prog = 0; P.speed = 1;
-    await TG.until(() => !P.moving);
-    P.hidden = true;
-    await fadeTo(1, 12, '0,0,0');
-    S.doorOpen = 0; P.hidden = false;
-    loadScene(w.to);
-    P.x = w.tx; P.y = w.ty; P.dir = w.dir; P.moving = false;
+    place(to, tx, ty, d);
     await wait(6);
     await fadeTo(0, 12);
   }
   function updateRabbit() {
     if (S.scene !== 'pen') return;
     if (RAB.munch > 0) RAB.munch--;
+    if (RAB.dig > 0) { RAB.dig--; RAB.ox = RAB.dig > 0 ? (((RAB.dig >> 1) & 1) ? 1 : -1) : 0; }
     if (RAB.moving) {
       RAB.prog += 1;
       if (RAB.prog >= 16) { RAB.x = RAB.tx; RAB.y = RAB.ty; RAB.moving = false; RAB.prog = 0; }
@@ -291,19 +359,47 @@ window.WORLD = (() => {
     RAB.tx = nx; RAB.ty = ny; RAB.moving = true; RAB.prog = 0;
   }
 
+  // ---------------------------------------------------------------- wild grass
+  function grassCheck() {
+    const E = window.DEX && DEX.encounters && DEX.encounters.grass;
+    if (!E || !E.scenes.includes(S.scene) || tileAt(P.x, P.y) !== ';') return;
+    if (Math.random() >= E.rate) return;
+    const r = Math.random() * 100;
+    let acc = 0, row = E.table[E.table.length - 1];
+    for (const e of E.table) { acc += e.weight; if (r < acc) { row = e; break; } }
+    const level = row.min + Math.floor(Math.random() * (row.max - row.min + 1));
+    let sp = row.species;
+    const ev = DEX.species[sp] && DEX.species[sp].evolves;
+    if (ev && ev.level <= level) sp = ev.into;
+    run(() => wildBattle(sp, level));
+  }
+  async function wildBattle(species, level) {
+    TG.releaseAll();
+    const r = await BATTLE.start({ kind: 'wild', foes: [{ species, level }], canRun: true, bg: S.scene === 'forest' ? 'forest' : 'grass' });
+    await afterBattle(r, 'crossroads');
+    return r;
+  }
+  async function afterBattle(r, dest) {
+    if (r === 'lose') await whiteout(dest);
+    else if (r === 'arrested') await arrest();
+  }
+
   // ---------------------------------------------------------------- render
+  function prefix() { return window.BATTLE && BATTLE.ME && BATTLE.ME.species === 'phd' ? 'd' : 'p'; }
+  function personFrame(pre, d, f) { return [`${pre}_${d === 'right' ? 'left' : d}_${f}`, d === 'right']; }
   function playerFrame() {
-    const step = (P.moving && P.prog < 8) || (P.bump > 0 && (P.bump & 8));
-    const alt = P.foot === 1;
-    switch (P.dir) {
-      case 'down': return step ? ['p_down_step', alt] : ['p_down', false];
-      case 'up': return step ? ['p_up_step', alt] : ['p_up', false];
-      case 'left': return [step ? 'p_left_step' : 'p_left', false];
-      default: return [step ? 'p_left_step' : 'p_left', true];
-    }
+    let f = 0;
+    if (P.moving) { if (P.t < P.dur / 2) f = P.foot === 0 ? 1 : 2; }
+    else if (P.bump > 0) f = ((P.bump >> 3) & 1) ? 1 : 2;
+    return personFrame(prefix(), P.dir, f);
   }
   function playerPos() {
-    return [P.x * 16 + DX[P.dir] * (P.moving ? P.prog : 0), P.y * 16 + DY[P.dir] * (P.moving ? P.prog : 0)];
+    const o = P.moving ? Math.round(16 * Math.min(P.t, P.dur) / P.dur) : 0;
+    return [P.x * 16 + DX[P.dir] * o, P.y * 16 + DY[P.dir] * o];
+  }
+  function npcFrame(n) {
+    const f = n.moving && n.t < WALK / 2 ? (n.foot === 0 ? 1 : 2) : 0;
+    return personFrame(n.over, n.dir, f);
   }
   function render() {
     const f = TG.frame;
@@ -313,21 +409,28 @@ window.WORLD = (() => {
       for (let x = 0; x < 15; x++) {
         const ch = sc.map[y][x];
         if (ch === '*' && ((f >> 5) & 1)) draw('flower1', x * 16, y * 16);
-        else if (ch === 't') draw(((f >> 3) + x) & 1 ? 'torch1' : 'torch0', x * 16, y * 16);
+        else if (ch === 't') draw(((f >> 3) + x) & 1 ? 'ctorch1' : 'ctorch0', x * 16, y * 16);
       }
-    // objects
-    if (S.scene === 'crossroads') draw(S.doorOpen ? 'cage_open' : 'cage', 80, 0);
-    if (S.scene === 'cage') {
+    // dig spots
+    for (const [s, x, y] of DIG) {
+      if (s !== S.scene) continue;
+      const n = S.dug[digKey(s, x, y)] ? 'dug' : (f + x * 13) % 96 < 8 ? 'dig1' : 'dig0';
+      draw(n, x * 16, y * 16);
+    }
+    // big objects
+    if (S.scene === 'crossroads') draw('cave', 80, 0);
+    if (S.scene === 'cave') {
       const breathe = !S.beast.awake && ((f >> 5) & 1) ? 1 : 0;
       draw(S.beast.awake ? 'beast_awake' : 'beast_sleep', 80, 32 + breathe);
     }
-    if (S.scene === 'forest') draw(S.tree.awake ? 'atree_awake' : 'atree', 80, 0);
+    if (S.scene === 'forest') {
+      const T = S.tree;
+      draw(T.fire ? (((f >> 3) & 1) ? 'atree_fire1' : 'atree_fire0') : T.awake ? 'atree_awake' : 'atree', 80, 0);
+    }
     // characters, sorted by y
     const ents = [];
-    if (!P.hidden) {
-      const [px, py] = playerPos();
-      ents.push({ y: py, fn: () => { const [n, fl] = playerFrame(); draw(n, px, py - 4 + P.sink, fl); } });
-    }
+    const [px, py] = playerPos();
+    ents.push({ y: py, fn: () => { const [n, fl] = playerFrame(); draw(n, px, py - 4 + P.sink, fl); } });
     if (S.scene === 'pen') {
       const rx = RAB.x * 16 + (RAB.moving ? (RAB.tx - RAB.x) * RAB.prog : 0) + RAB.ox;
       const ry = RAB.y * 16 + (RAB.moving ? (RAB.ty - RAB.y) * RAB.prog : 0) + RAB.oy;
@@ -339,14 +442,19 @@ window.WORLD = (() => {
         draw(n, rx, ry - 2 + hop, fl);
       } });
     }
+    for (const t of trainersHere()) {
+      const o = t.moving ? Math.round(16 * t.t / WALK) : 0;
+      const tx = t.x * 16 + DX[t.dir] * o, ty = t.y * 16 + DY[t.dir] * o;
+      ents.push({ y: ty, fn: () => { const [n, fl] = npcFrame(t); draw(n, tx, ty - 4, fl); } });
+    }
+    if (S.scene === 'cells') {
+      for (const s of SISTERS) ents.push({ y: s.y * 16, fn: () => draw(`${s.over}_down_0`, s.x * 16, s.y * 16 - 4) });
+      ents.push({ y: CIN.y * 16, fn: () => draw('cin_down_0', CIN.x * 16, CIN.y * 16 - 4) });
+    }
     ents.sort((a, b) => a.y - b.y).forEach(e => e.fn());
-    // tall grass over feet
-    for (let y = 0; y < 10; y++)
-      for (let x = 0; x < 15; x++)
-        if (sc.map[y][x] === ';') draw(sc.forest ? 'ftall_over' : 'tall_over', x * 16, y * 16);
     // particles
     for (const z of zzz) {
-      if ((S.scene === 'cage' && z.y > 0) || S.scene === 'crossroads') {
+      if ((S.scene === 'cave' && z.y > 0) || S.scene === 'crossroads') {
         const a = z.t < 50 ? '#e8e8f8' : '#b0b0c8';
         text(z.big ? 'Z' : 'z', z.x, z.y, a, '#4c3c78');
       }
@@ -366,8 +474,11 @@ window.WORLD = (() => {
         g.fillStyle = 'rgba(248,232,120,0.35)'; g.fillRect(Math.round(fl.x) - 1, Math.round(fl.y), 3, 1); g.fillRect(Math.round(fl.x), Math.round(fl.y) - 1, 1, 3);
         g.fillStyle = '#f8f0a0'; g.fillRect(Math.round(fl.x), Math.round(fl.y), 1, 1);
       }
+      if (S.tree.fire) {
+        g.fillStyle = `rgba(232,88,32,${0.2 + 0.05 * Math.sin(f / 4)})`;
+        g.fillRect(0, 0, 240, 160);
+      }
     }
-    if (S.shake) { /* applied via CSS transform for simplicity */ }
   }
 
   // ---------------------------------------------------------------- scripting helpers
@@ -388,21 +499,56 @@ window.WORLD = (() => {
     }
     el.style.transform = '';
   }
-  async function flash(color = '248,248,248', frames = 6) {
+  async function flash(color = WHITE, frames = 6) {
     await fadeTo(0.8, frames >> 1, color);
     await fadeTo(0, frames >> 1, color);
   }
   function facing() { return [P.x + DX[P.dir], P.y + DY[P.dir]]; }
+  async function sayAll(lines) { for (const l of lines) await say(l); }
+  const isWhite = () => TG.FADE.a >= 1 && TG.FADE.color === WHITE;
 
   function interact() {
     const [fx, fy] = facing();
     if (S.scene === 'pen' && rabbitHere(fx, fy) && !RAB.moving) { run(rabbitTalk); return; }
+    const tr = trainerAt(fx, fy);
+    if (tr && !tr.moving) { run(() => trainerTalk(tr)); return; }
     const t = tileAt(fx, fy);
-    if (S.scene === 'cage' && t === 'B') { run(beastTalk); return; }
+    if (S.scene === 'cells' && (sisterAt(fx, fy) || t === '+')) {
+      if (!S.asylum.sistersBeaten) run(sistersBattle);
+      else if (t === '+') run(rescue);
+      else run(() => sayAll(st().sisters.after));
+      return;
+    }
+    if (S.scene === 'cells' && t === '%') {
+      run(() => say(fy === 3 && fx >= 4 && fx <= 10 ? st().cinderella.psst : st().asylum.cell));
+      return;
+    }
+    if (digAt(fx, fy)) { run(() => dig(fx, fy)); return; }
+    if (S.scene === 'cave' && t === 'B') { run(beastTalk); return; }
     if (S.scene === 'forest' && t === 'A') { run(treeTalk); return; }
     if (t === 'D' && S.scene === 'crossroads') return;
-    const msg = sc.talk && sc.talk[t];
+    const m = sc.talk && sc.talk[t];
+    const msg = typeof m === 'function' ? m() : m;
     if (msg) run(() => say(msg));
+  }
+
+  // ---------------------------------------------------------------- digging
+  async function dig(x, y) {
+    const key = digKey(S.scene, x, y);
+    if (S.dug[key]) { await say(st().dig.empty); return; }
+    await say(st().dig.soft, { wait: false });
+    if (!(await yesno())) return;
+    close();
+    await shake(6, 1);
+    S.dug[key] = true;
+    const e = { t: 0, life: 0, draw: t => draw('candy', x * 16, y * 16 - 2 - Math.min(t, 12) - (t > 12 ? Math.round(Math.abs(Math.sin(t / 8)) * 2) : 0)) };
+    FX.push(e);
+    await wait(14);
+    await say(st().dig.found);
+    const i = FX.indexOf(e); if (i >= 0) FX.splice(i, 1);
+    await say(st().dig.ate);
+    close();
+    await BATTLE.rareCandy('world');
   }
 
   // ---------------------------------------------------------------- beast
@@ -471,31 +617,138 @@ window.WORLD = (() => {
       await emote(rx, ry - 18, 30);
       await say('The RABBIT would like to battle!');
       close();
-      await BATTLE.start();
+      TG.releaseAll();
+      const res = await BATTLE.start({ kind: 'wild', foes: [{ species: 'rabbit', level: 30 }], canRun: true, intro: 'The RABBIT challenges you!', bg: 'grass' });
+      await afterBattle(res, 'crossroads');
     } else if (r < 0.8625) {
       RAB.munch = 90;
       await say('The RABBIT is munching on a carrot.\nIt ignores you.');
     } else {
-      await say('The RABBIT dropped something!');
-      const e = { t: 0, life: 0, draw: t => draw('candy', rx, ry - 16 - Math.round(Math.abs(Math.sin(t / 8)) * 4)) };
-      FX.push(e);
-      await say('You found a RARE CANDY!');
-      FX.splice(FX.indexOf(e), 1);
-      await say('You ate the RARE CANDY.');
-      await BATTLE.rareCandy('world');
+      RAB.dir = 'down';
+      RAB.dig = 60;
+      await say(st().rabbit.dig);
+      const spot = DIG.find(([s, x, y]) => !S.dug[digKey(s, x, y)]);
+      await say(spot ? st().rabbit.sniff(PLACE[spot[0]]) : st().rabbit.bored);
     }
   }
-  async function whiteout() {
+
+  // ---------------------------------------------------------------- faint, arrest
+  async function whiteout(dest = 'crossroads') {
     close();
     TG.releaseAll();
-    await fadeTo(1, 30, '248,248,248');
-    loadScene('crossroads');
-    P.x = 7; P.y = 5; P.dir = 'up'; P.moving = false; P.sink = 0;
+    resetP();
     RAB.ox = RAB.oy = 0;
+    if (!isWhite()) await fadeTo(1, 30, WHITE);
+    if (dest === 'ward') { place('ward', 2, 8, 'up'); homeTrainers(); }
+    else place('crossroads', 7, 5, 'up');
     BATTLE.heal();
     await wait(30);
-    await fadeTo(0, 30, '248,248,248');
-    await say('...You came to at the crossroads.');
+    await fadeTo(0, 30, WHITE);
+    await say(st().whiteout[dest]);
+  }
+  async function arrest() {
+    close();
+    TG.releaseAll();
+    resetP();
+    RAB.ox = RAB.oy = 0;
+    if (!isWhite()) await fadeTo(1, 30, WHITE);
+    S.asylum = freshAsylum();
+    place('ward', 2, 8, 'up');
+    BATTLE.heal();
+    await wait(30);
+    await fadeTo(0, 30, WHITE);
+    await sayAll(st().asylum.wake);
+  }
+
+  // ---------------------------------------------------------------- asylum
+  function sees(t) {
+    for (let k = 1; k <= t.sight; k++) {
+      const x = t.x + DX[t.dir] * k, y = t.y + DY[t.dir] * k;
+      if (solid(x, y)) return 0;
+      if (x === P.x && y === P.y) return k;
+    }
+    return 0;
+  }
+  function spotCheck() {
+    if (!S.asylum) return;
+    if (S.scene === 'cells' && !S.asylum.sistersBeaten && P.x >= 5 && P.x <= 9 && P.y >= 4 && P.y <= 5) { run(sistersBattle); return; }
+    for (const t of trainersHere()) {
+      if (t.defeated) continue;
+      const k = sees(t);
+      if (k) { run(() => trainerSpots(t, k)); return; }
+    }
+  }
+  async function npcStep(n, d) {
+    n.dir = d; n.moving = true;
+    for (let i = 0; i < WALK; i++) { n.t = i; await wait(1); }
+    n.x += DX[d]; n.y += DY[d]; n.t = 0; n.moving = false; n.foot ^= 1;
+  }
+  function trainerFoes(T) {
+    return T.foes.map(f => {
+      const o = { species: f.species, level: Math.max(f.min, BATTLE.ME.level + f.offset) };
+      if (f.moves) o.moves = f.moves.slice();
+      return o;
+    });
+  }
+  async function trainerSpots(t, k) {
+    TG.releaseAll();
+    await emote(t.x * 16, t.y * 16 - 14, 30);
+    for (let i = 1; i < k; i++) await npcStep(t, t.dir);
+    P.dir = OPP[t.dir];
+    await trainerFight(t);
+  }
+  async function trainerTalk(t) {
+    if (t.defeated) { t.dir = OPP[P.dir]; await say(st().trainers[t.id].after); t.dir = t.hdir; return; }
+    TG.releaseAll();
+    t.dir = OPP[P.dir];
+    await emote(t.x * 16, t.y * 16 - 14, 30);
+    await trainerFight(t);
+  }
+  async function trainerFight(t) {
+    const L = st().trainers[t.id], T = DEX.trainers[t.id];
+    await say(L.intro);
+    close();
+    const r = await BATTLE.start({ kind: 'trainer', foes: trainerFoes(T), canRun: false, bg: 'asylum', intro: `${T.name} wants to battle!` });
+    if (r === 'win' || r === 'police') {
+      t.defeated = true;
+      await say(L.defeat);
+      close();
+      const back = Math.abs(t.x - t.hx) + Math.abs(t.y - t.hy);
+      if (back) { const d = OPP[t.hdir]; for (let i = 0; i < back; i++) await npcStep(t, d); }
+      t.dir = t.hdir;
+    } else await afterBattle(r, 'ward');
+  }
+  async function sistersBattle() {
+    TG.releaseAll();
+    P.dir = P.y === 4 && P.x === 5 ? 'right' : P.y === 4 && P.x === 9 ? 'left' : 'up';
+    await Promise.all(SISTERS.map(s => emote(s.x * 16, s.y * 16 - 14, 30)));
+    await sayAll(st().sisters.intro);
+    close();
+    const T = DEX.trainers.sisters;
+    const r = await BATTLE.start({ kind: 'trainer', foes: trainerFoes(T), canRun: false, bg: 'asylum', intro: 'PRUDENCE and GRISELDA want to battle!' });
+    if (r === 'win' || r === 'police') {
+      S.asylum.sistersBeaten = true;
+      await sayAll(st().sisters.defeat);
+    } else await afterBattle(r, 'ward');
+  }
+  async function rescue() {
+    await sayAll(st().cinderella.rescue);
+    close();
+    const cx = P.x * 16 + 4, cy = P.y * 16 + 2;
+    FX.push({ t: 0, life: 40, draw: t => {
+      for (let i = 0; i < 6; i++) {
+        const a = t / 6 + i * Math.PI / 3, rr = 16 - t / 4;
+        if ((t + i) % 4 < 3) draw('spark', cx + Math.cos(a) * rr, cy + Math.sin(a) * rr * 0.8);
+      }
+    } });
+    await wait(40);
+    await fadeTo(1, 40, WHITE);
+    place('crossroads', 7, 5, 'up');
+    BATTLE.heal();
+    S.asylum = freshAsylum();
+    await wait(20);
+    await fadeTo(0, 30, WHITE);
+    await sayAll(st().cinderella.home);
   }
 
   // ---------------------------------------------------------------- tree
@@ -522,9 +775,11 @@ window.WORLD = (() => {
     await say('ANCIENT TREE: ...', { wait: false, speed: 1 });
     const res = await VAULT.tryPassword(pw);
     if (!res.ok) {
-      await say(res.error === 'net'
-        ? 'ANCIENT TREE: ...The pages cannot be reached just now. Try again later.'
-        : 'ANCIENT TREE: ...No. That is not the word.');
+      if (res.error === 'net') { await say('ANCIENT TREE: ...The pages cannot be reached just now. Try again later.'); return; }
+      T.wrong++;
+      if (T.wrong >= 3) { await fireTree(); return; }
+      await say('ANCIENT TREE: ...No. That is not the word.');
+      if (T.wrong === 2) await say(st().tree.warn);
       return;
     }
     await say('ANCIENT TREE: ...Yes. That is the word.');
@@ -535,9 +790,26 @@ window.WORLD = (() => {
     else await say('ANCIENT TREE: Then I will forget you when you close this tab.');
     await say('ANCIENT TREE: Go on. The pages are waiting.');
     close();
-    await fadeTo(1, 40, '248,248,248');
+    await fadeTo(1, 40, WHITE);
     TG.stop();
     VAULT.show(res.data);
+  }
+  async function fireTree() {
+    const T = S.tree, ST = st().tree;
+    await say(ST.third);
+    close();
+    T.fire = true;
+    await Promise.all([shake(30, 3), flash('232,72,56', 12)]);
+    await sayAll(ST.burst);
+    close();
+    TG.releaseAll();
+    const r = await BATTLE.start({ kind: 'wild', foes: [{ species: 'firetree', level: 70 }], canRun: true, bg: 'forest', intro: 'The FIRE TREE wants to battle!' });
+    T.wrong = 0; T.fire = false; T.awake = false;
+    if (r === 'win') await sayAll(ST.win);
+    else if (r === 'run') await sayAll(ST.ran);
+    else if (r === 'police') await sayAll(ST.police);
+    else if (r === 'lose') { await whiteout('crossroads'); await sayAll(ST.lost); }
+    else if (r === 'arrested') await arrest();
   }
 
   // ---------------------------------------------------------------- password keyboard
@@ -626,6 +898,9 @@ window.WORLD = (() => {
       st.value = input.value.slice(0, MAXLEN);
       if (input.value !== st.value) input.value = st.value;
     });
+    input.addEventListener('blur', () => {
+      if (st) setTimeout(() => { if (st) try { input.focus({ preventScroll: true }); } catch (_) {} }, 0);
+    });
     input.addEventListener('keydown', e => {
       if (!st) return;
       const mv = { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'up', ArrowDown: 'down' }[e.key];
@@ -648,15 +923,20 @@ window.WORLD = (() => {
     return { open, get active() { return !!st; } };
   })();
 
+
   // ---------------------------------------------------------------- entry
   function enter() {
     TG.hooks.update = update;
     TG.hooks.render = render;
   }
   function start() {
+    S.asylum = freshAsylum();
     loadScene('crossroads');
     enter();
     TG.start();
   }
-  return { start, enter, S, P, RAB, SCENES, loadScene, run, say, whiteout, NAMING, shake, flash, get scene() { return S.scene; } };
+  return {
+    start, enter, S, P, RAB, SCENES, loadScene, run, say, whiteout, arrest, teleport, playerFrame, NAMING, shake, flash,
+    get scene() { return S.scene; },
+  };
 })();
