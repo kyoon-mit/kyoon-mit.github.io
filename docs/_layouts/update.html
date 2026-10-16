@@ -1,7 +1,11 @@
 ---
 layout: default
 ---
-{%- if page.project == 'ligo' -%}
+{%- if page.project == 'magnets' -%}
+  {%- assign all = site.magnet_updates | sort: "date" -%}
+  {%- assign p_base = '/projects/superconducting-magnets/' -%}
+  {%- assign p_name = 'Superconducting Magnets' -%}
+{%- elsif page.project == 'ligo' -%}
   {%- assign all = site.ligo_updates | sort: "date" -%}
   {%- assign p_base = '/projects/agentic-ligo/' -%}
   {%- assign p_name = 'Agentic LIGO' -%}
@@ -24,7 +28,9 @@ layout: default
 
   <div class="doc__layout">
     <aside class="doc__aside">
-      {%- if page.project == 'ligo' -%}
+      {%- if page.project == 'magnets' -%}
+        {% include magnets-subnav.html %}
+      {%- elsif page.project == 'ligo' -%}
         {% include ligo-subnav.html %}
       {%- else -%}
         {% include project-subnav.html %}

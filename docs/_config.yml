@@ -27,6 +27,9 @@ collections:
   updates:
     output: true
     permalink: /projects/bns/updates/:name/
+  magnet_updates:
+    output: true
+    permalink: /projects/superconducting-magnets/updates/:name/
   ligo_updates:
     output: true
     permalink: /projects/agentic-ligo/updates/:name/
@@ -38,6 +41,12 @@ defaults:
     values:
       layout: update
       project: bns
+  - scope:
+      path: ""
+      type: magnet_updates
+    values:
+      layout: update
+      project: magnets
   - scope:
       path: ""
       type: ligo_updates
