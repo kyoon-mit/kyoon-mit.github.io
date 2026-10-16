@@ -11,6 +11,12 @@ summary: >-
 
 {% include notice-snr-powerlaw.html %}
 
+<blockquote markdown="1">
+Correction, 16 October: every run on this page had dropout 0.2 inside every layer of its S4D networks. The same setting made our S4D chirp-mass regressors fail on clean signals; with dropout 0 they put 99.9% of clean validation events within 1% of the true chirp mass ([why dropout broke our S4D]({{ '/projects/bns/updates/2026-10-16-why-dropout-broke-our-s4d/' | relative_url }})). None of these runs has been repeated without dropout, so whether it lowered the overlaps below, or the chirp-mass accuracy of the joint denoiser and regressor, is not known. Since every run had it, dropout is not one of the settings in which the compared runs differ. Also, the
+pre-merger window below was 4 s long and ended 15.5 to 16 s before the merger (window length 4 s,
+padding 19.5 s and −16 s in the configs), not a 16-second window.
+</blockquote>
+
 Two weeks of scans on the 4-second merger window and a 16-second pre-merger
 window, all with the same S4D denoiser (64 wide, 4 layers) and the fixed
 reference events. The figure of merit is the overlap **rho**, the normalized

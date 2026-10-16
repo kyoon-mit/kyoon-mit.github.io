@@ -17,6 +17,10 @@ summary: >-
 
 {% include notice-snr-powerlaw.html %}
 
+<blockquote markdown="1">
+Correction, 16 October: the signal-only S4D numbers below (54.0% and 32.6%) came from runs with dropout 0.2; with dropout 0 the same S4D reaches 99.9% within 1% without noise. The noisy comparison of one-layer networks had no dropout and stands. The tone-fit numbers below (0.25 to 0.33 for 32 tones, 0.87 to 0.90 for 256) come from Fourier and matrix-pencil fits; directly optimized decaying tones reach 0.43 to 0.56 with 32 ([What S4D computes]({{ '/projects/bns/updates/2026-10-16-what-s4d-computes/' | relative_url }})). See the [16 October status]({{ '/projects/bns/updates/2026-10-16-status-dropout-and-signal-only/' | relative_url }}).
+</blockquote>
+
 ## The finding
 
 - **What an S4D layer can hold.** Each channel of an S4D layer convolves its

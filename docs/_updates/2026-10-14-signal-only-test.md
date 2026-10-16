@@ -13,6 +13,10 @@ summary: >-
 
 {% include notice-snr-powerlaw.html %}
 
+<blockquote markdown="1">
+Correction, 16 October: the S4D runs on this page had dropout 0.2 inside every layer. With dropout 0 and nothing else changed, the same small S4D puts 99.9% of events within 1%, with a mean or a maximum over time. The gap below was caused by dropout, not by S4D or by averaging over time. See the [16 October status]({{ '/projects/bns/updates/2026-10-16-status-dropout-and-signal-only/' | relative_url }}).
+</blockquote>
+
 ## Why this test
 
 Without noise, chirp mass can be read from the waveform locally: from its

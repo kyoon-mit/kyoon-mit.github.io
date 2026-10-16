@@ -147,7 +147,7 @@
 
 - id: effective-spin
   term: effective spin
-  also: [χ_eff]
+  also: [χ_eff, effective spins]
   group: Gravitational waves
   short: >-
     χ_eff = (m₁χ₁ + m₂χ₂)/(m₁ + m₂): the mass-weighted spin along the orbital
@@ -966,6 +966,7 @@
 
 - id: matrix-pencil
   term: matrix-pencil method
+  also: [matrix-pencil, matrix pencil]
   group: Signal processing
   short: >-
     A standard method for fitting a signal as a sum of damped complex exponentials.
@@ -974,6 +975,7 @@
 
 - id: taper
   term: taper
+  also: [tapered]
   group: Signal processing
   short: >-
     Bringing a signal's ends smoothly to zero, to avoid the sharp edges that spread power across frequencies.
@@ -1268,7 +1270,7 @@
 
 - id: learning-rate
   term: learning rate
-  also: [learning-rate schedule, learning rates]
+  also: [learning-rate schedule, learning rates, a step size, step size per update]
   group: Machine learning
   short: >-
     The size of the step training takes against the gradient. A schedule
@@ -1278,7 +1280,7 @@
 
 - id: warm-restart-cosine
   term: warm-restart cosine schedule
-  also: [warm restarts, cosine schedule]
+  also: [warm restarts, cosine schedule, learning-rate cycle, cosine cycles]
   group: Machine learning
   short: >-
     A learning-rate schedule that falls along a cosine curve and then jumps
@@ -1314,7 +1316,7 @@
 
 - id: regularization
   term: regularization
-  also: [regularize, Regularize]
+  also: [regularize, Regularize, regularizing]
   group: Machine learning
   short: >-
     Any addition to training that discourages overly complex solutions, for example a penalty on large or rough weights.
@@ -1419,7 +1421,7 @@
 
 - id: pooling
   term: pooling
-  also: [mean pooling, max pooling, mean pool, max pool, pooling layer]
+  also: [mean pooling, max pooling, mean pool, max pool, pooling layer, pooled value, pooled values]
   group: Machine learning
   short: >-
     Reducing a time series to one number per channel, by its mean (mean
@@ -1549,6 +1551,21 @@
     A smooth version of "keep positive values, set negative ones to zero", applied after each S4D layer.
   source: >-
     Hendrycks and Gimpel (2016), [arXiv:1606.08415](https://arxiv.org/abs/1606.08415).
+
+- id: threshold-at-zero
+  term: threshold at zero
+  also: [step function, Heaviside function, Heaviside step function]
+  group: Machine learning
+  short: >-
+    The function that is 1 where its input is above zero and 0 elsewhere
+    (the Heaviside step function). The sign function, +1 above zero and −1
+    below, is the same up to a scale and a shift; a threshold on the size of
+    the input, 1 where it is above a level or below minus that level, is
+    instead an even function.
+  source: >-
+    NIST Digital Library of Mathematical Functions, equation 1.16.13
+    ([dlmf.nist.gov/1.16.iv](https://dlmf.nist.gov/1.16.iv)): H(x) = 1 for
+    x > 0 and H(x) = 0 for x ≤ 0.
 
 - id: group-norm
   term: group norm
@@ -1734,7 +1751,7 @@
 
 - id: step-size
   term: step size
-  also: [timestep, Δt, dt]
+  also: [timestep, Δt, dt, time step per channel]
   group: State-space models
   short: >-
     How much of the tones' own time passes between two samples. It scales all
@@ -1746,6 +1763,7 @@
 
 - id: s4d-lin
   term: S4D-Lin
+  also: [standard start]
   case: true
   group: State-space models
   short: >-
@@ -1828,7 +1846,7 @@
 
 - id: long-convolution
   term: long convolution
-  also: [long convolutions, long-convolution layer, long kernel, long kernels]
+  also: [long convolutions, long-convolution layer, long kernel, long kernels, long-convolution]
   group: State-space models
   short: >-
     A convolution whose kernel is as long as the input, here 4 s.
@@ -1925,7 +1943,7 @@
 
 - id: band-init
   term: band init
-  also: [band initialization]
+  also: [band initialization, band start, started in band]
   group: This project
   short: >-
     Starting an S4D layer with every tone inside 20 to 512 Hz and lasting 4 s,
@@ -2095,6 +2113,7 @@
 
 - id: binomial-sd
   term: binomial standard deviation
+  also: [binomial spread]
   group: Statistics
   short: >-
     The scatter of a measured fraction p from n events by chance alone,
@@ -2179,3 +2198,1017 @@
     [arXiv:1909.13442](https://arxiv.org/abs/1909.13442): "we use N_t = 35"
     templates whose coefficients "are fixed and correspond to a whitened
     theoretical waveform".
+
+# --- Uncertainty and its checks (readings, 15 October) ---------------------------
+
+- id: coverage
+  term: coverage
+  also: [coverage rate]
+  group: Statistics
+  short: >-
+    The fraction of events whose true value falls inside the interval quoted
+    for them. A method that quotes 90% intervals should have 90% coverage.
+  source: >-
+    Lei, G'Sell, Rinaldo, Tibshirani and Wasserman, J. Am. Stat. Assoc. 113,
+    1094 (2018), [arXiv:1604.04173](https://arxiv.org/abs/1604.04173).
+
+- id: marginal-coverage
+  term: marginal coverage
+  also: [average coverage]
+  group: Statistics
+  short: >-
+    Coverage averaged over a whole population of events, for example all SNRs
+    of a test set together. It can hold while some kinds of events are covered
+    less often and others more often.
+  source: >-
+    Barber, Candès, Ramdas and Tibshirani, Inf. Inference 10, 455 (2021),
+    [arXiv:1903.04684](https://arxiv.org/abs/1903.04684): "Existing methods
+    such as conformal prediction offer marginal coverage guarantees, where
+    predictive coverage holds on average over all possible test points"
+    (quoted).
+
+- id: conditional-coverage
+  term: conditional coverage
+  group: Statistics
+  short: >-
+    Coverage for each kind of event separately, for example at each SNR. Much
+    stronger than marginal coverage, and impossible to guarantee without
+    assumptions about the data.
+  source: >-
+    Barber, Candès, Ramdas and Tibshirani, Inf. Inference 10, 455 (2021),
+    [arXiv:1903.04684](https://arxiv.org/abs/1903.04684): "exact conditional
+    inference guarantees are known to be impossible without imposing
+    assumptions on the underlying distribution" (quoted).
+
+- id: conformal-prediction
+  term: conformal prediction
+  also: [split conformal, split conformal prediction, conformal inference, conformal interval, conformal intervals, conformal sets]
+  group: Statistics
+  short: >-
+    A recipe that turns any estimate into an interval with a guaranteed
+    average hit rate: compute a score, such as the size of the error divided
+    by σ, on held-out simulated events, find the value that 90% of the scores
+    stay below, and use it to size the interval of each new event. It needs
+    held-out and new events to be exchangeable.
+  source: >-
+    Vovk, Gammerman and Shafer, *Algorithmic Learning in a Random World*
+    (Springer 2005), doi:10.1007/b106715; Lei et al., J. Am. Stat. Assoc. 113,
+    1094 (2018), [arXiv:1604.04173](https://arxiv.org/abs/1604.04173).
+
+- id: exchangeable
+  term: exchangeable
+  also: [exchangeability]
+  group: Statistics
+  short: >-
+    Events are exchangeable if shuffling their order does not change their
+    joint probability; independent draws from one population are. Conformal
+    guarantees need held-out and new events to be exchangeable, which can fail
+    if, for example, they come from different observing runs.
+  source: >-
+    Barber, Candès, Ramdas and Tibshirani, Ann. Stat. 51, 816 (2023),
+    [arXiv:2202.13415](https://arxiv.org/abs/2202.13415): conformal
+    prediction's "validity relies on the assumptions of exchangeability of the
+    data" (quoted).
+
+- id: quantile
+  term: quantile
+  also: [quantiles]
+  group: Statistics
+  short: >-
+    The value below which a given fraction of a distribution lies: 90% of it
+    lies below the 0.9 quantile, and the median is the 0.5 quantile.
+  source: >-
+    Koenker and Bassett, Econometrica 46, 33 (1978), doi:10.2307/1913643.
+
+- id: credible-interval
+  term: credible interval
+  also: [credible intervals, credible level, credible region]
+  group: Statistics
+  short: >-
+    An interval that holds a stated probability, for example 90%, of the
+    predicted distribution of a parameter.
+  source: >-
+    Veitch et al., Phys. Rev. D 91, 042003 (2015),
+    [arXiv:1409.7215](https://arxiv.org/abs/1409.7215), eq. (42).
+
+- id: pp-plot
+  term: p-p plot
+  also: [P–P plot, P-P plot, pp plot, p–p plot, p-p test]
+  group: Statistics
+  short: >-
+    A calibration check over many simulated signals: for each probability p,
+    the fraction of signals whose true value lies inside their p credible
+    interval, plotted against p. A calibrated method follows the diagonal.
+  source: >-
+    Veitch et al., Phys. Rev. D 91, 042003 (2015),
+    [arXiv:1409.7215](https://arxiv.org/abs/1409.7215), Fig. 10: "On the x
+    axis is the probability p contained in a credible interval, and on the y
+    axis the fraction of true values which lay inside that interval" (quoted).
+
+- id: pit-histogram
+  term: PIT histogram
+  also: [probability integral transform]
+  case: true
+  group: Statistics
+  short: >-
+    For each event, the predicted probability of a value below the true one,
+    collected in a histogram. It is flat for a calibrated method; a U shape
+    means the predicted spreads are too narrow, a hump that they are too wide.
+  source: >-
+    Gneiting, Balabdaoui and Raftery, J. R. Stat. Soc. B 69, 243 (2007),
+    doi:10.1111/j.1467-9868.2007.00587.x: "Hump-shaped histograms indicate
+    overdispersed predictive distributions with prediction intervals that are
+    too wide on average. U-shaped histograms often correspond to predictive
+    distributions that are too narrow" (quoted).
+
+- id: sbc
+  term: simulation-based calibration
+  group: Statistics
+  short: >-
+    Testing an inference method by drawing true values from the prior,
+    simulating data, and recording where each true value falls in the
+    method's predicted distribution. If the method is right, these positions
+    are spread uniformly.
+  source: >-
+    Talts, Betancourt, Simpson, Vehtari and Gelman,
+    [arXiv:1804.06788](https://arxiv.org/abs/1804.06788) (2018); Cook, Gelman
+    and Rubin, J. Comput. Graph. Stat. 15, 675 (2006),
+    doi:10.1198/106186006X136976.
+
+- id: mixture-of-gaussians
+  term: mixture of Gaussians
+  also: [Gaussian mixture, mixture density network, mixture density networks]
+  group: Machine learning
+  short: >-
+    A distribution made by adding several Gaussians with their own centres,
+    widths and weights; it can be lopsided or have several peaks. A mixture
+    density network is a network that outputs these centres, widths and
+    weights.
+  source: >-
+    Bishop, "Mixture density networks", Technical Report NCRG/94/004, Aston
+    University (1994),
+    [publications.aston.ac.uk/id/eprint/373](https://publications.aston.ac.uk/id/eprint/373).
+
+- id: cqr
+  term: conformalized quantile regression
+  group: Statistics
+  short: >-
+    A conformal method that starts from a network giving a lower and an upper
+    quantile and shifts both by an amount fitted on held-out events. Its
+    intervals can be lopsided and change width from event to event.
+  source: >-
+    Romano, Patterson and Candès, NeurIPS 2019,
+    [arXiv:1905.03222](https://arxiv.org/abs/1905.03222).
+
+- id: scaled-score
+  term: scaled score
+  also: [scaled scores, locally weighted score]
+  group: Statistics
+  short: >-
+    In conformal prediction, the size of an event's error divided by its
+    predicted spread σ. The interval μ ± qσ that results is wider where σ is
+    larger but always symmetric about μ.
+  source: >-
+    Lei, G'Sell, Rinaldo, Tibshirani and Wasserman, J. Am. Stat. Assoc. 113,
+    1094 (2018), [arXiv:1604.04173](https://arxiv.org/abs/1604.04173),
+    section 5.2 (locally weighted conformal inference).
+
+- id: jackknife
+  term: jackknife
+  also: [jackknife+, leave-one-out]
+  group: Statistics
+  short: >-
+    Estimating how large errors are by refitting the model with one training
+    event left out at a time and testing it on that event. The jackknife+
+    variant keeps a coverage guarantee that the plain jackknife lacks.
+  source: >-
+    Barber, Candès, Ramdas and Tibshirani, Ann. Stat. 49, 486 (2021),
+    [arXiv:1905.02928](https://arxiv.org/abs/1905.02928).
+
+- id: deep-ensemble
+  term: deep ensemble
+  also: [deep ensembles, ensemble of networks, ensemble of models]
+  group: Machine learning
+  short: >-
+    Several copies of a network trained from different random starts. The
+    spread of their answers measures uncertainty that a single network's own
+    σ does not include.
+  source: >-
+    Lakshminarayanan, Pritzel and Blundell, NIPS 2017,
+    [arXiv:1612.01474](https://arxiv.org/abs/1612.01474).
+
+- id: student-t
+  term: Student-t distribution
+  also: [Student-t, t-distribution]
+  group: Statistics
+  short: >-
+    A symmetric distribution shaped like a Gaussian near its centre but with
+    heavier tails, so large errors are less surprising. It arises when the
+    width of a Gaussian is itself uncertain.
+  source: >-
+    Skafte (Detlefsen), Jørgensen and Hauberg, NeurIPS 2019,
+    [arXiv:1906.03260](https://arxiv.org/abs/1906.03260): "the t-distribution
+    is often used as a replacement of the Gaussian when data is scarce and the
+    true variance is unknown" (quoted).
+
+- id: mass-spin-degeneracy
+  term: mass-spin degeneracy
+  also: [mass–spin degeneracy, degeneracy between mass and spin]
+  group: Gravitational waves
+  short: >-
+    A change of mass ratio and a change of spin can nearly cancel in the
+    inspiral waveform, so these two are poorly measured while chirp mass stays
+    well measured. The uncertain combinations lie along a ridge, not at
+    separate values.
+  source: >-
+    Baird, Fairhurst, Hannam and Murphy, Phys. Rev. D 87, 024035 (2013),
+    [arXiv:1211.0546](https://arxiv.org/abs/1211.0546): "At low masses, the
+    degeneracy is between mass ratio and total spin, with chirp mass
+    accurately determined" (quoted).
+
+- id: temperature-scaling
+  term: temperature scaling
+  group: Machine learning
+  short: >-
+    Dividing all of a classifier's scores by one number, fitted on held-out
+    data, before they are turned into probabilities, so that overconfident
+    probabilities match observed frequencies.
+  source: >-
+    Guo, Pleiss, Sun and Weinberger, ICML 2017,
+    [arXiv:1706.04599](https://arxiv.org/abs/1706.04599): "on most datasets,
+    temperature scaling [...] is surprisingly effective at calibrating
+    predictions" (quoted, omission marked).
+
+- id: histogram-loss
+  term: histogram loss
+  also: [HL-Gaussian]
+  group: Machine learning
+  short: >-
+    Training a network to output probabilities for bins of the target value,
+    compared with a narrow Gaussian around the true value. Our 235-bin
+    chirp-mass output is trained this way.
+  source: >-
+    Imani and White, ICML 2018,
+    [arXiv:1806.04613](https://arxiv.org/abs/1806.04613).
+
+- id: learning-curve
+  term: learning curve
+  also: [learning curves]
+  group: Machine learning
+  short: >-
+    How a network's accuracy on data it was not trained on changes with the
+    amount of training data. Training on a quarter, a half and all of the data
+    shows whether more data would still help.
+  source: >-
+    Viering and Loog, IEEE Trans. Pattern Anal. Mach. Intell. 45, 7799 (2023),
+    [arXiv:2103.10948](https://arxiv.org/abs/2103.10948): "Learning curves
+    provide insight into the dependence of a learner's generalization
+    performance on the training set size" (quoted).
+
+- id: early-stopping
+  term: early stopping
+  also: [early stop, stopped early, stopping rule]
+  group: Machine learning
+  short: >-
+    Ending training once a score on held-out examples has stopped improving
+    for a set number of passes over the data, and keeping the best version
+    seen so far.
+  source: >-
+    I. Goodfellow, Y. Bengio and A. Courville, *Deep Learning* (MIT Press,
+    2016), section 7.8.
+
+- id: dilated-convolution
+  term: dilated convolution
+  also: [dilated CNN, dilated convolutions]
+  group: Machine learning
+  short: >-
+    A convolution whose few weights are applied to input samples spaced
+    apart (every 2nd, 4th, 8th sample, ...), so that a short stack of layers
+    can see a long stretch of the signal.
+  source: >-
+    F. Yu and V. Koltun, "Multi-Scale Context Aggregation by Dilated
+    Convolutions", ICLR 2016, [arXiv:1511.07122](https://arxiv.org/abs/1511.07122).
+
+# --- Resonators, delays and the pre-registered test (16 October) ----------------
+
+- id: resonator
+  term: resonator
+  also: [resonators]
+  group: State-space models
+  short: >-
+    A damped oscillator driven by the input. One complex state of an S4D
+    channel is one resonator; earlier pages call it a tone.
+  source: >-
+    Gu, Gupta, Goel and Ré, NeurIPS 2022,
+    [arXiv:2206.11893](https://arxiv.org/abs/2206.11893), section 3; the
+    oscillator equation is derived on the
+    [derivations page](/projects/bns/derivations/#oct15-oscillator).
+
+- id: ring-time
+  term: ring time
+  also: [ring times]
+  group: State-space models
+  short: >-
+    The time in which a resonator's free swing falls by a factor e: 1/a for
+    decay rate a. A resonator that rings for T listens to a band 1/(πT) wide
+    and delays a burst at its frequency by T.
+  source: >-
+    Derived on the [derivations page](/projects/bns/derivations/#oct16-s4d-resonance-curve)
+    and [here](/projects/bns/derivations/#oct16-s4d-ring-delay); the earlier
+    S4D pages call the same time the tone's memory
+    ([S4D tones](/projects/bns/derivations/#s4d-tones)).
+
+- id: skip-term
+  term: skip term
+  group: State-space models
+  short: >-
+    The part D·u(t) of an S4D channel's output: the input passed straight
+    through with one weight D, with no memory.
+  source: >-
+    Gu, Goel and Ré, ICLR 2022,
+    [arXiv:2111.00396](https://arxiv.org/abs/2111.00396), section 2.1:
+    "the term Du can be viewed as a skip connection and is easy to compute".
+
+- id: resonance-curve
+  term: resonance curve
+  also: [resonance curves]
+  group: Signal processing
+  short: >-
+    A driven oscillator's response, in power, against the frequency of the
+    drive: a peak at the oscillator's frequency whose full width at half
+    maximum is a/π in hertz for decay rate a.
+  source: >-
+    Derived on the [derivations page](/projects/bns/derivations/#oct16-s4d-resonance-curve).
+
+- id: transfer-function
+  term: transfer function
+  also: [transfer functions]
+  group: Signal processing
+  short: >-
+    A linear filter's response to a steady tone: one complex number per
+    frequency, whose size is the gain and whose angle is the phase shift.
+  source: >-
+    Oppenheim and Willsky, *Signals and Systems*, 2nd ed. (1997).
+
+- id: group-delay
+  term: group delay
+  also: [group delays]
+  group: Signal processing
+  short: >-
+    How late a filter lets the envelope of a narrow-band burst through, at a
+    given frequency: minus the slope of its phase against angular frequency.
+  source: >-
+    Oppenheim and Schafer, *Discrete-Time Signal Processing*, 3rd ed.
+    (2010). Klauder, Price, Darlington and Albersheim, *Bell System Technical
+    Journal* 39, 745 (1960),
+    [doi:10.1002/j.1538-7305.1960.tb03942.x](https://doi.org/10.1002/j.1538-7305.1960.tb03942.x),
+    p. 759, call it the instantaneous delay: "The instantaneous delay is
+    proportional to the phase [...] differentiated with respect to
+    frequency."
+
+- id: delay-line
+  term: delay line
+  also: [delay lines, dispersive delay line, dispersive delay lines]
+  group: Signal processing
+  short: >-
+    A filter that holds its input for a time before passing it on. In a
+    dispersive delay line the time depends on frequency; the matched filter
+    of a chirp is one, holding each frequency until the merger.
+  source: >-
+    Klauder, Price, Darlington and Albersheim, *Bell System Technical
+    Journal* 39, 745 (1960),
+    [doi:10.1002/j.1538-7305.1960.tb03942.x](https://doi.org/10.1002/j.1538-7305.1960.tb03942.x),
+    p. 750: a "network possessing a delay versus frequency character".
+
+- id: filter-zero
+  term: zeros of a filter
+  also: [channel's zeros, channel’s zeros, right-half-plane zeros, zeros in the right half plane]
+  group: Signal processing
+  short: >-
+    The complex frequencies at which a filter's transfer function vanishes,
+    the counterparts of its poles. In an S4D channel the weights decide where
+    they sit.
+  source: >-
+    Oppenheim and Schafer, *Discrete-Time Signal Processing*, 3rd ed. (2010).
+
+- id: all-pass
+  term: all-pass filter
+  also: [all-pass filters, all-pass]
+  group: Signal processing
+  short: >-
+    A filter that changes only phases, not amplitudes: its gain is 1 at every
+    frequency, and its zeros are the mirror images of its poles.
+  source: >-
+    Oppenheim and Schafer, *Discrete-Time Signal Processing*, 3rd ed.
+    (2010), section on all-pass systems.
+
+- id: fourier-tone
+  term: Fourier tones
+  also: [Fourier tone]
+  group: Signal processing
+  short: >-
+    Steady sine waves at the frequencies of a window's discrete Fourier
+    transform, multiples of 1/(window length): 0.25 Hz apart for 4 s.
+    Keeping the strongest N of them is the Fourier fit.
+  source: >-
+    Oppenheim and Schafer, *Discrete-Time Signal Processing*, 3rd ed.
+    (2010); our use: the [derivations page](/projects/bns/derivations/#ck-fourier-tones).
+
+- id: in-step-time
+  term: in-step time
+  group: Signal processing
+  short: >-
+    How long a chirp stays within an eighth of a cycle of a steady wave at
+    the frequency it is passing: one over the square root of the rate at
+    which its frequency rises.
+  source: >-
+    Derived on the [derivations page](/projects/bns/derivations/#oct15-in-step-time).
+
+- id: chirplet
+  term: chirplet
+  also: [chirplets, chirplet chain, chirplet chains, chirplet kernel, chirplet kernels]
+  group: Signal processing
+  short: >-
+    A short wave packet whose frequency changes at a constant rate across it:
+    a linear chirp under a Gaussian envelope, set by its centre time, width,
+    centre frequency, rate of change of frequency, amplitude and phase. A
+    chirplet chain joins several end to end, so that its frequency follows a
+    broken line.
+  source: >-
+    Mann and Haykin, IEEE Trans. Signal Process. 43, 2745 (1995),
+    [doi:10.1109/78.482123](https://doi.org/10.1109/78.482123). In the words
+    of Glotin, Ricard and Balestriero 2016,
+    [arXiv:1611.08749](https://arxiv.org/abs/1611.08749), section 2: "A
+    chirplet can be seen as a complex sinus with increasing or decreasing
+    frequency over time modulated by a Gaussian window to have a localized
+    support in the time and Fourier domain." Chirplet chains (CCs):
+    Chassande-Mottin and Pai, Phys. Rev. D 73, 042003 (2006),
+    [arXiv:gr-qc/0512137](https://arxiv.org/abs/gr-qc/0512137), section IV:
+    "CCs are signals whose (instantaneous) frequency is a broken line." Their
+    chirplets are cut pieces, with no Gaussian envelope (section IV.A): "A
+    chirplet is a short piece of signal whose frequency varies linearly
+    between two successive nodes of the grid." How many cover our windows:
+    the [derivations page](/projects/bns/derivations/#oct16-chirplet-count).
+
+- id: linear-chirp
+  term: linear chirp
+  also: [linear chirps]
+  group: Signal processing
+  short: >-
+    A wave whose frequency changes at a constant rate, so that its phase is
+    a quadratic function of time. Over a short enough stretch, any smooth
+    chirp is close to one.
+  source: >-
+    Chassande-Mottin and Pai, Phys. Rev. D 73, 042003 (2006),
+    [arXiv:gr-qc/0512137](https://arxiv.org/abs/gr-qc/0512137), section V.B:
+    "a linear chirp (i.e., a chirp whose frequency is a linear function of
+    time)". How long a binary's chirp stays within an eighth of a cycle of
+    one: the
+    [derivations page](/projects/bns/derivations/#oct16-chirplet-count).
+
+- id: dc-offset
+  term: DC offset
+  also: [DC offsets]
+  case: true
+  group: Signal processing
+  short: >-
+    A constant added to every sample of a signal; its part at zero
+    frequency.
+  source: >-
+    Oppenheim and Willsky, *Signals and Systems*, 2nd ed. (1997).
+
+- id: variable-projection
+  term: VarPro
+  also: [variable projection]
+  case: true
+  group: Signal processing
+  short: >-
+    A least-squares fit for models that are linear in some parameters: for
+    each trial of the others (here the resonators' frequencies and decay
+    rates), the linear weights are solved exactly.
+  source: >-
+    Golub and Pereyra, SIAM J. Numer. Anal. 10, 413 (1973),
+    [doi:10.1137/0710036](https://doi.org/10.1137/0710036).
+
+- id: float32
+  term: float32
+  also: [float64, complex64]
+  case: true
+  group: Machine learning
+  short: >-
+    Numbers stored in 32 bits, which hold 7.2 significant decimal digits
+    (float64: 64 bits, 16.0 digits; log10 of 2^24 and of 2^53). The S4D layers we
+    use compute in float32; complex64 is a pair of float32 values.
+  source: >-
+    IEEE Standard for Floating-Point Arithmetic, IEEE Std 754-2019,
+    [doi:10.1109/IEEESTD.2019.8766229](https://doi.org/10.1109/IEEESTD.2019.8766229).
+
+- id: cufft
+  term: cuFFT
+  case: true
+  group: Machine learning
+  short: >-
+    NVIDIA's library for fast Fourier transforms on its GPUs; PyTorch uses
+    it for FFTs on the GPU.
+  source: >-
+    NVIDIA, cuFFT documentation
+    ([docs.nvidia.com/cuda/cufft](https://docs.nvidia.com/cuda/cufft/)):
+    "This document describes cuFFT, the NVIDIA® CUDA® Fast Fourier Transform
+    (FFT) product." PyTorch documentation, CUDA semantics, section "cuFFT
+    plan cache": "For each CUDA device, an LRU cache of cuFFT plans is used
+    to speed up repeatedly running FFT methods [...]"
+
+- id: pre-registration
+  term: pre-registered test
+  also: [pre-registered tests, pre-registered, pre-registration]
+  group: Statistics
+  short: >-
+    A test whose prediction and decision rule are written down before the
+    data are seen, so that the result cannot shape the rule. Here the file
+    was fixed by its sha256.
+  source: >-
+    Nosek, Ebersole, DeHaven and Mellor, "The preregistration revolution",
+    Proc. Natl. Acad. Sci. 115, 2600 (2018),
+    [doi:10.1073/pnas.1708274114](https://doi.org/10.1073/pnas.1708274114).
+
+- id: sha256
+  term: sha256
+  also: [SHA-256]
+  group: Statistics
+  short: >-
+    A fingerprint of a file, 64 hexadecimal digits long. Changing the file
+    changes the fingerprint, so quoting it fixes the file's content at the
+    time it was quoted.
+  source: >-
+    National Institute of Standards and Technology, *Secure Hash Standard
+    (SHS)*, FIPS PUB 180-4 (2015),
+    [doi:10.6028/NIST.FIPS.180-4](https://doi.org/10.6028/NIST.FIPS.180-4):
+    "Any change to a message will, with a very high probability, result in a
+    different message digest."
+
+- id: bootstrap
+  term: bootstrap interval
+  also: [bootstrap intervals, bootstrap]
+  group: Statistics
+  short: >-
+    A range for a statistic found by recomputing it on many resamples of the
+    data, each drawn with replacement; here 2,000 resamples of the test
+    windows, the same resample for the quantities being compared.
+  source: >-
+    Efron, "Bootstrap methods: another look at the jackknife", Ann. Statist.
+    7(1) (1979), [doi:10.1214/aos/1176344552](https://doi.org/10.1214/aos/1176344552).
+
+- id: rank-correlation
+  term: rank correlation
+  group: Statistics
+  short: >-
+    The correlation between the ranks of two quantities rather than their
+    values: 1 if one always rises with the other, 0 if unrelated, −1 if one
+    always falls as the other rises.
+  source: >-
+    Spearman, "The proof and measurement of association between two
+    things", Am. J. Psychol. 15, 72 (1904),
+    [doi:10.2307/1412159](https://doi.org/10.2307/1412159).
+
+# New terms for the 16 October update "Why dropout broke our S4D chirp-mass
+# regressor" and its derivation sections (#oct16-dropout-...), in the format of
+# docs/_data/glossary.yml. On 16 October 2026 none of these ids or spellings
+# was in that file. Existing entries already cover channel, pooling, linear
+# head (read-out), GELU, group norm, epoch, validation, checkpoint, overfitting,
+# Student-t distribution, ml4gw, S4D and the β-weighted Gaussian likelihood.
+# Every citation below was checked on 16 October 2026 against the arXiv API,
+# Crossref, the publisher's page or the installed library's documentation.
+
+# --- Machine learning -----------------------------------------------------------
+
+- id: dropout
+  term: dropout
+  also: [channel dropout, inverted dropout, SpatialDropout, dropout pattern, dropout patterns]
+  group: Machine learning
+  short: >-
+    A random step used only in training. Each value, or in channel dropout
+    each whole channel, is set to zero with probability p, and the values
+    that survive are multiplied by 1/(1 − p), so that each value keeps its
+    average. The random choice of what is switched off (the dropout pattern)
+    is new for every example at every step. In evaluation mode dropout does
+    nothing. Our S4D regressors used channel dropout with p = 0.2.
+  source: >-
+    Srivastava, Hinton, Krizhevsky, Sutskever and Salakhutdinov, JMLR 15,
+    1929 (2014); Hinton et al. (2012),
+    [arXiv:1207.0580](https://arxiv.org/abs/1207.0580); whole channels
+    (SpatialDropout): Tompson et al., CVPR 2015,
+    [arXiv:1411.4280](https://arxiv.org/abs/1411.4280). The PyTorch
+    documentation of `nn.Dropout` (version 2.10) reads: "the outputs are
+    scaled by a factor of 1/(1−p) during training. This means that during
+    evaluation the module simply computes an identity function."
+
+- id: evaluation-mode
+  term: evaluation mode
+  also: [training mode, eval mode, train mode]
+  group: Machine learning
+  short: >-
+    The two ways a network can run. In training mode random steps such as
+    dropout are on. In evaluation mode, used for validation, tests and all
+    later use, they are off, so the same input always gives the same output.
+  source: >-
+    PyTorch documentation of `Module.eval` (version 2.10): "Set the module in
+    evaluation mode. This has an effect only on certain modules. See the
+    documentation of particular modules for details of their behaviors in
+    training/evaluation mode, i.e. whether they are affected, e.g. Dropout,
+    BatchNorm, etc."
+
+- id: linear-layer
+  term: linear layer
+  also: [linear layers, affine, fully connected layer]
+  group: Machine learning
+  short: >-
+    A layer whose outputs are weighted sums of its inputs plus a constant,
+    out_j = b_j + Σ_i w_ji in_i, with the weights w and constants b learned.
+    Strictly this is affine (linear plus a constant); in machine learning it
+    is called linear.
+  source: >-
+    PyTorch documentation of `nn.Linear` (version 2.10): "Applies an affine
+    linear transformation to the incoming data: y = xAᵀ + b."
+
+- id: glu
+  term: GLU
+  also: [gated linear unit]
+  case: true
+  group: Machine learning
+  short: >-
+    Gated linear unit. The input channels are split into two halves a and b,
+    and the output is a × σ(b), with σ(x) = 1/(1 + e^(−x)), so b opens or
+    closes a like a gate. Each S4D layer in our networks ends with one, which
+    brings 128 channels back to 64.
+  source: >-
+    Dauphin, Fan, Auli and Grangier, ICML 2017,
+    [arXiv:1612.08083](https://arxiv.org/abs/1612.08083). PyTorch
+    documentation of `nn.GLU` (version 2.10): "GLU(a,b) = a ⊗ σ(b) where a is
+    the first half of the input matrices and b is the second half."
+
+- id: residual-connection
+  term: residual connection
+  also: [residual connections, residual sum]
+  group: Machine learning
+  short: >-
+    Adding a block's input to its output, so that the block adds a correction
+    to what it receives instead of replacing it. Each block of our S4D
+    networks has one.
+  source: >-
+    He, Zhang, Ren and Sun, CVPR 2016,
+    [arXiv:1512.03385](https://arxiv.org/abs/1512.03385).
+
+- id: batch-normalization
+  term: batch normalization
+  also: [batch norm, BatchNorm]
+  group: Machine learning
+  short: >-
+    Rescaling each channel to mean 0 and spread 1 using the statistics of the
+    current batch in training; in evaluation it uses averages of those
+    statistics stored during training. Our S4D networks use group norm
+    instead, which computes its statistics from each example in both modes.
+  source: >-
+    Ioffe and Szegedy (2015),
+    [arXiv:1502.03167](https://arxiv.org/abs/1502.03167). PyTorch
+    documentation of `nn.BatchNorm1d` (version 2.10): "during training this
+    layer keeps running estimates of its computed mean and variance, which
+    are then used for normalization during evaluation."
+
+- id: monte-carlo-dropout
+  term: Monte Carlo dropout
+  also: [MC dropout]
+  group: Machine learning
+  short: >-
+    Keeping dropout on in evaluation and averaging the outputs of several
+    passes through the network, each with a new random dropout pattern.
+  source: >-
+    Gal and Ghahramani, ICML 2016,
+    [arXiv:1506.02142](https://arxiv.org/abs/1506.02142), section 4: "We
+    refer to this Monte Carlo estimate as MC dropout. In practice this is
+    equivalent to performing T stochastic forward passes through the network
+    and averaging the results."
+
+- id: inference-gap
+  term: inference gap
+  group: Machine learning
+  short: >-
+    The difference between a network's output averaged over dropout patterns
+    and its output with dropout off. It is zero when everything after the
+    dropout is linear and not in general.
+  source: >-
+    Ma, Gao, Hu, Yu, Deng and Hovy, ICLR 2017,
+    [arXiv:1609.08017](https://arxiv.org/abs/1609.08017), section 2.3: "no
+    attempt has been made to explicitly control this inference gap", where
+    the gap is that of their equation 3, E_S[H(x, S; θ)] ≈ h(x, E[S]; θ).
+
+- id: variance-shift
+  term: variance shift
+  group: Machine learning
+  short: >-
+    Dropout widens the spread of the values after it in training but not in
+    evaluation. A batch normalization after the dropout stores the training
+    spread and applies it in evaluation, where it no longer fits; Li et al.
+    call this mismatch the variance shift.
+  source: >-
+    Li, Chen, Hu and Yang, CVPR 2019,
+    [arXiv:1801.05134](https://arxiv.org/abs/1801.05134): "Dropout would shift
+    the variance of a specific neural unit when we transfer the state of that
+    network from train to test. However, BN would maintain its statistical
+    variance, which is accumulated from the entire learning procedure, in the
+    test phase. The inconsistency of that variance (we name this scheme as
+    “variance shift”) ..."
+
+- id: pytorch
+  term: PyTorch
+  case: true
+  group: Machine learning
+  short: >-
+    The Python library in which our networks are written and trained.
+  source: >-
+    Paszke et al., NeurIPS 2019,
+    [arXiv:1912.01703](https://arxiv.org/abs/1912.01703).
+
+- id: pytorch-lightning
+  term: PyTorch Lightning
+  also: [Lightning]
+  case: true
+  group: Machine learning
+  short: >-
+    A library on top of PyTorch that runs the training loop: training steps,
+    validation after each epoch, checkpoints and logging.
+  source: >-
+    Lightning documentation of the hook `on_validation_model_eval` (version
+    2.2.1): "The validation loop by default calls `.eval()` on the
+    LightningModule before it starts."
+
+# --- Statistics -------------------------------------------------------------------
+
+- id: convex-function
+  term: convex function
+  also: [convex, convexity]
+  group: Statistics
+  short: >-
+    A function whose chord between any two points lies on or above its graph:
+    f(θx + (1 − θ)y) ≤ θ f(x) + (1 − θ) f(y) for 0 ≤ θ ≤ 1. The square, the
+    exponential and the largest of several numbers, max(x₁, …, xₙ), are
+    convex.
+  source: >-
+    Boyd and Vandenberghe, *Convex Optimization* (Cambridge University Press,
+    2004), section 3.1.1 (definition, equation 3.1) and section 3.1.5: "Max
+    function. f(x) = max{x1, . . . , xn} is convex on Rn."
+
+- id: jensen
+  term: Jensen's inequality
+  also: [Jensen’s inequality]
+  group: Statistics
+  short: >-
+    For a convex function f and a random quantity x, the average of f(x) is
+    at least f of the average of x. For the maximum: the average of a
+    maximum is at least the maximum of the averages.
+  source: >-
+    Boyd and Vandenberghe, *Convex Optimization* (Cambridge University Press,
+    2004), section 3.1.8, equation 3.5: "f(E x) ≤ E f(x)".
+
+# New terms for the 15 October lecture "Oscillators and chirps", the three
+# 16 October updates (status, what an S4D channel computes, why dropout broke
+# our S4D) and the derivation sections whose ids start with oct15- or oct16-.
+# On 16 October 2026 none of these ids or spellings was in this file. Every
+# citation below was checked on 16 October 2026 against the arXiv API,
+# Crossref, OpenAlex, the publisher's page or the installed library's
+# documentation; statements on our pipeline were checked against the
+# aframe and ml4gw code.
+
+# --- Machine learning -----------------------------------------------------------
+
+- id: architecture
+  term: architecture
+  also: [architectures]
+  group: Machine learning
+  short: >-
+    The design of a network: which layers it has, how large they are and how
+    they are connected, as opposed to the values of its weights.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016), section 6.4:
+    "The word architecture refers to the overall structure of the network: how
+    many units it should have and how these units should be connected to each
+    other."
+
+- id: relu
+  term: ReLU
+  also: [ReLUs, rectified linear unit, rectified linear units]
+  case: true
+  group: Machine learning
+  short: >-
+    Rectified linear unit: the function max(0, x), which keeps positive values
+    and sets negative ones to zero. aframe's ResNet and the dilated CNN of our
+    signal-only comparison apply it after their convolutions; our S4D layers
+    use the GELU, a smooth version of it.
+  source: >-
+    Nair and Hinton, "Rectified Linear Units Improve Restricted Boltzmann
+    Machines", ICML 2010, 807,
+    [icml.cc/Conferences/2010/papers/432.pdf](https://icml.cc/Conferences/2010/papers/432.pdf),
+    section 4: "The discriminative models use the deterministic version of
+    NReLUs that implement the function y = max(0, x)." Glorot, Bordes and
+    Bengio, "Deep Sparse Rectifier Neural Networks", AISTATS 2011, PMLR 15,
+    315,
+    [proceedings.mlr.press/v15/glorot11a](https://proceedings.mlr.press/v15/glorot11a.html).
+    Where our networks use it: the ml4gw and aframe code.
+
+- id: residual-block
+  term: residual block
+  also: [residual blocks, block’s branch]
+  group: Machine learning
+  short: >-
+    A few layers with a residual connection around them: the block adds its
+    input to what its layers (its branch) compute from that input. aframe's
+    ResNet is a stack of 16 such blocks of two 3-sample convolutions each, the
+    dilated CNN of our signal-only comparison a stack of 9, and each block of
+    our S4D networks is one built around an S4D layer.
+  source: >-
+    He, Zhang, Ren and Sun, CVPR 2016,
+    [arXiv:1512.03385](https://arxiv.org/abs/1512.03385), section 3.2: "We
+    adopt residual learning to every few stacked layers. A building block is
+    shown in Fig. 2." Section 1: "the shortcut connections simply perform
+    identity mapping, and their outputs are added to the outputs of the
+    stacked layers". Our networks: the ml4gw and aframe code.
+
+- id: one-by-one-convolution
+  term: 1 × 1 convolution
+  also: [1×1 convolution]
+  group: Machine learning
+  short: >-
+    A convolution whose kernel is one sample long: at each time it forms
+    weighted sums of the channels at that time, with the same weights at every
+    time. It mixes channels and does not look along time, so it is a linear
+    layer applied separately at each time. In ml4gw's S4D layer one doubles the
+    channels (64 to 128 in our small S4D) before the GLU halves them again.
+  source: >-
+    Lin, Chen and Yan, "Network In Network", ICLR 2014,
+    [arXiv:1312.4400](https://arxiv.org/abs/1312.4400), section 3.1: "The
+    cross channel parametric pooling layer is also equivalent to a convolution
+    layer with 1x1 convolution kernel." ml4gw's S4D layer: its code (version
+    0.8.3).
+
+- id: tensor
+  term: tensor
+  also: [tensors]
+  group: Machine learning
+  short: >-
+    In PyTorch, an array of numbers with any number of indices, for example
+    windows × detectors × samples. It is only a container for data; unlike a
+    tensor in physics, it implies no rule for how it changes under a change of
+    coordinates.
+  source: >-
+    PyTorch documentation of `torch.Tensor` (version 2.10): "A torch.Tensor is
+    a multi-dimensional matrix containing elements of a single data type."
+
+- id: weight-decay
+  term: weight decay
+  group: Machine learning
+  short: >-
+    Shrinking every weight toward zero at each training step by the fraction
+    γλ, with γ the learning rate and λ the weight-decay coefficient. In AdamW,
+    our optimizer, this shrinking is applied separately from the step set by
+    the gradients. The signal-only comparison of 16 October used λ = 0.01 for
+    every network, and none for the S4D's own parameters (its resonators'
+    frequencies and damping rates, and each channel's time step).
+  source: >-
+    Loshchilov and Hutter, "Decoupled Weight Decay Regularization", ICLR 2019,
+    [arXiv:1711.05101](https://arxiv.org/abs/1711.05101). The PyTorch
+    documentation of `torch.optim.AdamW` (version 2.10) writes this step as
+    θₜ ← θₜ₋₁ − γλθₜ₋₁, with λ the "weight decay coefficient (default:
+    1e-2)". Our value: run configurations; the zero for the S4D parameters:
+    the aframe training code.
+
+- id: warmup
+  term: warmup
+  also: [linear warmup]
+  group: Machine learning
+  short: >-
+    Starting training with a small learning rate and raising it step by step to
+    its full value. Our recent runs raise it linearly from 1% of the full rate
+    over the first 10 epochs, then follow the warm-restart cosine schedule.
+  source: >-
+    Goyal et al., "Accurate, Large Minibatch SGD: Training ImageNet in 1 Hour"
+    (2017), [arXiv:1706.02677](https://arxiv.org/abs/1706.02677); in the words
+    of its abstract, it develops "a new warmup scheme that overcomes
+    optimization challenges early in training". Our schedule: run
+    configurations.
+
+- id: patience
+  term: patience
+  group: Machine learning
+  short: >-
+    In early stopping, the number of validations in a row without a new best
+    score after which training stops. Our stopping rule uses 80 epochs for
+    signal-only runs and 160 for noisy runs, and never stops before the end of
+    the learning-rate cycle that holds the best epoch.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016), section 7.8,
+    algorithm 7.1: "Let p be the “patience,” the number of times to observe
+    worsening validation set error before giving up." Lightning documentation
+    of `EarlyStopping` (version 2.2.1): "patience: number of checks with no
+    improvement after which training will be stopped." Our choice of 80 and
+    160: [derivations page](/projects/bns/derivations/#oct16-stopping).
+
+- id: callback
+  term: callback
+  also: [callbacks, hook, hooks]
+  group: Machine learning
+  short: >-
+    Code that a training library runs at fixed points of its loop (its hooks),
+    for example after each validation. Our stopping rule is a callback: it
+    reads each validation result and decides whether training goes on.
+  source: >-
+    Lightning documentation of `Callback` (version 2.2.1): "Abstract base class
+    used to build new callbacks. Subclass this class and override any of the
+    relevant hooks". Our stopping rule: the aframe training code.
+
+- id: seed
+  term: seed
+  also: [seeds, random seed, random seeds]
+  group: Machine learning
+  short: >-
+    The number that starts a random-number generator: the same seed gives the
+    same sequence of random numbers. Training a network again with another seed
+    changes its random starting weights and the random choices made during
+    training, and shows how much a result owes to chance.
+  source: >-
+    PyTorch documentation of `torch.manual_seed` (version 2.10): "Sets the seed
+    for generating random numbers on all devices." Lightning documentation of
+    `seed_everything` (version 2.2.1): "Function that sets the seed for
+    pseudo-random number generators in: torch, numpy, and Python's random
+    module."
+
+# --- Signal processing ----------------------------------------------------------
+
+- id: hann-window
+  term: Hann window
+  also: [Hann taper, half-Hann taper]
+  group: Signal processing
+  short: >-
+    The taper w(t) = sin²(πt/T) = ½[1 − cos(2πt/T)] over a stretch of length T:
+    it rises smoothly from 0 to 1 and falls back to 0. Multiplying data by it
+    keeps the ends of the stretch from spreading power across frequencies, at
+    the price of blurring each frequency over ±2/T, the extent of its main
+    lobe. A half-Hann taper is one half of it, a smooth ramp at one end. ml4gw,
+    which we use, applies Hann windows when it estimates the noise spectrum and
+    when it cuts the whitening filter's response to a set length.
+  source: >-
+    Harris, "On the use of windows for harmonic analysis with the discrete
+    Fourier transform", Proc. IEEE 66, 51 (1978),
+    [doi:10.1109/PROC.1978.10837](https://doi.org/10.1109/PROC.1978.10837).
+    SciPy documentation of `scipy.signal.windows.hann` (version 1.14.1): "The
+    Hann window is a taper formed by using a raised cosine or sine-squared with
+    ends that touch zero." In ml4gw (version 0.8.3), `torch.hann_window` is the
+    default window of `SpectralDensity` and the taper of `Whiten`.
+
+- id: main-lobe
+  term: main lobe
+  group: Signal processing
+  short: >-
+    The central peak of a window's spectrum, between its first zeros on either
+    side of zero frequency. Multiplying data by a window convolves their
+    spectrum with the window's, so each frequency is spread over the main lobe:
+    for a plain cut T long its first zeros lie at ±1/T, for a Hann window at
+    ±2/T.
+  source: >-
+    Harris, Proc. IEEE 66, 51 (1978),
+    [doi:10.1109/PROC.1978.10837](https://doi.org/10.1109/PROC.1978.10837).
+
+- id: real-fft
+  term: real FFT
+  also: [inverse real FFT]
+  group: Signal processing
+  short: >-
+    The FFT of a real signal. Its spectrum at −f is the complex conjugate of
+    that at f, so the real FFT keeps only the bins from zero to the Nyquist
+    frequency, N/2 + 1 of them for an even number N of samples. The inverse
+    real FFT turns such bins back into a real signal, for which the bins at
+    zero and at the Nyquist frequency must be real.
+  source: >-
+    PyTorch documentation (version 2.10) of `torch.fft.rfft`: "The FFT of a
+    real signal is Hermitian-symmetric, X[i] = conj(X[-i]) so the output
+    contains only the positive frequencies below the Nyquist frequency"; of
+    `torch.fft.irfft`: "Some input frequencies must be real-valued to satisfy
+    the Hermitian property. In these cases the imaginary component will be
+    ignored." Our use:
+    [derivations page](/projects/bns/derivations/#oct16-s4d-fft-offset).
+
+# --- Gravitational waves --------------------------------------------------------
+
+- id: detector-frame
+  term: detector frame
+  also: [detector-frame]
+  group: Gravitational waves
+  short: >-
+    Masses as the detector measures them: the source's own masses times
+    (1 + z), with z its redshift, since the expansion of the universe stretches
+    the signal in time by 1 + z. aframe's waveform code stores its masses in
+    the detector frame, multiplying source-frame samples by 1 + z.
+  source: >-
+    Abbott et al., Phys. Rev. Lett. 119, 161101 (2017),
+    [arXiv:1710.05832](https://arxiv.org/abs/1710.05832): "The mass parameters
+    in the detector frame are related to the rest-frame masses of the source by
+    its redshift z as m^det = m(1 + z)." aframe's waveform code: its conversion
+    of sampled masses.

@@ -87,8 +87,8 @@ kernels (white noise, 64 windows).
 The network statistic
 is $\max_t [E^{\rm H1}(t) + \max_{|\tau| \le 10\,{\rm ms}} E^{\rm L1}(t+\tau)]$ (in the code, ±20 samples: 9.77 ms at 2048 Hz).
 For $N$ independent exponential variables of mean 2 (χ² with two degrees of
-freedom), the expected maximum is $2 H_N = 2\sum_{k=1}^N 1/k \approx 2(\ln N
-+ 0.577)$, which is 17.8 for $N = 4096$. Neighbouring outputs of a kernel are
+freedom), the expected maximum is
+$2 H_N = 2\sum_{k=1}^N 1/k \approx 2(\ln N + 0.577)$, which is 17.8 for $N = 4096$. Neighbouring outputs of a kernel are
 correlated and the overlap is partial, so this is only a guide. Measured on
 white noise with the trained kernels of the 13 October run (64 windows, 256
 kernels): one detector's maximum averaged 13.9; the two-detector statistic
@@ -183,20 +183,123 @@ $$
 (Sathyaprakash and Schutz 2009, Living Reviews in Relativity 12, 2,
 [arXiv:0903.0338](https://arxiv.org/abs/0903.0338); Maggiore,
 *Gravitational Waves*, Vol. 1, chapter 4). Setting $\tau = 4$ s gives the
-frequency 4 s before merger and the cycles after it:
+frequency 4 s before merger and the cycles after it, and $\tau = 3.5$ s the
+same for the last 3.5 s:
 
 <div markdown="1">
 
-| chirp mass | frequency 4 s before merger | cycles in the last 4 s |
-|---|---|---|
-| 0.85 M☉ | 99 Hz | 636 |
-| 1.2 M☉ | 80 Hz | 513 |
-| 1.8 M☉ | 62 Hz | 398 |
-| 2.75 M☉ | 48 Hz | 305 |
+| chirp mass | frequency 4 s before merger | cycles in the last 4 s | frequency 3.5 s before merger | cycles in the last 3.5 s |
+|---|---|---|---|---|
+| 0.85 M☉ | 99 Hz | 636 | 105 Hz | 585 |
+| 1.2 M☉ | 80 Hz | 513 | 84 Hz | 472 |
+| 1.8 M☉ | 62 Hz | 398 | 65 Hz | 366 |
+| 2.75 M☉ | 48 Hz | 305 | 50 Hz | 281 |
 
 </div>
 
+In our 4 s windows the merger falls 3.5 to 4 s after the first sample
+([where the merger falls](#oct16-merger-position)), so a window holds the
+last 3.5 to 4 s of the chirp. Over 0.85 to 2.75 M☉ the chirp in a window
+therefore starts at 48 to 105 Hz and makes 281 to 636 cycles (280 to 636 in
+one detector, where the merger can move by a further 21.0 ms). Since
+$f \propto \tau^{-3/8}$ and $N \propto \tau^{5/8}$, each 3.5 s frequency is
+$(4/3.5)^{3/8} = 1.0513$ times the 4 s one, and each 3.5 s count
+$(3.5/4)^{5/8} = 0.9199$ times.
+
 These are leading-order values; post-Newtonian corrections are not included.
+
+**Check.** Python (numpy and scipy), with
+$GM_\odot/c^3 = 4.925490947\times10^{-6}$ s ([constants](#ck-chirp)): the
+closed form for $N$ and a numerical integral of $f$ over the time before
+merger agree to better than $10^{-14}$ (relative). At 4 s, 99.41, 80.14,
+62.20 and 47.72 Hz and 636.23, 512.88, 398.07 and 305.43 cycles; at 3.5 s,
+104.52, 84.25, 65.39 and 50.17 Hz and 585.29, 471.81, 366.19 and 280.98
+cycles. For one detector the count starts at the window's first sample,
+3.4795 to 4.0210 s before the merger, and stops at the merger or at the
+window's end, whichever comes first: 279.95 cycles at the fewest (2.75 M☉)
+and 636.23 at the most (0.85 M☉).
+
+## Where the merger falls in our 4 s windows {#oct16-merger-position}
+
+**Claim** (15 and 16 October updates): in the training, validation and test
+windows of our 4 s runs, signal-only and noisy, the merger falls 3.5 to 4 s
+after the window's first sample, at one of 1,024 positions, each equally
+likely. A window therefore holds the last 3.5 to 4 s of the chirp and up to
+0.5 s after the merger. In each detector the merger moves by at most a
+further 21.0 ms either way. The merger runs with a time warp use the same
+windows, warped up to each detector's amplitude peak; the early runs with a
+time warp use windows that end 25.0 to 25.5 s before the merger.
+
+**Setup.** Our training code (built on aframe and ml4gw) cuts every window
+the same way.
+
+- The stored waveforms (IMRPhenomPv2, generated with PyCBC) are 32 s long at
+  2048 Hz, 65,536 samples, with the coalescence placed 2 s before the end, at
+  sample 61,440. That sample is the merger here.
+- A window is 4 s of whitened data, 8,192 samples, numbered here from 0; it
+  ends 4 s after its first sample, one sample after its last. The whitening
+  filter is 1 s long, so the code whitens a 5 s segment (10,240 samples) and
+  drops 0.5 s (1,024 samples) at each end.
+- The run settings ask for the merger at least 3.5 s after the window's start
+  and no later than its end.
+
+**Derivation.** From each stored waveform the code first cuts the 11,264
+samples from 9,216 before the merger to 2,048 after it, so that the merger is
+sample 9,216 of the cut: $9{,}216 = 10{,}240 - 1{,}024$, the segment less half
+the filter (no time is required after the merger), and
+$2{,}048 = 10{,}240 - 8{,}192$, the segment less the 3.5 s (7,168 samples)
+required before the merger and half the filter. It then takes the 5 s
+segment that starts at sample $k$ of this cut, with $k$ drawn with equal
+probability from the 1,024 whole numbers 0 to 1,023
+($11{,}264 - 10{,}240 = 1{,}024$ choices). The merger is at sample
+$9{,}216 - k$ of the segment and, once the first 1,024 samples are dropped,
+at sample $8{,}192 - k$ of the window: from sample 7,169, 3.5005 s after the
+first, to sample 8,192, one past the last, at the window's end. So the window
+ends 0 to 0.4995 s after the merger.
+
+Projecting onto each detector also moves the waveform, by the difference
+between the wave's arrival at the detector and at the Earth's centre for the
+source's direction, cut to whole samples toward zero. That difference is at
+most the detector's distance from the Earth's centre over $c$, 21.24 ms for
+H1 and 21.26 ms for L1, so the shift is at most 43 samples (21.0 ms): in
+each detector the merger falls 3.4795 to 4.0210 s after the first sample.
+When it falls after the window's end, the window misses at most the last
+21.0 ms of that detector's chirp.
+
+The signal-only runs read the whitened signal alone, the noisy runs the same
+signal added to real noise before whitening, and their validation and test
+windows are made by the same code. The merger runs with a time warp take the
+same window and resample it, from its first sample up to $t_c$, on a grid
+uniform in $(t_c - t)^{5/8}$ ([time warp](#time-warp)), with $t_c$ the peak
+of each detector's whitened amplitude (the size of the analytic signal), so
+their input ends at that peak. In each of the first batches logged by three
+of these runs, the peak lay a median of 10.7 to 12.2 ms from the merger
+placed as above, and at most 35 to 63 ms. The early runs with a time warp
+move the cut 25.5 s (52,224 samples) earlier: the window then starts
+29.0005 to 29.5 s and ends 25.0005 to 25.5 s before the merger. The stored
+waveforms start 30 s before the merger, so this is the earliest window they
+allow.
+
+**Check.** Python, with the training code's own functions (its cut of the
+stored waveforms, and ml4gw's choice of segment, detector shift and
+whitening): each stored waveform was replaced by the numbers 0, 1, 2, …, so
+that every window sample shows which stored sample it came from. The segment
+choice drew all 1,024 values of $k$ in 20,000 draws, and over these values
+the merger falls at window samples 7,169 to 8,192 (3.500488 to 4.000000 s,
+mean 3.750244 s). The detector shift equals the arrival-time difference cut
+toward zero (tested on 4,096 directions) and reached 43 samples either way;
+over 4,000,000 directions drawn as in training, the merger fell 3.479492 to
+4.020996 s after the first sample in a detector, and after the window's end
+in 1.04% of detector windows, the share computed exactly for directions
+spread evenly over the sky. With the early runs' cut it fell 29.000488 to
+29.500000 s after the first sample. A single nonzero sample, whitened with
+the 1 s filter and the 20 Hz highpass, peaks at its own position less 1,024,
+with a flat noise spectrum and with a steeply varying one. In 192 stored
+waveforms (three blocks of 64, chirp masses 0.87 to 2.75 M☉), the amplitude
+$\sqrt{h_+^2 + h_\times^2}$ peaks 4 to 23 samples (2.0 to 11.2 ms) before
+the merger sample, and around the merger sample the median of eight
+successive phase steps gives a frequency of 963 to 1024 Hz, close to the
+1024 Hz Nyquist frequency of the stored data.
 
 ## S4D tones: frequency and memory {#s4d-tones}
 
@@ -591,6 +694,12 @@ Match by number of tones (chirp masses 1.0 / 1.2 / 1.5 / 2.0 M☉):
 | 1,024 | 0.88 / 0.96 / 0.96 / 0.97 | 0.51 / 0.66 / 0.66 / 0.67 | 0.87 / 0.89 / 0.89 / 0.91 |
 | 2,048 | 0.96 / 0.99 / 0.99 / 0.99 | 0.68 / 0.87 / 0.86 / 0.88 | 0.88 / 0.88 / 0.89 / 0.92 |
 
+(Corrected 16 October: the matrix-pencil column below is limited by how this
+fit reflects growing poles inside the unit circle, not by decaying tones as
+such. Directly optimized decaying tones reach far higher matches, with a
+minimum count of about 3/8 of the chirp's cycles; see
+[fitting resonators to chirp kernels](#oct16-s4d-fits).)
+
 So the 0.87 to 0.92 ceiling is a property of the matrix-pencil fit with
 decaying tones, not of fixed frequencies: the Fourier tones pass it at
 1,024 tones (except at 1.0 M☉, at 2,048) and reach 0.99 at 2,048. The
@@ -852,7 +961,7 @@ distribution on $[a, b]$ has standard deviation $(b - a)/\sqrt{12} = 1.9/\sqrt{1
 
 **Why the estimate is pulled toward the prior mean.** The function that
 minimizes the expected squared error $E\lVert y - f(x)\rVert^2$ is the mean of
-$y$ given $x$, $f^*(x) = E[y \mid x]$ (Goodfellow, Bengio and Courville,
+$y$ given $x$, $f^\*(x) = E[y \mid x]$ (Goodfellow, Bengio and Courville,
 *Deep Learning*, MIT Press 2016, section 6.2.1.2, eqs. 6.14 and 6.15). The mean
 output of our regressor is trained with the β-weighted Gaussian likelihood
 (Seitzer et al. 2022, [arXiv:2203.09168](https://arxiv.org/abs/2203.09168));
@@ -962,7 +1071,7 @@ $$
 $$
 
 and an unbiased estimate of $\theta_i$ has variance at least
-$(\Gamma^{-1})_{ii}$ (Cutler and Flanagan 1994,
+$(\Gamma^{-1})\_{ii}$ (Cutler and Flanagan 1994,
 [arXiv:gr-qc/9402014](https://arxiv.org/abs/gr-qc/9402014); Vallisneri 2008,
 [arXiv:gr-qc/0703086](https://arxiv.org/abs/gr-qc/0703086)). For
 $\tilde h = A f^{-7/6} e^{i\Psi(f;\theta)}$ the amplitude separates from the
@@ -1032,7 +1141,7 @@ that shrinks by a factor $e$ after exactly $1/(\Delta t\,\alpha_n)$ samples;
 one state number generates its tone step by step; S4D's real kernel is twice
 the real part of a sum over half the states.
 
-**Setup.** One diagonal state, $x'(t) = a\,x(t) + B\,u(t)$, $y = C\,x$, with
+**Setup.** One diagonal state, $x^\prime(t) = a\,x(t) + B\,u(t)$, $y = C\,x$, with
 $a = -\alpha + i\omega$. One sample is a step $\Delta t$ of the model's own
 time.
 
@@ -1100,7 +1209,7 @@ changes the phase accumulated in the last 4 s by 12 to 25 radians; the
 inspiral ends at a frequency set by the total mass.
 
 **Constants.** The IAU 2015 nominal solar mass parameter is
-$(GM)^{\rm N}_\odot = 1.3271244 \times 10^{20}$ m³ s⁻², exact by definition
+$(GM)^{\rm N}\_\odot = 1.3271244 \times 10^{20}$ m³ s⁻², exact by definition
 (Prša et al. 2016, [arXiv:1605.09788](https://arxiv.org/abs/1605.09788)),
 and $c = 299\,792\,458$ m/s exactly. So $GM_\odot/c^3 = 4.925491\ \mu$s, and
 $5.911\ \mu$s for $1.2\,M_\odot$.
@@ -1272,8 +1381,8 @@ $E\lvert\cdot\rvert^2 = \lVert\hat h_c\rVert^2 + \lVert\hat h_s\rVert^2 = 2$.
 ## Keeping the strongest Fourier tones {#ck-fourier-tones}
 
 **Claims** (proposal, section 4): the best approximation of a signal by $k$
-Fourier tones keeps the $k$ strongest, with match $\sqrt{\sum_{\rm strongest\
-k}\lvert\hat h_q\rvert^2/\sum_q\lvert\hat h_q\rvert^2}$; the tone counts in
+Fourier tones keeps the $k$ strongest, with match
+$\sqrt{\sum_{\rm strongest\ k}\lvert\hat h_q\rvert^2/\sum_q\lvert\hat h_q\rvert^2}$; the tone counts in
 the two figures; why a chirp needs hundreds.
 
 **Derivation.** For a length-$L$ signal, the vectors $e_q(\ell) =
@@ -1970,13 +2079,23 @@ piece's output is $z_k = \rho_k + n_k$ with independent unit-variance noise
 $n_k$. Added in step ([coherent addition](#ck-coherent)) and divided by
 $\sqrt N$, the signal parts give $\sum_k \rho_k/\sqrt N = \rho$ against unit
 noise. Added
-as powers, $P = \sum_k z_k^2$ has mean $N + \rho^2$ and standard deviation
-about $\sqrt{2N}$, so the signal stands out by $\rho^2/\sqrt{2N}$. To stand out
+as powers, $P = \sum_k z_k^2$ has mean $N + \rho^2$ and, in noise alone,
+standard deviation $\sqrt{2N}$, so the signal stands out by $\rho^2/\sqrt{2N}$. To stand out
 by a fixed amount the SNR must grow like $N^{1/4}$: with 600 pieces, about
 $(2 \cdot 600)^{1/4} \approx 6$ times the SNR is needed for the same
-significance as one standard deviation in the coherent sum. Any nonlinearity
-applied to the pieces before they are added (a square, a threshold, a GELU)
-turns the sum into this kind.
+significance as one standard deviation in the coherent sum. An even nonlinearity
+applied to the pieces before they are added (a square, an absolute value)
+turns the sum into this kind. (Corrected 16 October: an earlier version also
+listed a threshold and a GELU. A GELU and a threshold at zero are not even:
+they keep a part linear in a weak signal, the GELU with gain 1/2
+([GELU section](#oct16-s4d-gelu-linear)), and pieces added in step after
+them keep, to first order, the fraction 0.838 to 0.910 of the SNR (GELU,
+noise spreads 0.5 to 2) or 0.798 (threshold at zero). For the 600 pieces
+above at SNR 8 the exact SNR of the sum is 7.737 after a GELU and 6.271
+after a threshold at zero, against 8 without them and 1.848 after a square
+([section on nonlinear functions](#oct16-nonlinearity-linear-part)). A
+threshold on the size $\lvert z_k\rvert$ is even and does turn the sum into
+this kind.)
 
 **Source.** The same scaling is the standard result for searches that stack
 power from $N$ segments, for example Brady and Creighton 2000, Phys. Rev. D
@@ -2028,3 +2147,2088 @@ known to a few milliseconds (an error of 5 ms doubles to quadruples the count).
 Higher post-Newtonian terms leave a drift: the fitted effective $t_c$ sits
 about 19 ms after the peak, and the frequency in $\tau$ still drifts by 0.5% to
 1% up to 300 Hz and 5% to 6% up to 900 Hz. Not yet tried in training.
+
+## Adding in step, and what a steady phase drift leaves {#oct15-phase-drift}
+
+**Claim** (15 October update): if the parts of a sum that should add in step
+drift steadily out of step, by $k$ cycles from the first part to the last,
+the sum keeps the fraction $|\sin(\pi k)/(\pi k)|$ of its full size: 0.90 for
+a quarter cycle, 0.64 for half a cycle, 0 for a whole cycle. A frequency
+error $\delta f$ held for a time $T$ is such a drift, with $k = \delta f\,T$;
+over 4 s, an error of 0.0625 Hz costs 10% of the sum and 0.25 Hz costs all of
+it. As a function of $\delta f$ the kept fraction has one central peak, of
+half-width $1/T$, and side peaks no higher than 0.217. For comparison, at SNR
+8 spread over 600 pieces, adding the pieces' powers instead of the pieces
+leaves the signal 1.85 standard deviations above the noise, against 8.
+
+**Setup.** Take $M$ parts of equal size whose phases should agree. Let the
+$j$-th part have the phase error $2\pi k\,x_j$, with $x_j = (j + \tfrac12)/M$,
+$j = 0, \dots, M-1$, so the error grows evenly from 0 to $k$ cycles. In step
+($k = 0$) the parts add to $M$ times one part.
+
+**Derivation.** Relative to its in-step value, the sum is
+$\frac1M\sum_j e^{2\pi i k x_j}$. For many parts this is the integral
+
+$$
+\int_0^1 e^{2\pi i k x}\,dx = \frac{e^{2\pi i k} - 1}{2\pi i k}
+= e^{i\pi k}\,\frac{\sin \pi k}{\pi k},
+$$
+
+whose size is $|\sin(\pi k)/(\pi k)|$. For $k = \tfrac14$ this is
+$(\sqrt2/2)/(\pi/4) = 2\sqrt2/\pi = 0.900$; for $k = \tfrac12$, $2/\pi = 0.637$;
+for $k = 1$, $0$. In a phasor diagram the parts are arrows that should all
+point one way; a steady drift bends them into an arc of $k$ turns, and a
+whole turn closes into a circle whose arrows add to nothing. For finite $M$
+the exact sum is $|\sin(\pi k)/(M\sin(\pi k/M))|$, which tends to the
+integral as $M$ grows.
+
+A reference at frequency $f + \delta f$, compared with a signal at $f$, gains
+phase on it at the rate $2\pi\,\delta f$, so over a time $T$ the error grows
+steadily from 0 to $k = \delta f\,T$ cycles. Keeping 0.90 of the sum over $T$
+needs $|\delta f| \le 1/(4T)$, which is 0.0625 Hz for $T = 4$ s; at $|\delta
+f| = 1/T = 0.25$ Hz nothing is kept. As a function of $\delta f$, the kept
+fraction $|\sin(\pi\,\delta f\,T)/(\pi\,\delta f\,T)|$ is 1 at $\delta f =
+0$, falls to 0 at $|\delta f| = 1/T$, and beyond that rises and falls in side
+peaks, the largest of which is 0.217, at $k = 1.43$.
+
+This assumes equal parts. A chirp grows louder toward the merger, so its
+parts are not equal and the kept fractions differ from these; the even case
+is the simple guide.
+
+**Adding powers instead.** With the notation of the
+[$N^{1/4}$ section](#semi-coherent), a signal of SNR $\rho$ spread evenly over
+$N$ pieces gives each piece the SNR $\rho/\sqrt N$, 0.33 for $\rho = 8$ and
+$N = 600$. Added in step, the signal parts total $\sqrt N\,\rho = 196$ against
+noise of spread $\sqrt N = 24.5$: the ratio is $\rho = 8$. Added as squares,
+the signal raises the total by $\rho^2 = 64$ against a noise spread of
+$\sqrt{2N} = 34.6$, so it stands out by $\rho^2/\sqrt{2N} = 1.85$ standard
+deviations.
+
+**Check.** numpy: the mean of $e^{2\pi i k x}$ over $10^6$ evenly spaced
+points in $[0, 1]$ gives 0.90032, 0.63662 and 0.00000 for $k = \tfrac14,
+\tfrac12, 1$, equal to $|\sin(\pi k)/(\pi k)|$; the discrete sum over 600
+parts gives the same to five decimals; the largest side peak, found on a
+grid of $2 \times 10^6$ points in $1 < k \le 2$, is 0.2172 at $k = 1.4303$.
+A Monte Carlo with 20,000 trials of 600 unit-variance Gaussian pieces at
+SNR 8 gave 1.851 standard deviations for the sum of squares and 8.01 for
+the in-step sum.
+
+## One S4D state is a damped, driven oscillator {#oct15-oscillator}
+
+**Claim** (15 October update): the S4D state equation
+$\dot x = (-a + i\omega)x + u$, one complex equation of first order, is the
+equation of a damped harmonic oscillator driven by $\dot u + a u$: with
+$x = p + iq$,
+
+$$
+\ddot p + 2a\,\dot p + (a^2 + \omega^2)\,p = \dot u + a\,u .
+$$
+
+The output of an S4D channel compares the recent input with one fixed shape,
+a sum of decaying waves that all start at the present.
+
+**Setup.** One state of an S4D layer obeys $\dot x(t) = A\,x(t) + B\,u(t)$ with
+complex $A = -a + i\omega$, $a > 0$, and real input $u(t)$ (Gu, Gupta, Goel
+and Ré 2022, [arXiv:2206.11893](https://arxiv.org/abs/2206.11893), section 3).
+In ml4gw, which we use, $B$ is absorbed into the output weights ($B = 1$
+here), and the real part of $A$ is stored as minus an exponential
+(`log_A_real`), so it is negative by construction. A channel with state size $N$ keeps $N/2$ such states and
+outputs $y(t) = 2\,\mathrm{Re}\sum_n C_n x_n(t) + D\,u(t)$, with complex $C_n$
+and real $D$ ([S4D in samples](#ck-s4d-step)).
+
+**Derivation.** With $x = p + iq$, $p$ and $q$ real, the real and imaginary
+parts of the equation are
+
+$$
+\dot p = -a\,p - \omega\,q + u, \qquad \dot q = \omega\,p - a\,q .
+$$
+
+Differentiating the first and inserting the second,
+$\ddot p = -a\dot p - \omega\dot q + \dot u = -a\dot p - \omega^2 p + a\omega q + \dot u$.
+The first equation gives $\omega q = -\dot p - a p + u$, so
+$a\omega q = -a\dot p - a^2 p + a u$, and
+
+$$
+\ddot p + 2a\,\dot p + (a^2 + \omega^2)\,p = \dot u + a\,u .
+$$
+
+This is a mass on a spring with friction and a driving force: damping rate
+$a$ (the free amplitude falls by $e$ in a time $1/a$), natural angular
+frequency $\omega_0 = \sqrt{a^2 + \omega^2}$, and free oscillation at
+$\sqrt{\omega_0^2 - a^2} = \omega$, since the roots of $s^2 + 2as + a^2 +
+\omega^2$ are $s = -a \pm i\omega$. The force is the input's rate of change
+plus $a$ times the input. The pair $(p, q)$ plays the part of position and
+scaled momentum, as Hamilton's two first-order equations for a mass on a
+spring, $\dot x = p/m$ and $\dot p = -kx$, together give Newton's $m\ddot x =
+-kx$; the complex $x$ is the phasor of the oscillation.
+
+**The response, and the output.** For a kick at $t = 0$, $u(t) = \delta(t)$,
+with $x = 0$ before it, the state rings as $x(t) = e^{(-a + i\omega)t}$ for
+$t > 0$. The equation is linear, so the response to any input is the sum of
+the responses to the kicks that make it up:
+
+$$
+x(t) = \int_0^\infty e^{(-a + i\omega)s}\,u(t - s)\,ds ,
+$$
+
+and the channel's output is
+
+$$
+y(t) = \int_0^\infty K(s)\,u(t - s)\,ds + D\,u(t), \qquad
+K(s) = 2\,\mathrm{Re}\sum_n C_n e^{(-a_n + i\omega_n)s}
+= \sum_n 2|C_n|\,e^{-a_n s}\cos(\omega_n s + \arg C_n) .
+$$
+
+The input $s$ seconds ago is multiplied by $K(s)$ and the products are added:
+a comparison of the recent past with one fixed shape, read backwards from
+the present. Every term of $K$ starts at $s = 0$ and only decays. Once
+training is over, every $a_n$, $\omega_n$ and $C_n$ is a fixed number, the
+same at every moment and for every input ([input-dependent
+steps](#early-mamba-step)). The sampled form, with the zero-order hold, is
+in [S4D in samples](#ck-s4d-step).
+
+**Check.** sympy: substituting the two real equations into
+$\ddot p + 2a\dot p + (a^2 + \omega^2)p - (\dot u + a u)$ gives 0
+identically, and the roots of $s^2 + 2as + a^2 + \omega^2$ come out as
+$-a \pm i\omega$. numpy: integrating
+$\dot x = (-a + i\omega)x + u$ exactly for an input held constant over steps
+of 1 µs ($a = 3$ s⁻¹, $\omega = 2\pi \times 40$ rad/s, a 25 Hz input with a
+Gaussian envelope, 0.2 s), then inserting $p = \mathrm{Re}\,x$ into the
+second-order equation with finite differences, leaves a largest residual of
+$1.06 \times 10^{-4}$ of the largest right-hand side.
+
+## How long a chirp stays in step with one fixed frequency {#oct15-in-step-time}
+
+**Claim** (15 October update): a chirp that passes the frequency $f$ stays
+within an eighth of a cycle of a steady wave at $f$ for a time $\dot f^{-1/2}$,
+centred on the moment it passes $f$. For chirp mass 1.2 M☉ this is 0.87 s at
+50 Hz, 0.24 s at 100 Hz and 0.032 s at 300 Hz. Within that time the steady
+wave keeps 97% of the in-step sum; over twice that time, 59 to 63%. However
+long the steady wave lasts, its total overlap with the chirp is never more
+than that of a perfectly in-step stretch $1.34\,\dot f^{-1/2}$ long.
+
+**Derivation.** Let the chirp pass $f_0$ at time $t_0$. Its phase advances at
+$\dot\Phi = 2\pi f$, so $\ddot\Phi = 2\pi\dot f$, and near $t_0$
+
+$$
+\Phi(t_0 + s) = \Phi(t_0) + 2\pi f_0\,s + \pi\dot f\,s^2 + O(s^3) .
+$$
+
+A steady wave at $f_0$, in step with the chirp at $t_0$, has the phase
+$\Phi(t_0) + 2\pi f_0\,s$. The two differ by $\pi\dot f s^2$, which is at
+most an eighth of a cycle, $\pi/4$, for $|s| \le \tfrac12\dot f^{-1/2}$: a
+total time
+
+$$
+T_{\rm step} = \dot f^{-1/2} .
+$$
+
+At leading order ([chirp mass from the frequency](#late-chirp-rate);
+[Newtonian chirp](#ck-chirp))
+
+$$
+\dot f = \frac{96}{5}\,\pi^{8/3}\left(\frac{G\mathcal M}{c^3}\right)^{5/3} f^{11/3},
+$$
+
+so $T_{\rm step}$ falls as $f^{-11/6}$ and as $\mathcal M^{-5/6}$:
+
+<div markdown="1">
+
+| chirp mass | 50 Hz | 100 Hz | 300 Hz |
+|---|---|---|---|
+| 0.85 M☉ | $\dot f$ = 0.75 Hz/s, 1.15 s | 9.52 Hz/s, 0.324 s | 535 Hz/s, 0.0432 s |
+| 1.2 M☉ | 1.33 Hz/s, 0.866 s | 16.9 Hz/s, 0.243 s | 950 Hz/s, 0.0324 s |
+| 2.75 M☉ | 5.31 Hz/s, 0.434 s | 67.4 Hz/s, 0.122 s | 3,785 Hz/s, 0.0163 s |
+
+</div>
+
+In our 4 s windows the chirp starts at 48 to 105 Hz ([cycles](#cycles)); it
+passes 50 Hz inside the window only for chirp masses above 2.55 M☉.
+
+**What the steady wave keeps.** With the chirp's amplitude taken as constant
+over the interval and $v = s\,\dot f^{1/2}$, the in-step sum relative to its
+full value is the mean of $e^{i\pi v^2}$. Over $|v| \le \tfrac12$ (the time
+$T_{\rm step}$) it is $\left|\int_{-1/2}^{1/2} e^{i\pi v^2}\,dv\right| = 0.973$,
+and over $|v| \le 1$ (twice the time) $\left|\tfrac12\int_{-1}^{1} e^{i\pi
+v^2}\,dv\right| = 0.628$. The total overlap, $\left|\int_{-V}^{V} e^{i\pi
+v^2}\,dv\right|$ in units of $T_{\rm step}$, is a Fresnel integral: it is
+largest, 1.34, for $V = 0.855$, and tends to 1 as $V$ grows, since
+$\int_{-\infty}^{\infty} e^{i\pi v^2}\,dv = e^{i\pi/4}$. A steady wave longer
+than $1.71\,T_{\rm step}$ (that is, $V > 0.855$) therefore adds nothing more:
+away from $t_0$ it goes in and out of step with the chirp, and its total
+overlap settles toward 1.
+
+**Check.** numpy: for chirp masses 0.85, 1.2 and 2.75 M☉ and 50, 100 and 300
+Hz, the exact leading-order phase was compared with the tangent steady wave
+on 600,001 points; the interval where the two differ by at most $\pi/4$ has
+length $\dot f^{-1/2}$ to within 0.04%. The kept fraction inside it is 0.9729
+in every case; over twice the time it is 0.593 to 0.628 with the exact phase
+(the $s^3$ term lowers it most for heavy systems at high frequency) and 0.628
+with the quadratic phase alone. The largest total overlap, 1.342 at $V =
+0.855$, was found on a grid of 2,951 values of $V$ from 0.05 to 3, and the
+overlap is 0.989 at $V = 20$. The chirp mass whose 4 s window starts at 50 Hz,
+$1.2 \times (80.14/50)^{8/5} = 2.552$ M☉, returns 50.000 Hz from the
+leading-order $f(\tau)$.
+
+## Leftover cycles after heterodyning with a wrong chirp mass, and with a grid {#oct15-het-grid}
+
+**Claim** (15 October update): over chirp masses 0.85 to 2.75 M☉ and the
+last 3.5 to 4 s before the merger, the stretch of chirp our windows hold
+([where the merger falls](#oct16-merger-position)), heterodyning with a chirp mass wrong by
+0.1, 1, 2, 5 and 10% leaves 0.18 to 0.40, 1.75 to 3.98, 3.50 to 7.98, 8.70
+to 20.07 and 17.25 to 40.55 cycles. The leftover is itself a chirp, with
+$\tfrac58|\epsilon|$ times the frequency of the original to first order.
+Heterodyning at the nearest of ten chirp masses spaced evenly in log over 0.85
+to 2.75 M☉ leaves at most 23 to 25 cycles (median 8 to 9); at the nearest of
+the 100 masses of the AFRAME BNS grid (1.0 to 2.5 M☉), at most 1.5 to 1.6.
+
+**Setup.** As in [residual phase after heterodyning](#sep-het-phase). At
+leading order the phase a binary accumulates from a time $\tau$ before the
+merger to the merger is $|\Phi(\tau)| = 2\left(c^3\tau/(5G\mathcal
+M)\right)^{5/8}$ ([Newtonian chirp](#ck-chirp)), $2\pi$ times the cycles $N$
+of the [cycles table](#cycles) at $\tau = 4$ s. Heterodyning with an assumed
+chirp mass $\tilde{\mathcal M}$ multiplies the data by
+$e^{-i\Phi(\tau;\tilde{\mathcal M})}$; our heterodyne does this in the
+frequency domain, which at leading order leaves the same phase
+([residual phase](#sep-het-phase)). The error $\epsilon$ is defined by
+$\mathcal M = \tilde{\mathcal M}(1 + \epsilon)$, and the two chirps are
+aligned at the merger.
+
+**Derivation.** At fixed $\tau$, $\lvert\Phi\rvert \propto \mathcal M^{-5/8}$, so
+$\lvert\Phi(\tau;\tilde{\mathcal M})\rvert = (1 + \epsilon)^{5/8}\lvert\Phi(\tau;\mathcal
+M)\rvert$ and the leftover phase has the size
+
+$$
+\left|1 - (1 + \epsilon)^{5/8}\right|\,|\Phi(\tau;\mathcal M)|
+\approx \tfrac58\,|\epsilon|\,|\Phi(\tau;\mathcal M)| .
+$$
+
+It grows with $\tau$, so it is largest at the start of the window, where in
+cycles it is $N\,|1 - (1 + \epsilon)^{5/8}|$, with $N$ the true signal's
+cycles in the window: from 281 (2.75 M☉, 3.5 s) to 636 (0.85 M☉, 4 s). Its
+rate of change is $|1 - (1 + \epsilon)^{5/8}|$ times the chirp's, $2\pi f$, so
+the leftover is a chirp $\tfrac58|\epsilon|$ times slower: 0.00624 to 0.00626
+of the chirp's frequency for $\epsilon = \pm 1\%$, 0.0614 to 0.0637 for $\pm
+10\%$.
+
+<div markdown="1">
+
+| error $\lvert\epsilon\rvert$ | leftover cycles | leftover radians |
+|---|---|---|
+| 0.1% | 0.18 to 0.40 | 1.1 to 2.5 |
+| 1% | 1.75 to 3.98 | 11.0 to 25.0 |
+| 2% | 3.50 to 7.98 | 22.0 to 50.2 |
+| 5% | 8.70 to 20.07 | 54.7 to 126.1 |
+| 10% | 17.25 to 40.55 | 108.4 to 254.8 |
+
+</div>
+
+Ranges over chirp masses 0.85 to 2.75 M☉, the last 3.5 and 4 s, and both
+signs of $\epsilon$. With the error measured the other way, $\tilde{\mathcal
+M} = \mathcal M(1 + \epsilon)$, the rows for 0.1% to 2% change by at most 0.1
+cycles, and the 5% and 10% rows become 8.44 to 20.73 and 16.25 to 43.31
+cycles.
+
+**Grids.** For $n$ chirp masses spaced evenly in log from $\mathcal M_{\rm lo}$
+to $\mathcal M_{\rm hi}$, neighbours differ by the factor $r = (\mathcal M_{\rm
+hi}/\mathcal M_{\rm lo})^{1/(n-1)}$, and every chirp mass in the range is
+within a factor $\sqrt r$ of a grid mass. Taking the nearest grid mass (in
+log) as $\tilde{\mathcal M}$, the leftover over chirp masses spaced evenly in
+log over the grid's range is:
+
+<div markdown="1">
+
+| grid | neighbour ratio | largest error | leftover, worst | leftover, median |
+|---|---|---|---|---|
+| 10 masses, 0.85 to 2.75 M☉ | 1.1394 | 6.74% | 23.4 / 25.4 | 8.1 / 8.8 |
+| 10 masses, 1.0 to 2.5 M☉ | 1.1072 | 5.22% | 16.5 / 18.0 | 6.2 / 6.8 |
+| 100 masses, 1.0 to 2.5 M☉ | 1.0093 | 0.46% | 1.5 / 1.6 | 0.6 / 0.6 |
+
+</div>
+
+Cycles for the last 3.5 / 4 s before the merger. The last row is the grid of the AFRAME BNS
+search ([how much phase heterodyning leaves](#proj-heterodyne)).
+
+**Limits.** This compares chirps aligned at the merger, at leading order. A
+network can also shift the merger time and the phase, which absorbs part of
+the leftover ([Newtonian chirp](#ck-chirp)), and post-Newtonian terms, which
+heterodyning at leading order does not remove, add to it.
+
+**Check.** numpy: the closed form and the difference of the two phases, each
+computed from the leading-order formula, agree to $10^{-10}$ (relative) on
+4,001 chirp masses spaced evenly in log over 0.85 to 2.75 M☉, for the last
+3.5 and 4 s before the merger and both signs of $\epsilon$; the leftover grows monotonically
+toward the start of the window; grids built with `numpy.geomspace` give the
+neighbour ratio 1.009298 of the [100-mass grid](#proj-heterodyne). The 0.1%
+and 2% rows agree with [residual phase after heterodyning](#sep-het-phase)
+(1.1 to 2.5 rad and 22 to 50 rad).
+
+## How many of the 100 grid masses a first estimate leaves {#oct15-grid-count}
+
+**Claim** (15 October update): a chirp-mass estimate good to ±5% leaves 10 to
+11 of the 100 masses of the AFRAME BNS heterodyne grid as candidates; one good
+to ±10% leaves 21 to 22.
+
+**Derivation.** The grid has 100 masses spaced evenly in log from 1.0 to 2.5
+M☉ ([how much phase heterodyning leaves](#proj-heterodyne)), so neighbours
+differ by $\ln 2.5/99$ in $\ln\mathcal M$. The interval from $\hat{\mathcal
+M}(1 - e)$ to $\hat{\mathcal M}(1 + e)$ around an estimate $\hat{\mathcal M}$
+spans $\ln\frac{1+e}{1-e}$ in $\ln\mathcal M$, which is
+
+$$
+L = \frac{99\,\ln\frac{1+e}{1-e}}{\ln 2.5}
+$$
+
+grid spacings: 10.81 for $e = 5\%$ and 21.68 for $e = 10\%$. An interval $L$
+spacings long, $L$ not an integer, holds either the integer below $L$ or the
+one above it, depending on where it falls: 10 or 11, and 21 or 22. This holds
+while the whole interval lies inside the grid, $\hat{\mathcal M}(1 - e) \ge
+1.0$ M☉ and $\hat{\mathcal M}(1 + e) \le 2.5$ M☉. The interval for the true
+chirp mass given the estimate, from $\hat{\mathcal M}/(1+e)$ to
+$\hat{\mathcal M}/(1-e)$, has the same width in log, so the count is the same.
+
+**Check.** numpy: for 20,001 estimates evenly spaced from 1.15 to 2.2 M☉
+(inside the grid for both values of $e$), counting the grid masses inside
+$[\hat{\mathcal M}(1 - e), \hat{\mathcal M}(1 + e)]$ gives 10 to 11 for $e =
+5\%$ and 21 to 22 for $e = 10\%$.
+
+## Heterodyning at the worst errors of the ten-mass grid {#oct15-het-grid-worst}
+
+**Claim** (15 October update, section 8, rebuttal and verdict, revised on 16
+October): on the grid of ten chirp masses spaced evenly in log over 0.85 to
+2.75 M☉, the worst errors are a true chirp mass 6.74% above or 6.31% below
+the nearest grid mass. Heterodyning there leaves a chirp with 4.0 to 4.2% of
+the original's frequency and sweep, which stays in step with a fixed wave
+4.9 to 5.0 times longer. The four leading-order chirps of the 7 October set
+then need 21 to 34 Fourier tones for a match of 0.9, against 476 to 744
+before heterodyning, and 3 to 7 at an error of 1%. At 1.2 M☉, while the
+chirp rises from 80 to 512 Hz, the leftover stays between 3.2 and 21 Hz; in
+the standard start, a channel of 32 oscillators lasting 1 s spans 0 to 31
+Hz.
+
+**Setup.** As in [leftover cycles after heterodyning](#oct15-het-grid):
+leading order, the two chirps aligned at the merger, the true chirp mass
+$\mathcal M = \tilde{\mathcal M}(1 + \epsilon)$ for the assumed one
+$\tilde{\mathcal M}$, and the nearest grid mass taken in log. The ten masses
+span the chirp-mass range of our training waveforms ([prior](#sep-prior)).
+They are our example, not the grid of the AFRAME BNS search, which has 100
+masses from 1.0 to 2.5 M☉ ([how much phase heterodyning
+leaves](#proj-heterodyne)).
+
+**Derivation.** Neighbouring grid masses differ by the factor $r =
+(2.75/0.85)^{1/9} = 1.13935$, so the nearest one in log is never more than a
+factor $\sqrt r = 1.06740$ away. A true chirp mass $\sqrt r$ times a grid
+mass has $\epsilon = \sqrt r - 1 = +6.740\%$; one $1/\sqrt r$ times the next
+grid mass up has $\epsilon = 1/\sqrt r - 1 = -6.315\%$. These are the worst
+errors above and below.
+
+At a fixed time $\tau$ before the merger, $\lvert\Phi(\tau;\mathcal
+M)\rvert \propto \mathcal M^{-5/8}$ ([Newtonian chirp](#ck-chirp)), so the
+leftover phase is exactly
+
+$$
+\Phi(\tau;\mathcal M) - \Phi(\tau;\tilde{\mathcal M}) = \left[1 - (1 + \epsilon)^{5/8}\right]\Phi(\tau;\mathcal M) ,
+$$
+
+the chirp's own phase times a constant. Its frequency and its sweep (the
+rate $\dot f$ at which the frequency rises) are therefore the chirp's times
+
+$$
+q = \left|1 - (1 + \epsilon)^{5/8}\right|
+$$
+
+at every moment: $q = 4.161\%$ for $\epsilon = +6.740\%$ and $3.995\%$ for
+$\epsilon = -6.315\%$ (the first-order value $\tfrac58\lvert\epsilon\rvert$
+gives 4.213% and 3.947%). A chirp stays in step with a fixed wave for
+$\dot f^{-1/2}$ ([in-step time](#oct15-in-step-time)); the leftover, whose
+sweep is $q\dot f$, does so for $(q\dot f)^{-1/2}$, which is $q^{-1/2}$ =
+4.902 and 5.003 times as long as the chirp at the same moment.
+
+At 1.2 M☉ the chirp enters the 4 s window at 80.14 Hz ([cycles](#cycles)).
+While it rises from there to 512 Hz, the leftover rises from 3.335 to 21.30
+Hz for $\epsilon = +6.740\%$ and from 3.201 to 20.45 Hz for
+$\epsilon = -6.315\%$, so it stays between 3.2 and 21 Hz. In the standard
+start, a channel of 32 oscillators that last 1 s has them at 0, 1, 2, …, 31
+Hz ([S4D tones](#s4d-tones)).
+
+**Fourier tones.** Counted as in [keeping the strongest Fourier
+tones](#ck-fourier-tones): the complex signal $\mathcal A e^{i\psi}$, 4 s at
+2048 Hz with the merger at the end, amplitude $\propto \tau^{-1/4}$ while
+the chirp is between 20 and 900 Hz and zero otherwise, and the fewest tones
+that keep 81% of the power (a match of 0.9). Before heterodyning $\psi$ is
+the chirp's phase, after it the leftover phase:
+
+<div markdown="1">
+
+| chirp mass | before heterodyning | $\epsilon = +6.740\%$ | $\epsilon = -6.315\%$ | $\epsilon = +1\%$ or $-1\%$ |
+|---|---|---|---|---|
+| 1.0 M☉ | 744 | 34 | 33 | 7 |
+| 1.4 M☉ | 630 | 29 | 28 | 5 |
+| 1.8 M☉ | 557 | 26 | 26 | 6 |
+| 2.4 M☉ | 476 | 23 | 21 | 3 |
+
+</div>
+
+So 21 to 34 tones at the grid's worst errors, and 3 to 7 at an error of 1%,
+where both signs give the same count. The first version of the rebuttal
+also took $\epsilon = -6.740\%$, which no chirp mass in the grid's range
+reaches, since none is more than 6.315% below its nearest grid mass; there
+$q = 4.27\%$ and the counts are 34, 30, 27 and 23.
+
+**Limits.** Those of [leftover cycles after heterodyning](#oct15-het-grid):
+leading order only, and chirps aligned at the merger.
+
+**Check.** numpy: a scan of 400,001 true chirp masses spaced evenly in log
+over 0.85 to 2.75 M☉, each heterodyned at its nearest grid mass in log (grid
+from `numpy.geomspace`), gives errors from $-6.3147\%$ to $+6.7403\%$ and a
+largest $q$ of 4.1610%. On 200,001 times from 0.03 to 4 s before the merger,
+finite differences of the leftover phase give 0.041610 and 0.039948 times
+the chirp's frequency at every time, for 0.85, 1.2 and 2.75 M☉, and a sweep
+within 0.1% of $q\dot f$. On the exact leading-order phase at 1.2 M☉, the
+time for which the leftover stays within an eighth of a cycle of a fixed
+wave, centred 0.5, 1, 2, 3 and 4 s before the merger, is 4.898 to 4.901
+times the chirp's for $\epsilon = +6.740\%$ and 4.999 to 5.002 times for
+$\epsilon = -6.315\%$. The counting code reproduces the 7 October counts
+744, 630, 557 and 476 exactly, and for each count $k$ the match with $k$
+tones is at least 0.9 and with $k - 1$ tones below it. Two earlier check
+scripts, written for the 15 October update, give the same counts in every
+case they cover, and a third code written for this check reproduces the
+worst errors, $q$, the leftover frequencies, the in-step ratios and every
+count in the table.
+
+## When to stop training: patience and the learning-rate cycle {#oct16-stopping}
+
+**Claim** (16 October status): stopping a signal-only run after 80 epochs
+without a new best in validation within 1%, and never before the end of the
+learning-rate cycle that contains the best epoch, loses at most 0.05
+percentage points against running the full schedule.
+
+**Setup.** Our runs use a linear warmup of 10 epochs followed by cosine
+cycles of 40, 80, 160 and 320 epochs (each twice the last), so the learning
+rate is lowest at epochs 49, 129, 289 and 609 and jumps up after each. New
+bests tend to appear near those low points. Plain early stopping counts the
+epochs since the best and stops after a fixed number (the patience).
+
+**Derivation (empirical).** For each of our 31 training histories with at
+least 60 validation epochs, I replayed plain early stopping at patience $P$
+and compared the best value reached before stopping with the best of the full
+history. Largest shortfall over the signal-only runs: 5.6 points for
+$P \le 40$, 5.2 at 50, 0.05 at 60 and 80. Over the noisy runs the shortfall
+stays above 0.5 points for some run up to $P = 160$ (1 of 31 runs at 160),
+because their bests come at the ends of the long cycles. I chose 80 for
+signal-only runs and 160 for noisy runs, and added the cycle rule so that a
+run whose best falls early in a long cycle is still carried to that cycle's
+low point.
+
+**Check.** The replay script reads the local training logs; the cycle end
+after a given epoch is computed by the stopping callback itself and is tested
+against the schedule (epochs 0, 49, 50, 130, 151, 207, 289, 290 map to 49,
+49, 129, 289, 289, 289, 289, 609).
+
+## Where the training time goes: one timing of a training batch {#oct16-step-time}
+
+**Claim** (measured on 15 October): in our noisy runs with one layer of 256
+free kernels or S4D kernels, preparing the data of one batch takes 2.7 ms of
+GPU time and the network's training step 21.2 to 44.2 ms, while one batch
+takes 238 to 284 ms of elapsed (wall-clock) time. So 83.5 to 90.0% of the
+elapsed time per batch is outside the timed data preparation and training
+step, and what fills it was not measured. These numbers come from one
+measurement.
+
+**Setup.** The three runs train one layer of 256 kernels 4 s long, either
+free kernels or S4D with state size 64 or 512 (32 or 256 oscillators per
+channel), on noisy data from both LIGO detectors sampled at 2048 Hz, which
+the network halves to 1,024 Hz before its kernels, with 32 windows per
+batch and 1,564 training batches and 64 validation batches per epoch (run
+configurations). A short script timed the GPU work of one batch on random
+numbers of the real shapes, without reading any data:
+
+- data preparation: a power spectral density from 20 s of noise for each
+  window, the response of H1 and L1 to 8 waveforms, each used in 4 windows,
+  rescaling to a chosen SNR, and two whitenings (the noisy window and the
+  clean signal);
+- the training step of each of the three networks: a forward pass, the
+  gradient and one AdamW update.
+
+Each was run 8 times to warm up and then 40 times between two GPU timers,
+and the time is the mean of the 40. The elapsed time per batch of each real
+run was read from its run time recorded in Weights and Biases, with 1,628
+batches per epoch counting validation.
+
+**Derivation (measurement).**
+
+<div class="table-scroll" markdown="1">
+
+| network | data preparation | training step | sum | elapsed time per batch | outside the timed parts |
+|---|---|---|---|---|---|
+| free kernels | 2.7 ms | 21.2 ms | 23.9 ms | 238 ms | 90.0% |
+| S4D, state size 64 | 2.7 ms | 24.1 ms | 26.8 ms | 260 ms | 89.7% |
+| S4D, state size 512 | 2.7 ms | 44.2 ms | 46.9 ms | 284 ms | 83.5% |
+
+</div>
+
+The last column is 1 minus the sum divided by the elapsed time per batch.
+
+**Caveats.** This is one measurement. The GPU was shared with 8 running
+jobs, so the absolute times are upper bounds. The remaining 83.5 to 90.0%
+was not broken down. It holds everything outside the two timed parts, among
+them the data loading (cutting windows from the background files and
+reading waveforms from disk, on the processor rather than the GPU) and the
+waits caused by sharing the GPU; their shares were not measured.
+
+**Check.** The run configurations give 32 windows per batch, 1,564 training
+and 64 validation batches per epoch, and the settings the script used (20 s
+of noise for the spectrum, 4 s windows, each waveform in 4 windows, 256
+channels, state sizes 64 and 512, the rate halved to 1,024 Hz). The
+free-kernel run ran without a break, and its record in Weights and Biases,
+97,683 s over 395,899 training batches and the 64 validation batches of
+each of its 253 completed epochs, gives 237.0 ms per batch. The S4D runs
+were interrupted and resumed, so their records cannot be checked the same
+way. The epoch timers of the progress bars in the three runs' training
+logs, read at their last update in each epoch, give 236.1, 254.5 and
+281.8 ms per batch over 253, 331 and 344 epochs, 0.8 to 2.1% below the
+elapsed times above. The last column was recomputed from the others. The
+GPU timing was not repeated.
+
+## One S4D channel: transfer function, resonance width and phase {#oct16-s4d-resonance-curve}
+
+**Claim** (16 October update): the transfer function of an S4D channel, its
+gain and phase at each angular frequency $\omega$, is
+
+$$
+H(\omega) = D + \sum_n\left[\frac{C_n}{a_n + i(\omega - \omega_n)} + \frac{\bar C_n}{a_n + i(\omega + \omega_n)}\right].
+$$
+
+Near $\omega_n$ its power is the resonance curve
+$|C_n|^2/\big(a_n^2 + (\omega - \omega_n)^2\big)$ of a driven oscillator,
+whose full width at half maximum is $1/(\pi T_n)$ Hz for the ring time
+$T_n = 1/a_n$. Across the resonance the phase turns by half a cycle.
+
+**Derivation.** The channel's kernel is
+$K(s) = 2\,\mathrm{Re}\sum_n C_n e^{(-a_n + i\omega_n)s}$ for $s \ge 0$
+([oscillator](#oct15-oscillator)), so
+$H(\omega) = D + \int_0^\infty K(s)e^{-i\omega s}\,ds$, and
+$\int_0^\infty e^{(-a + i\omega_n - i\omega)s}\,ds = 1/\big(a + i(\omega - \omega_n)\big)$;
+the conjugate term gives the mirror resonance at $-\omega_n$. Near
+$\omega_n > 0$ the first term of index $n$ dominates. Its power falls to half
+its peak where $(\omega - \omega_n)^2 = a_n^2$, so the full width is $2a_n$ in
+angular frequency, $a_n/\pi = 1/(\pi T_n)$ in hertz. Its phase,
+$\arg C_n - \arctan\big((\omega - \omega_n)/a_n\big)$, goes from $+90°$ to
+$-90°$ relative to $\arg C_n$ as $\omega$ sweeps through the resonance: half a
+cycle.
+
+**Check.** Python: widths at half maximum measured on a fine grid, 0.63659,
+1.59147 and 0.159147 Hz, against $a/\pi$ = 0.63662, 1.59155 and 0.159155 Hz
+for $a$ = 2, 5 and 0.5 s⁻¹. $H(\omega)$ from a numerical Fourier integral of a
+three-resonator kernel agrees with the sum above to $2.3\times10^{-5}$
+between 10 and 400 Hz, and the ml4gw kernel agrees with the sum of damped
+cosines to $2.0\times10^{-6}$ of its peak (float32 against float64). A second,
+independent code rebuilt the first-layer kernels of the clean S4D network
+from its stored parameters; they match the network's own kernels to
+$8.4\times10^{-7}$, for a kernel peak of 3.9.
+
+## The matched filter of a chirp holds each frequency until the merger {#oct16-s4d-matched-delay}
+
+**Claim** (16 October update): a filter's group delay at frequency $f$,
+
+$$
+\tau_g(f) = -\frac{1}{2\pi}\frac{d\theta}{df},
+$$
+
+with $\theta$ the phase of its transfer function, is how late the envelope
+of a narrow-band burst at $f$ comes out ([next section](#oct16-s4d-ring-delay)).
+The matched filter of a chirp, $K(s) = \overline{h(t_c - s)}$, has
+$\tau_g(f) = \tau(f)$ in the stationary-phase approximation: it holds the
+part of the chirp at $f$ for the time between the chirp passing $f$ and the
+merger. To leading order, at chirp mass 1.2 M☉, this is 4.02 s at 80 Hz,
+2.22 s at 100 Hz, 0.349 s at 200 Hz and 0.0550 s at 400 Hz, and a resonator
+ringing that long listens to a band $1/(\pi\tau)$ = 0.0792, 0.144, 0.912 and
+5.79 Hz wide.
+
+**Derivation.** Write
+$\tilde h(f) = \int h(t)e^{-2\pi i f t}dt = |\tilde h|e^{i\psi(f)}$ and
+$h = A e^{i\Phi}$, with $h$ the complex (analytic) whitened template and
+$t_c$ the merger. The phase of the integrand, $\Phi(t) - 2\pi f t$, is
+stationary where $\dot\Phi = 2\pi f$, at the time $t(f)$ when the chirp
+passes $f$, and that time dominates the integral (stationary phase; Cutler
+and Flanagan 1994, Phys. Rev. D 49, 2658,
+[arXiv:gr-qc/9402014](https://arxiv.org/abs/gr-qc/9402014)). So
+$\psi(f) = \Phi(t(f)) - 2\pi f\,t(f) + \text{const}$, and since
+$\dot\Phi = 2\pi f$ at $t(f)$, the terms in $dt/df$ cancel on
+differentiating: $t(f) = -\frac{1}{2\pi}\frac{d\psi}{df}$. Substituting
+$s = t_c - t$, $\tilde K(f) = \overline{\tilde h(f)}\,e^{-2\pi i f t_c}$, with
+phase $\theta = -\psi - 2\pi f t_c$. The group delay is
+
+$$
+\tau_g = -\frac{1}{2\pi}\frac{d\theta}{df} = \frac{1}{2\pi}\frac{d\psi}{df} + t_c = t_c - t(f) = \tau(f).
+$$
+
+The numbers come from the leading-order
+$\tau(f) = \frac{5}{256}\left(\frac{G\mathcal M}{c^3}\right)^{-5/3}(\pi f)^{-8/3}$
+([cycles](#cycles)), and the widths from the
+[resonance width](#oct16-s4d-resonance-curve) with $T = \tau$.
+
+**Check.** Python: the group delay of leading-order chirp kernels, computed
+from their discrete Fourier transforms as
+$\mathrm{Re}[\mathrm{DFT}(\ell K)/\mathrm{DFT}(K)]/f_s$ and averaged over
+±2 Hz, agrees with $\tau(f)$ to within 3.6 ms at every tested frequency from
+100 to 800 Hz for 0.85, 1.2, 1.8 and 2.75 M☉, and to within 0.07% to 0.9%
+where $\tau > 0.1$ s. Narrow pieces of the 1.2 M☉ chirp at 100, 200 and
+400 Hz, centred 2.225, 0.349 and 0.0557 s before the merger ($\tau$ = 2.216,
+0.349 and 0.0550 s), each leave the matched filter at the merger sample. The
+values of $\tau$ and $1/(\pi\tau)$ above were recomputed separately for this
+page ($G = 6.67430\times10^{-11}$ m³ kg⁻¹ s⁻², M☉ = $1.98847\times10^{30}$ kg):
+4.0181, 2.2161, 0.3490 and 0.0550 s; 0.0792, 0.1436, 0.9120 and 5.791 Hz.
+
+## A resonator delays a burst at its frequency by its ring time {#oct16-s4d-ring-delay}
+
+**Claim** (16 October update): through any linear filter, a burst whose
+envelope changes slowly comes out, to first order, with its envelope
+unchanged and late by the group delay $\tau_g = -d\theta/d\omega$ at its
+frequency. One resonance term has
+
+$$
+\tau_g(\omega) = \frac{a}{a^2 + (\omega - \omega_n)^2}:
+$$
+
+the ring time $T = 1/a$ at its centre, $T/2$ one half-width away, and area
+$\pi$ over all frequencies (half a cycle of phase). For a burst exactly at
+the resonance, the centre of the output envelope is delayed by exactly $T$,
+whatever the burst's length.
+
+**Derivation.** Let $u(t) = E(t)e^{i\omega_0 t}$ with $E$ slowly varying, so
+its spectrum $\tilde E(\nu)$ is concentrated near $\nu = 0$, and let the
+filter be $H = |H|e^{i\theta}$. Near $\omega_0$,
+$|H| \approx |H(\omega_0)|$ and
+$\theta(\omega_0 + \nu) \approx \theta(\omega_0) + \theta'(\omega_0)\,\nu$,
+so the output is
+
+$$
+\frac{1}{2\pi}\int\tilde E(\nu)H(\omega_0 + \nu)e^{i(\omega_0 + \nu)t}\,d\nu \approx |H(\omega_0)|\,e^{i\theta(\omega_0)}e^{i\omega_0 t}\,E\big(t - \tau_g(\omega_0)\big)
+$$
+
+with $\tau_g = -\theta'(\omega_0)$. The phase of
+$1/\big(a + i(\omega - \omega_n)\big)$ is
+$-\arctan\big((\omega - \omega_n)/a\big)$; minus its derivative is the
+expression above, whose integral over all $\omega$ is
+$[\arctan(x/a)]_{-\infty}^{\infty} = \pi$. For a burst
+$u = E(t)e^{i\omega_n t}$ exactly at the resonance, the term's response is
+$\int_0^\infty e^{(-a + i\omega_n)s}E(t - s)e^{i\omega_n(t - s)}ds = e^{i\omega_n t}\,(E * e^{-a\,\cdot})(t)$:
+the envelope is convolved with $e^{-at}$, $t \ge 0$. For positive functions a
+convolution adds centres (first moments over areas), and the centre of
+$e^{-at}$ is $1/a$. So the envelope's centre moves by exactly $T$.
+
+**Check.** Python, $a$ = 7 s⁻¹: the centre value times $a$ is 1.0000; the
+area over $|\omega - \omega_n| \le 2\times10^5$ s⁻¹ is $0.99998\,\pi$, which
+is the exact $2\arctan(2\times10^5/a)$ for that range. Gaussian bursts at the
+resonance with $a$ = 10 s⁻¹ have their envelope centre delayed by
+$0.99975/a$ for widths $0.5/a$ to $10/a$ (the tail of $e^{-at}$ was cut at
+$12/a$); a long burst one half-width off resonance is delayed by $0.502/a$,
+against $0.5/a$ from the formula.
+
+## A channel of $N$ resonators turns its phase by at most $N$ cycles {#oct16-s4d-phase-limit}
+
+**Claim** (16 October update): over any band of positive frequencies, an S4D
+channel with $N$ resonators turns its phase by at most
+$\pi(N + Z_{\rm rhp}/2) \le 2\pi N$, where $Z_{\rm rhp} \le 2N$ is the number
+of its zeros in the right half plane. A channel that is the matched filter
+of a chirp over a band therefore needs
+
+$$
+N \ge \int_{\rm band}\tau(f)\,df .
+$$
+
+**Derivation.** Integrating the group delay gives the phase turned:
+$\int_{\omega_a}^{\omega_b}\tau_g\,d\omega = \theta(\omega_a) - \theta(\omega_b)$.
+The matched filter has $\tau_g = \tau$
+([matched filter](#oct16-s4d-matched-delay)), so across a band it turns
+$2\pi\int\tau\,df$ radians, $\int\tau\,df$ cycles. The channel's transfer
+function is a ratio of polynomials in $s = i\omega$,
+
+$$
+H = D\,\frac{\prod_{k=1}^{2N}(s - z_k)}{\prod_{k=1}^{2N}(s - p_k)},
+$$
+
+with poles $p_k = -a_n \pm i\omega_n$ (each resonator and its mirror) and
+zeros $z_k$ set by the weights (with $D = 0$ the numerator has degree at most
+$2N - 1$). The phase of a product is the sum of the phases, so each factor
+adds its own group delay. Using $\frac{d}{dy}\arg(x + iy) = x/(x^2 + y^2)$:
+a pole at $-a + i\omega_0$ adds $a/\big(a^2 + (\omega - \omega_0)^2\big)$, a
+resonance curve of area $\pi$; a zero at $\sigma + i\omega_0$ adds
+$\sigma/\big(\sigma^2 + (\omega - \omega_0)^2\big)$, a delay of area $+\pi$ if
+$\sigma > 0$ (right half plane) and an advance of area $-\pi$ if
+$\sigma < 0$. The kernel is real, so poles and zeros come in mirror pairs at
+$\pm\omega_0$, and a pair puts exactly $\pi$ of area at positive
+frequencies:
+$\int_0^\infty[L(\omega - \omega_0) + L(\omega + \omega_0)]\,d\omega = \int_{-\infty}^{\infty}L(\omega - \omega_0)\,d\omega = \pi$
+for a resonance curve $L$ (a zero on the real axis has no partner and puts
+$\pi/2$ there). The phase turned over any band is at most the positive area
+inside it: at most $\pi$ per pole pair plus $\pi$ per pair of
+right-half-plane zeros, $\pi(N + Z_{\rm rhp}/2) \le 2\pi N$. So
+$2\pi N \ge 2\pi\int\tau\,df$. The limit is reached only with every zero in
+the right half plane, as in an all-pass filter (zeros mirroring the poles,
+$|H| = 1$; Oppenheim and Schafer, *Discrete-Time Signal Processing*, 3rd ed.
+(2010), on all-pass systems). An S4D channel can be such a filter exactly,
+since $D$ plus a sum of resonance terms is any ratio of this form with these
+poles (partial fractions).
+
+**Scope.** This is the channel in continuous time with its full kernel. The
+network samples the kernel and cuts it at the 4 s window. Inside the window
+$\tau \le 4$ s, and a resonator ringing longer than the window acts like a
+Fourier tone of the window, covering $1/(4\ {\rm s})$ = 0.25 Hz, no more than
+the $1/\tau \ge 0.25$ Hz the bound allows a resonator. Mixtures of long and
+short rings are not covered by a proof; the
+[fits](#oct16-s4d-fits) on sampled kernels are the test, and their match
+jumps between 0.81 and 1.23 times the bound.
+
+**Check.** Python, two independent codes. Over 200 random channels (2 to 8
+resonators, decay rates 2 to 60 s⁻¹, frequencies 20 to 400 Hz, complex and
+real kernels, $D$ on or off), the largest phase turned over any band was 0.87
+of $2\pi N$. A 6-section all-pass filter turns 0.999997 of $2\pi N$, has
+$|H| = 1$ to $2.1\times10^{-15}$, and equals $D$ plus partial fractions to
+$2.1\times10^{-15}$. Over 60 more random channels, with the zeros found as
+roots of the numerator, every channel stayed within $\pi(N + Z_{\rm rhp}/2)$
+(largest 0.70 of $2\pi N$), and the total phase turned equalled
+$(\pi/2)(2N + Z_{\rm rhp} - Z_{\rm lhp})$ to $10^{-4}\pi$.
+
+## For a leading-order chirp, $\int\tau\,df$ is 3/8 of the cycles {#oct16-s4d-three-eighths}
+
+**Claim** (16 October update): for a leading-order chirp,
+$\int\tau\,df = \tfrac38 N_{\rm cyc}$ exactly, over any band. For any chirp
+whose frequency rises steadily,
+$\int_{f_1}^{f_2}\tau\,df = N_{\rm cyc} - \tau_1 f_1 + \tau_2 f_2$: the cycles
+of the chirp minus those of a steady tone at the starting frequency over the
+same time. In the last 4 s before the merger, the longest stretch of chirp
+our windows hold ([where the merger falls](#oct16-merger-position)):
+
+<div markdown="1">
+
+| chirp mass | frequency 4 s before merger | cycles to merger | $\int\tau\,df$ to merger |
+|---|---|---|---|
+| 0.85 M☉ | 99.41 Hz | 636.2 | 238.6 |
+| 1.2 M☉ | 80.14 Hz | 512.9 | 192.3 |
+| 1.8 M☉ | 62.20 Hz | 398.1 | 149.3 |
+| 2.75 M☉ | 47.72 Hz | 305.4 | 114.5 |
+
+</div>
+
+A channel's kernel is the same in every window, so a channel that is to be
+the matched filter in all our windows must cover this longest case. The
+chirp in a window whose merger falls 3.5 s in has $(3.5/4)^{5/8} = 0.9199$
+of each count: 585.3, 471.8, 366.2 and 281.0 cycles and $\int\tau\,df$ =
+219.5, 176.9, 137.3 and 105.4 at the four chirp masses, so that chirp alone
+would need at least 106 to 220 resonators.
+
+**Derivation.** With $\tau \propto f^{-8/3}$,
+$\tau f = \tau_1 f_1 (f/f_1)^{-5/3}$ and
+$\int_{f_1}^{f_2}\tau\,df = \tfrac35(\tau_1 f_1 - \tau_2 f_2)$. The cycles are
+$N_{\rm cyc} = \int f\,dt = \int f\,|d\tau/df|\,df$ with
+$|d\tau/df| = \tfrac83\tau/f$, so $N_{\rm cyc} = \tfrac83\int\tau\,df$. To
+merger, $f_2 \to \infty$ and $\tau_2 f_2 \to 0$, so
+$\int\tau\,df = \tfrac35\,\tau_1 f_1$ and $N_{\rm cyc} = \tfrac85\,\tau_1 f_1$;
+with $\tau_1$ = 4 s this gives the table, and since $f_1 \propto \tau_1^{-3/8}$,
+$\tau_1 f_1 \propto \tau_1^{5/8}$ gives the 3.5 s values. A channel's output
+at the merger adds its kernel times the data back to the window's first
+sample, so a kernel matched to the last 4 s is also the matched filter of the
+shorter stretch in a window whose merger falls earlier, while one matched
+only to the last 3.5 s misses the first 0.5 s of chirp in a window whose
+merger falls at its end. In general, integrating by parts,
+$\int_{f_1}^{f_2}\tau\,df = [\tau f]\_{f_1}^{f_2} + \int f\,|d\tau| = N_{\rm cyc} - \tau_1 f_1 + \tau_2 f_2$.
+An earlier count asked for resonances spaced no further apart than their
+angular width $1/\tau$; that gives
+$2\pi\int\tau\,df = 2\pi\cdot\tfrac38 N_{\rm cyc} = \tfrac{3\pi}{4}N_{\rm cyc}$,
+1,208 at 1.2 M☉, and it is not the requirement: the
+[phase limit](#oct16-s4d-phase-limit) is $\int\tau\,df$.
+
+**Check.** Python, two independent codes: by quadrature,
+$\int\tau\,df / N_{\rm cyc}$ = 0.375000 at 0.85, 1.2, 1.8 and 2.75 M☉ (0.375
+to $2\times10^{-16}$ in the second code); the frequencies, cycles and
+integrals of the table; $\int\tau\,df$ = 192.32, $N_{\rm cyc}$ = 512.87 and
+$2\pi\int\tau\,df$ = 1,208.4 at 1.2 M☉. The frequencies match the
+[cycles](#cycles) section. The 3.5 s values were recomputed for this page
+from the closed form and by quadrature, which agree to better than
+$10^{-14}$ (relative): $\int\tau\,df$ = 219.48, 176.93, 137.32 and 105.37,
+and 585.29, 471.81, 366.19 and 280.98 cycles. In one detector the shortest
+stretch is 3.4795 s ([where the merger falls](#oct16-merger-position)),
+which gives 104.98 at 2.75 M☉. A merger that falls after the window's end
+in one detector, by up to 21.0 ms, cuts the top of the band, so
+$\int\tau\,df$ stays below its 4 s value: 230.40 at 0.85 M☉ for a merger
+21.0 ms after the end.
+
+## Fitting resonators to chirp kernels {#oct16-s4d-fits}
+
+**Claim** (16 October update): fits of one channel of $N$ resonators to the
+matched filter of a whitened chirp give the following.
+
+- One resonator per band of equal $\int\tau\,df$, ring time $\tau(f)$, only
+  the weights solved: the match jumps from 0.457 to 0.480 at 0.81 to 0.98
+  times $\int\tau\,df$ to 0.861 to 0.932 at 1.01 to 1.23 times it, counting
+  the resonators on the dominant sign of frequency (1.2, 1.5 and 2.0 M☉). For 1.0 M☉, covering the larger of its two frequency signs
+  gives 0.78, and 0.967 needs both covered (640 resonators).
+- The matrix-pencil fits of the [earlier tone fits](#early-tone-fit) stop at
+  0.875 to 0.917 with 2,048 resonators because growing poles were reflected;
+  clipping them instead gives 0.933 to 0.958. The layout along the chirp
+  reaches 0.99 with 448 resonators at 1.2 and 1.5 M☉, 320 at 2.0 M☉ and 896
+  at 1.0 M☉.
+- With frequencies, decay rates and weights all fitted and the result valid
+  in float32, 32 resonators keep 0.290, 0.429, 0.476 and 0.564 at 1.0, 1.2,
+  1.5 and 2.0 M☉; 64 keep 0.389, 0.540, 0.574 and 0.629; 128 keep 0.543,
+  0.862, 0.908 and 0.942.
+- On whitened templates of seven chirp masses from 0.85 to 2.75 M☉, with a cap
+  on cancellation: 16 resonators keep 0.210 to 0.434; 32 keep 0.304 to
+  0.592; 64 keep 0.465 to 0.778; 128 keep 0.658 to 0.947; 256 keep 0.942 to
+  0.992.
+- For a match of 0.9 over the whole chirp, resonators need 0.34 to 0.38 per
+  cycle of the chirp (both template sets below), and the strongest Fourier
+  tones 1.26 to 1.45 per cycle (leading-order chirps).
+
+**The kernels.** Three sets, so absolute values differ a little between
+them: leading-order chirps over the last 4 s, 20 to 900 Hz; whitened
+templates of $h_+$ (analytic signal) from our training file, whitened with
+the average O3 noise spectrum of our training windows; and the four whitened
+kernels of the [earlier tone fits](#early-tone-fit), at detector-frame chirp
+masses 1.0, 1.2, 1.5 and 2.0 M☉, built from $h_+ - ih_\times$. The 1.0 M☉
+source is seen nearly edge-on (inclination 1.63 rad), so its kernel holds
+61% of its energy at positive and 39% at negative frequencies, and a channel
+must cover both; covering one sign alone keeps at most $\sqrt{0.61}$ = 0.78.
+
+**The match** of a fitted kernel is defined as in the
+[earlier tone fits](#early-tone-fit): the fraction of the matched filter's
+SNR it keeps.
+
+**The fits.**
+
+- *Along the chirp, no fit:* the band is cut into $N$ bands of equal
+  $\int\tau\,df$, with one resonator in each, ring time $\tau(f)$; only the
+  weights are solved, by least squares. On the leading-order chirps a
+  variant uses $c$ resonators per unit of $\int\tau\,df$, ring times
+  $\tau/\alpha$ with the best $\alpha$ between 0.25 and $\pi$, and weights
+  with a cap of 2 on cancellation (the summed energy of the terms at most
+  twice the energy of their sum): the match is 0.535 to 0.538 at $c$ = 0.8,
+  0.696 to 0.830 at 1.0, 0.945 to 0.962 at 1.1, 0.973 to 0.979 at 1.5, 0.994
+  at 2 and 0.998 at $c = e$, for 0.85 to 2.75 M☉; from $c$ = 1.1 up the best
+  ring times are 0.7 to 1 $\tau$.
+- *Matrix pencil* (Hua and Sarkar 1990, IEEE Trans. ASSP 38, 814): as in the
+  earlier fits, except that poles with $|z| > 1$ (the best pencil poles reach
+  $|z|$ = 1.009) are clipped to $|z| = 1$ instead of reflected to
+  $1/\bar z$, which changes their shape.
+- *All parameters fitted:* frequencies, decay rates and weights by
+  variable projection (the weights are the least-squares solution at every
+  step; Golub and Pereyra 1973, SIAM J. Numer. Anal. 10, 413,
+  [doi:10.1137/0710036](https://doi.org/10.1137/0710036)), from three
+  fixed starts (the two matrix-pencil fits and the layout along the chirp)
+  and from random starts (24 at 32 resonators, 8 at 64 and 128), keeping
+  only results whose match holds when the kernel is evaluated in float32,
+  the precision S4D computes in; the claim gives the best over all starts.
+  The kept 32-resonator fits have cancellation ratios of 12 to 24.
+- *Without any cap*, least squares with free poles drifts into pairs of poles
+  almost on top of each other with large, opposite weights (for 1.2 M☉ at 256
+  resonators: pairs near 83 to 85 Hz, 0.008 to 0.014 of a line width apart,
+  weights of $2\times10^6$ to $5\times10^6$). In float64 the match climbs
+  (1.0 M☉: 0.9954 at 512, 0.9998 at 1,024); the same kernels evaluated in
+  float32 keep 0.014 to 0.084. They are not usable S4D kernels.
+
+In the best 32-resonator fits, ring time grows as $\tau^{1.27}$ to
+$\tau^{1.42}$ (log-log $R^2$ 0.92 to 0.94), and the median ring time is 0.43
+to 0.70 of $\tau$.
+
+**Check.** The fits of the layout along the chirp were evaluated in float64
+and again in float32 and agree to 4 digits; a second, independent reading of
+the saved results gives the same jump (1.2 M☉: 0.467 at 0.886 times, 0.902 at
+1.065 times; 1.5 M☉: 0.457 at 0.806, 0.861 at 1.010; 2.0 M☉: 0.480 at 0.983,
+0.932 at 1.231). The reflected (0.875 to 0.917) and clipped (0.933 to 0.958)
+matrix-pencil values at 2,048 were reproduced by a second, independent least
+squares. The 32-resonator fits were re-evaluated in complex64 with
+independent code: 0.2896, 0.4288, 0.4762 and 0.5641, cancellation 12.3 to
+24.3. The other values are read from the saved outputs of the fitting
+scripts and were not rerun. The per-cycle ratios were recomputed for this page from
+the counts for a match of 0.9, at 0.85, 1.2, 1.8 and 2.75 M☉, divided by the
+cycles of the [3/8 section](#oct16-s4d-three-eighths): resonators 219, 182,
+143 and 112 on leading-order chirps (0.344 to 0.367 per cycle) and 230, 194,
+148 and 106 on whitened templates (0.347 to 0.378); Fourier tones 800, 685,
+557 and 442 on leading-order chirps (1.257 to 1.447).
+
+## How long a chirp stays in step with a linear chirp, and how many chirplets cover the window {#oct16-chirplet-count}
+
+**Claim** (brainstorm, 16 October): a chirp that passes the frequency $f$
+stays within an eighth of a cycle of the linear chirp (a wave whose
+frequency changes at a constant rate) that has its phase, frequency and rate
+of change of frequency at that moment for a time
+
+$$
+T_{\rm lin} = \left(\frac{6}{\ddot f}\right)^{1/3},
+$$
+
+centred on that moment. For chirp mass 1.2 M☉ this is 0.830 s at 100 Hz and
+0.0816 s at 300 Hz, 3.41 and 2.52 times the
+[in-step time](#oct15-in-step-time) $\dot f^{-1/2}$ of a steady wave. At
+leading order, pieces of length $T_{\rm lin}$ laid end to end over a window
+that ends at the merger and holds $N$ cycles number
+
+$$
+\frac35\left(\frac{55}{2}\,N\right)^{1/3} = 1.811\,N^{1/3},
+$$
+
+against $\tfrac25\sqrt{15N} = 1.549\sqrt N$ steady pieces and at least
+$\int\tau\,df = \tfrac38 N$ resonators for one S4D channel
+([3/8 section](#oct16-s4d-three-eighths)). Over the last 4 s before the
+merger, rounded up to whole pieces, that is 10 to 12 linear pieces up to
+1024 Hz, against at least 114 to 234 resonators:
+
+<div markdown="1">
+
+| chirp mass | cycles | linear pieces: to merger, to 1024 Hz, to 512 Hz | steady pieces: to merger, to 1024 Hz, to 512 Hz | $\int\tau\,df$: to merger, to 1024 Hz |
+|---|---|---|---|---|
+| 0.85 M☉ | 636.2 | 15.58, 11.31, 9.31 | 39.08, 33.48, 29.11 | 238.6, 233.7 |
+| 1.2 M☉ | 512.9 | 14.50, 10.98, 9.32 | 35.08, 30.89, 27.60 | 192.3, 189.6 |
+| 1.8 M☉ | 398.1 | 13.32, 10.51, 9.19 | 30.91, 27.91, 25.57 | 149.3, 147.9 |
+| 2.75 M☉ | 305.4 | 12.20, 9.98, 8.93 | 27.07, 24.97, 23.33 | 114.5, 113.8 |
+
+</div>
+
+A chirplet is such a piece under a Gaussian envelope (Mann and Haykin 1995,
+IEEE Trans. Signal Process. 43, 2745,
+[doi:10.1109/78.482123](https://doi.org/10.1109/78.482123)). With the match
+defined as in the [resonator fits](#oct16-s4d-fits), the fraction of the
+matched filter's SNR kept:
+
+- *Cut pieces*, each the tangent linear chirp at its midpoint in time: 9
+  to 12 of them keep 0.958 to 0.959 (up to 512, 900 or 1024 Hz); steady
+  pieces made the same way, 24 to 34 of them, keep 0.973.
+- *Chirplets along the chirp, amplitudes solved:* on the leading-order
+  chirps of the resonator fits (20 to 900 Hz), 9 to 10 chirplets reach a
+  match of 0.9, 10 to 11 reach 0.95 and 14 reach 0.99, where for 0.9 the
+  same chirps need 112 to 219 resonators and 442 to 800 Fourier tones
+  ([resonator fits](#oct16-s4d-fits)). Up to 1024 Hz, 12 chirplets keep
+  0.982 to 0.989.
+- *Fitted* to the four whitened kernels of the resonator fits: 8 chirplets
+  keep 0.953 to 0.962 at 1.2 to 2.0 M☉ and 12 keep 0.977 to 0.986, where 32
+  resonators keep 0.429 to 0.564. From random starts, fits of 8 chirplets
+  end at 0.600 to 0.915.
+- *A start with no fit:* at the best of 256 chirp masses spaced evenly in
+  log from 0.85 to 2.75 M☉, 12 chirplets laid along the leading-order chirp
+  match the 1.2, 1.5 and 2.0 M☉ whitened kernels at 0.788 to 0.824, and at
+  0.924 to 0.955 once their complex amplitudes alone are solved.
+
+A chirplet has six numbers (centre time, width, centre frequency, rate of
+change of frequency, and a complex amplitude), so a chain of 12 has 72; a
+free kernel at 2048 Hz uses 8,032 ([counts](#parameters)).
+
+**Setup.** One chirplet is
+
+$$
+g(t) = A\,e^{-(t - t_k)^2/(2\sigma^2)}\exp\!\Big(i\big[\phi + 2\pi f_k\,(t - t_k) + \pi c_k\,(t - t_k)^2\big]\Big),
+$$
+
+with centre time $t_k$, width $\sigma$, centre frequency $f_k$, rate of
+change of frequency $c_k$, amplitude $A$ and phase $\phi$. Two sets of
+targets:
+
+- *Leading-order chirps:* $\tau^{-1/4}e^{i\Phi(\tau)}$ over the last 4 s at
+  2048 Hz (8,192 samples), with $\tau$ the time before the merger, kept from
+  20 Hz to $f_{\max}$ = 512, 900 or 1024 Hz; 900 Hz is the band of the
+  leading-order chirps of the resonator fits.
+- *Whitened kernels:* the four kernels of the
+  [earlier tone fits](#early-tone-fit), whitened templates at detector-frame
+  chirp masses 1.0, 1.2, 1.5 and 2.0 M☉ built from $h_+ - ih_\times$, 8,064
+  samples (the 3.94 s before the merger) at 2048 Hz. The 1.0 M☉ source is
+  seen nearly edge-on, so its kernel holds 39% of its energy at negative
+  frequencies, and chirplets on one sign of frequency keep at most
+  $\sqrt{0.61}$ = 0.78 of it ([resonator fits](#oct16-s4d-fits)).
+
+The constructions:
+
+- *Cut pieces:* one piece per unit of the count derived below, each the
+  tangent linear chirp (or steady wave) at the midpoint in time of its
+  piece, with the chirp's own amplitude.
+- *Chirplets along the chirp:* $P$ chirplets centred at equal steps of the
+  count, with the chirp's frequency and rate at each centre and a width
+  $\sigma$ that is a fixed fraction of the local spacing in time (0.3, 0.4,
+  0.5, 0.6, 0.8 or 1.0, the best kept for each $P$; it is 0.4 from 10 to 16
+  chirplets). Only the complex amplitudes are solved, by least squares.
+  Taking instead the chirp's own amplitude and phase at each centre, with
+  nothing solved, needs the same numbers of chirplets for 0.9 and 0.95, and
+  14 to 15 for 0.99.
+- *Fitted:* the centre times, widths, frequencies and rates of $P$
+  chirplets are fitted to a whitened kernel by variable projection, as for
+  the resonators (the amplitudes are the least-squares solution at every
+  step), with a gradient-based minimizer from SciPy and an exact gradient,
+  until the match gains less than $10^{-6}$ in 500 steps. The start puts
+  the chirplets at equal steps of the kernel's energy along its own
+  frequency track (frequency and rate from local quadratic fits of the
+  kernel's phase), each half as wide as the time over which the kernel's
+  phase stays within a quarter cycle of the tangent linear chirp there; for
+  1.0 M☉ the chirplets are split between the two signs of frequency in
+  proportion to their energy. The random starts, three each at 1.2 and
+  2.0 M☉, put the centres anywhere in the kernel, the frequencies between
+  20 and 800 Hz, the widths between 32 and 1,024 samples and the rates at 0;
+  for them the minimizer's own stop on a small relative gain was turned off,
+  since with it the first random start stopped at 0.154 (1.2 M☉) and 0.383
+  (2.0 M☉).
+- *A start with no fit:* 12 chirplets along the leading-order chirp from
+  20 to 1024 Hz, width 0.4 of the spacing, with the chirp's amplitude and
+  phase at each centre, at the 256 chirp masses; the match is the largest
+  over the kernel's lag, both signs of frequency and all 256 masses (the
+  best lies 0.8% to 1.5% below the kernel's chirp mass). For the second
+  number only the complex amplitudes are re-solved, by least squares, at
+  the best mass and lag.
+
+The fits:
+
+<div markdown="1">
+
+| chirplets | 1.0 M☉, both signs | 1.2 M☉ | 1.5 M☉ | 2.0 M☉ |
+|---|---|---|---|---|
+| 4 | | 0.791 | | |
+| 6 | | 0.902 | | |
+| 8 | | 0.955 | 0.953 | 0.962 |
+| 12 | | 0.979 | 0.977 | 0.986 |
+| 16 | 0.942 | 0.995 | | |
+| 24 | 0.984 | | | |
+
+</div>
+
+The summed energy of the fitted chirplets is 0.80 to 1.26 times the energy
+of their sum, so no fit relies on terms that cancel (the 32-resonator fits
+have 12 to 24). From the random starts, 8 chirplets end at 0.600, 0.698 and
+0.857 (1.2 M☉) and 0.915, 0.798 and 0.795 (2.0 M☉), against 0.955 and 0.962
+from the start along the track. The start with no fit reaches 0.607 on the
+1.0 M☉ kernel, and 0.727 with the amplitudes re-solved, below the one-sign
+limit of 0.78.
+
+**Derivation.** Near the moment $t_0$ when the chirp passes $f_0$,
+
+$$
+\Phi(t_0 + s) = \Phi(t_0) + 2\pi f_0\,s + \pi\dot f\,s^2 + \frac{\pi}{3}\,\ddot f\,s^3 + O(s^4).
+$$
+
+The tangent linear chirp keeps the first three terms, so the two differ by
+$\tfrac{\pi}{3}\ddot f\,|s|^3$, which is at most an eighth of a cycle,
+$\pi/4$, for $|s| \le \big(3/(4\ddot f)\big)^{1/3}$: a total time
+$T_{\rm lin} = 2\,\big(3/(4\ddot f)\big)^{1/3} = (6/\ddot f)^{1/3}$. A steady wave
+keeps only the first two terms and is limited by the $s^2$ term instead
+([in-step time](#oct15-in-step-time)). The envelope, sharp-edged or
+Gaussian, does not enter: the in-step time depends on the phase alone.
+
+At leading order $f \propto \tau^{-3/8}$ ([cycles](#cycles)), so
+$\dot f = \tfrac38 f/\tau$ and
+$\ddot f = \tfrac38\cdot\tfrac{11}{8}\,f/\tau^2 = \tfrac{11}{3}\,\dot f^2/f$.
+Then
+
+$$
+\frac{T_{\rm lin}}{T_{\rm step}} = \left(\frac{18}{11}\,f\,T_{\rm step}\right)^{1/3}, \qquad T_{\rm step} = \dot f^{-1/2},
+$$
+
+so the linear chirp gains most where a steady wave already holds many
+cycles:
+
+<div markdown="1">
+
+| chirp mass | 50 Hz | 100 Hz | 300 Hz |
+|---|---|---|---|
+| 0.85 M☉ | $\ddot f$ = 0.0412 Hz/s², 5.26 s | 3.33 Hz/s², 1.22 s | 3,497 Hz/s², 0.120 s |
+| 1.2 M☉ | 0.130 Hz/s², 3.59 s | 10.5 Hz/s², 0.830 s | 11,040 Hz/s², 0.0816 s |
+| 2.75 M☉ | 2.07 Hz/s², 1.43 s | 167 Hz/s², 0.330 s | 175,100 Hz/s², 0.0325 s |
+
+</div>
+
+The 50 Hz column lies inside our windows only above 2.55 M☉
+([in-step time](#oct15-in-step-time)).
+
+Pieces of length $T_{\rm lin}$ laid end to end number
+$\int dt/T_{\rm lin} = \int(\ddot f/6)^{1/3}\,d\tau$. Since
+$\ddot f \propto \tau^{-19/8}$, the integrand grows only as $\tau^{-19/24}$
+toward the merger, and the integral to the merger is finite:
+
+$$
+\int_0^T \left(\frac{\ddot f}{6}\right)^{1/3} d\tau = \frac{24}{5}\,T\left(\frac{\ddot f(T)}{6}\right)^{1/3} = \frac{24}{5}\left(\frac{11}{128}\right)^{1/3}(T f_T)^{1/3} = \frac35\left(\frac{55}{2}\,N\right)^{1/3},
+$$
+
+with $T$ = 4 s, $f_T$ the frequency at $\tau = T$ and $N = \tfrac85\,T f_T$
+the cycles to the merger ([3/8 section](#oct16-s4d-three-eighths)). The same
+steps for steady pieces give
+$\int\dot f^{1/2}\,dt = \tfrac{16}{5}\,T\,\dot f(T)^{1/2} = \tfrac25\sqrt{15N}$,
+the count in section 4 of the
+[15 October lecture]({{ u | append: '2026-10-15-oscillators-and-chirps/' | relative_url }}).
+Since $\tau \propto f^{-8/3}$, stopping at $f_{\max}$ instead of the merger
+multiplies the two counts by $1 - (f_T/f_{\max})^{5/9}$ and
+$1 - (f_T/f_{\max})^{5/6}$. With constant amplitude, a cut piece keeps
+$\int_0^1\cos(\pi w^3/4)\,dw = 0.957$ of a perfectly in-step stretch of its
+length, where $w$ runs from the piece's middle to its end, and a steady
+piece keeps 0.973.
+
+**Check.** Python (numpy and scipy, one thread), two codes written
+separately:
+
+- The exact leading-order phase was compared with the tangent linear chirp
+  on 600,001 points in one code and 2,000,001 in the other. The interval
+  where the two differ by at most $\pi/4$ is 0.02% to 0.49% shorter than
+  $(6/\ddot f)^{1/3}$ for 0.85, 1.2 and 2.75 M☉ at 50, 100 and 300 Hz;
+  the largest difference is at 2.75 M☉ and 300 Hz, 30 ms before the merger,
+  where the $s^4$ term is largest. The same codes give $\dot f^{-1/2}$ for
+  the steady wave to within 0.04%, and finite differences of $f(\tau)$ give
+  $\dot f$ and $\ddot f$ to a relative $10^{-7}$.
+- Numerical integration (SciPy's `quad`, after a change of variable that
+  removes the growth at the merger) gives the closed forms to all digits
+  shown: 15.576, 14.497, 13.322 and 12.196 linear pieces and 39.076,
+  35.084, 30.909 and 27.075 steady pieces to the merger at 0.85, 1.2, 1.8
+  and 2.75 M☉, and the counts to 1024 and 512 Hz. The first code, on a
+  grid in $\log\tau$ that stopped 1 ns before the merger, came out 1% low
+  for the linear pieces: the count grows as $\tau^{5/24}$, so its last
+  nanosecond holds 1% of it.
+- The cut pieces keep 0.958 to 0.959 in both codes with the tangent at the
+  midpoint in time (0.954 to 0.957 with the tangent at the midpoint of the
+  count), and the chirplet counts for 0.9, 0.95 and 0.99 agree between
+  them. Both codes reproduce two numbers found before with other code: 800,
+  685, 557 and 442 strongest Fourier tones for a match of 0.9
+  ([resonator fits](#oct16-s4d-fits)), and steady pieces that keep 0.973
+  with 24 to 30 pieces up to 512 Hz (section 4 of the lecture).
+- Every saved fit was rebuilt from its saved parameters by separate code,
+  in float64 and in complex64: the matches agree with the fitting code to
+  four digits (one random start to 0.003 in complex64), and re-solving the
+  amplitudes with numpy's least squares gives the same matches. The fit's
+  exact gradient agrees with central finite differences of a separately
+  written objective to a relative $2.2\times10^{-8}$ or better in every
+  component above a thousandth of the largest, at the start along the track
+  (8 chirplets, 1.2 M☉). The 8-chirplet fit at 1.2 M☉ from the track
+  was run three times, the last without the stop on a small relative gain,
+  and gave 0.9551 each time.
+- The start with no fit: on a grid of chirp masses 0.05% apart, the
+  leading-order chirp itself matches the 1.2, 1.5 and 2.0 M☉ kernels at
+  0.816 to 0.846 and the chain of 12 chirplets at 0.814 to 0.835, so what
+  the start lacks is in the leading-order phase and amplitude, not in the
+  chirplets. A second code, which shifts and trims the chain to the kernel's
+  length instead of padding it, gives 0.809 to 0.838 before the amplitudes
+  are re-solved.
+- A third code, written separately again to check the first two (root
+  finding for the in-step lengths, counts integrated on a grid, least
+  squares through a QR decomposition), reproduced every number in the
+  three tables, the cut-piece and chirplet matches and counts, the 800,
+  685, 557 and 442 Fourier tones, every saved fit rebuilt from its
+  parameters, and the start with no fit (0.788 to 0.824, and 0.924 to
+  0.955 with the amplitudes re-solved), taking the best over all 256
+  masses.
+
+## How the trained channels were measured {#oct16-s4d-channel-analysis}
+
+**Claim** (16 October update): the numbers given for the trained channels:
+for the clean S4D's first layer, the ring times, the matches, the group-delay
+slope and the skip term; for the four noisy networks, the counts of channels
+whose delay follows the chirp, their matches and slopes.
+
+**The kernels.** Each channel's kernel is rebuilt from the stored
+parameters, with frequency $f_n = \Delta t\,\mathrm{Im}A_n f_s/2\pi$ and ring
+time $T_n = 1/(\Delta t\,|\mathrm{Re}A_n| f_s)$
+([S4D tones](#s4d-tones)), where $f_s$ is the rate at which the kernel runs:
+2048 Hz in the clean network, 1024 Hz in the four noisy ones.
+
+**The templates.** 235 whitened templates, chirp masses 0.85 to 2.74 M☉,
+mass ratio 0.70 to 0.90, spin near 0, whitened with the H1 noise spectrum.
+Some numbers were also measured on 1,000 clean test windows of both
+detectors.
+
+**What is measured, per channel.**
+
+- *In-band match:* the fraction of a template's SNR the channel keeps,
+  counting only 20 Hz to the Nyquist frequency (the whitened data hold no
+  power below 20 Hz), at the best template and the best output time.
+- *One resonator alone:* the best match a single resonance reaches in the
+  channel's band, and the gain $G$ = (channel's match / one resonance's
+  match)².
+- *Slope:* the slope of the channel's group delay against the chirp's
+  $\tau(f)$ across its band; 1 means the channel delays each frequency as the
+  matched filter does, 0 that it has no delay that depends on frequency.
+- *Memory:* ring time over $\tau$ at the resonators' frequencies.
+
+Channels with $G \ge 2$ and a slope between 0.5 and 2 are counted as
+channels whose delay follows the chirp. These cuts are mine, fixed after
+seeing the best channels; the clean first layer has none at $G$ cuts of 1.5,
+2 and 3.
+
+**Results, clean S4D 64 × 32 × 4, first layer, epoch 69.** 671 of 1,024
+resonators lie between 20 and 1024 Hz; ring time median 5.7 ms, 95th
+percentile 0.25 s; 1.0% (at 0.85 M☉) to 18% (at 2.75 M☉) ring as long as
+$\tau$ at their frequency. Best match per channel on the 1,000 windows:
+median 0.090, maximum 0.204, against 0.20 to 0.32 for one resonator alone at
+60 to 400 Hz on the same windows. On the templates: median 0.060, maximum
+0.175, against 0.22 for one resonance, so $G$ has a median of 0.083 and a
+maximum of 0.59. Slope median 0.000; the best channel's group delay is flat
+at 0 over 42 to 173 Hz, where the chirp's delay spans 3.7 s. Skip term:
+$D^2/\lVert K\rVert^2$ median 0.72. Epoch 135: 676 resonators in band, ring
+time median 5.4 ms, best match per channel median 0.089 and maximum 0.192 on
+the same 1,000 windows.
+
+**Results, noisy networks.** On real windows the channel matches and the
+one-resonance bound are both 1.4 to 1.6 times the values on the templates;
+ratios and counts do not change. The eight best channels of the
+256-per-channel network hold 1.40 to 2.15 resonators per unit of
+$\int\tau\,df$ in their band, with median ring times of 0.65 to 1.05 $\tau$.
+Training moved the S4D-Lin frequencies by a median 0.05 to 0.09 of the
+starting spacing $\pi$ (at most 2.5% of resonators moved more than half a
+spacing), while 73% to 91% of resonators changed their ring time by more
+than 10%. In the 256-per-channel network, the channels whose delay follows the
+chirp have a median step $\Delta t$ of $1.7\times10^{-3}$, against 0.11 for
+the other channels. The
+five best channels' full width at half height in chirp mass is 3.6% to 5.7%
+for the 256-per-channel network, 8% to 34% for the 32-per-channel and
+band-init networks, and 1.4% to 2.0% for free kernels.
+
+**Check.** A second, independent code rebuilt the clean first-layer kernels
+from the raw parameters (match to the module $8.4\times10^{-7}$) and
+reproduced 671 of 1,024, 5.68 ms and 0.255 s (with 324 aliased resonators
+handled), the matches on the 1,000 windows, the one-resonator values on them,
+$D^2/\lVert K\rVert^2$ = 0.7229 and the epoch-135 values. For the noisy
+networks, kernels rebuilt from the stored parameters match the module code to
+$3.7\times10^{-14}$ or better; the second code rebuilt the eight best
+256-per-channel channels (slopes against the leading-order $\tau$ 1.05 to
+1.21). The counts, the matches on templates, the slopes, the training changes
+and the tuning widths are read from the saved analysis results and were not
+rerun; the training changes compare each network with a fresh draw from the
+same start code, not with the run's own start.
+
+## A GELU passes each channel's linear response with gain 1/2 {#oct16-s4d-gelu-linear}
+
+**Claim** (16 October update):
+$\mathrm{GELU}(y) = \tfrac12 y + y\big(\Phi_{\mathcal N}(y) - \tfrac12\big)$,
+and the second term is even. The part of a channel's output that is linear
+in the input therefore reaches the next layer's mixing of channels with gain
+1/2, where it can be added in step across channels. A GELU does not by
+itself turn a sum of channels into a sum of powers.
+
+**Derivation.** $\Phi_{\mathcal N}(y) - \tfrac12$ is odd, so
+$y(\Phi_{\mathcal N}(y) - \tfrac12)$ is even, and $\tfrac12 y$ is the whole
+odd part ([averaging after a GELU](#ck-gelu-mean); Hendrycks and Gimpel 2016,
+[arXiv:1606.08415](https://arxiv.org/abs/1606.08415)). The mixing of
+channels that follows in ml4gw's S4D layer is a 1×1 convolution, which is
+linear, followed by a gated linear unit, which multiplies by a
+data-dependent factor. This corrects the
+[$N^{1/4}$ section](#semi-coherent), which listed a GELU among the
+nonlinearities that turn a sum into a sum of powers: that holds for its even
+part only. It holds exactly for the noisy one-layer networks, which square
+each channel. The even part adds noise but no response linear in the
+signal, so for pieces with independent Gaussian noise a sum in step after a
+GELU keeps the fraction 0.838 to 0.910 of the SNR at noise spreads 0.5 to 2
+([next section](#oct16-nonlinearity-linear-part)).
+
+**Check.** Python, two codes:
+$\tfrac12(\mathrm{GELU}(y) - \mathrm{GELU}(-y)) - \tfrac12 y$ is at most
+$4.4\times10^{-16}$ on $[-8, 8]$ and on $[-12, 12]$.
+
+## How much SNR a sum in step keeps after a nonlinear function {#oct16-nonlinearity-linear-part}
+
+**Claim** (15 October update, section 5, as revised on 16 October; and the
+corrected [$N^{1/4}$ section](#semi-coherent)): apply a function $\phi$ to
+each of $K$ pieces of data $z_k = s_k + n_k$, whose noise $n_k$ is Gaussian
+with spread $\sigma$ and independent from piece to piece, and add the outputs
+with weights in step with the signal, $c_k \propto s_k$. To first order in
+the signal of each piece the sum has SNR $r\rho$, where
+$\rho = \lVert s\rVert/\sigma$ is the SNR of the same sum taken without
+$\phi$, and
+
+$$
+r = \operatorname{corr}\big(n, \phi(n)\big) = \frac{E[n\,\phi(n)]}{\sigma\,\operatorname{std}\phi(n)}, \qquad n \sim \mathcal N(0, \sigma^2),
+$$
+
+the correlation between the noise that enters $\phi$ and what comes out. "A
+sum in step keeps 86% of the SNR" means $r = 0.86$. The values:
+
+- ReLU, $\max(0, x)$: $r = 1/\sqrt{2 - 2/\pi} = 0.856429$ at every $\sigma$.
+- Threshold at zero (1 for $x > 0$, 0 otherwise), and the sign function:
+  $r = \sqrt{2/\pi} = 0.797885$ at every $\sigma$.
+- GELU, $x\,\Phi_{\mathcal N}(x)$, with $\sigma$ in the units of $x$: $r$ is
+  0.909548 at $\sigma = 0.5$, 0.850463 at 1 and 0.839013 at 2, and smallest,
+  0.838159, at $\sigma = 1.678$. For $0.5 \le \sigma \le 2$ it therefore lies
+  between 0.838 and 0.910 (84 to 91%). It tends to 1 as $\sigma \to 0$ and to
+  the ReLU's 0.856429 as $\sigma \to \infty$, so at any spread it lies
+  between 0.838 and 1.
+- The GELU and the ReLU pass a weak signal with an average gain of exactly
+  1/2 at every $\sigma$.
+- An even function, $\phi(-x) = \phi(x)$, such as a square, an absolute
+  value, the energy of a channel or a threshold on $\lvert x\rvert$, has
+  $r = 0$ at every $\sigma$. Nothing linear in the signal survives: a
+  weighted sum of its outputs responds only to even powers of the pieces'
+  signals, led by $s_k^2$, and with equal weights it is the power sum of the
+  [$N^{1/4}$ section](#semi-coherent). A continuous function that grows no
+  faster than a power of $x$ has $r = 0$ at every $\sigma$ only if it is
+  even.
+- In the setting of the [$N^{1/4}$ section](#semi-coherent), 600 pieces that
+  each carry $8/\sqrt{600} = 0.327$ in unit noise, added with equal weights
+  (which are in step there, since every piece carries the same signal), the
+  exact SNR is 7.737 after a GELU, 7.736 after a ReLU, 6.271 after a
+  threshold at zero and 1.848 after a square, against 8 without a function.
+
+**Setup.** The SNR of a sum $o$ is the shift of its mean when the signal is
+added, in units of its spread in noise alone:
+
+$$
+\mathrm{SNR}(o) = \frac{E[o \mid s] - E[o \mid 0]}{\operatorname{std}(o \mid 0)} .
+$$
+
+For the plain sum $\sum_k s_k z_k$ this is $\lVert s\rVert/\sigma = \rho$, the
+matched-filter SNR. Samples of whitened data are such pieces, with
+$\sigma = 1$, when the noise is Gaussian: white Gaussian noise is independent
+from sample to sample. This section does not cover pieces whose noises are
+correlated, such as two channels of one layer at the same time. Write
+$p(x) = e^{-x^2/(2\sigma^2)}/(\sigma\sqrt{2\pi})$ for the density of $n$, and
+$m(s) = E\,\phi(s + n)$ for the mean output of one piece that carries the
+signal $s$.
+
+**Derivation.**
+
+**The average gain.** $m(s) = \int \phi(y)\,p(y - s)\,dy$. The first and second
+derivatives of $p(y - s)$ with respect to $s$, at $s = 0$, are
+$(y/\sigma^2)\,p(y)$ and $\big((y^2 - \sigma^2)/\sigma^4\big)\,p(y)$, so
+
+$$
+m(s) = m(0) + g\,s + \tfrac12\,h\,s^2 + O(s^3), \qquad
+g = \frac{E[n\,\phi(n)]}{\sigma^2}, \qquad
+h = \frac{E[(n^2 - \sigma^2)\,\phi(n)]}{\sigma^4} .
+$$
+
+This needs no derivative of $\phi$, so it covers a threshold too. When $\phi$
+has one, integrating by parts with $x\,p(x) = -\sigma^2 p^\prime(x)$ gives
+$g = E[\phi^\prime(n)]$, the average slope, and with two, $h = E[\phi^{\prime\prime}(n)]$
+(Stein 1981, Ann. Statist. 9, 1135,
+[doi:10.1214/aos/1176345632](https://doi.org/10.1214/aos/1176345632)). For a
+Gaussian input, the cross-correlation of a function's output with its
+input, at any time lag, is this same $g$ times the input's autocorrelation
+(Bussgang
+1952, MIT Research Laboratory of Electronics Technical Report 216,
+[hdl:1721.1/4847](https://hdl.handle.net/1721.1/4847)).
+
+**The sum in step.** The pieces are independent, so
+$\operatorname{std}(o \mid 0) = \operatorname{std}\phi(n)\,\lVert c\rVert$. To
+first order in the signal the mean moves by $g\sum_k c_k s_k$, and
+$\lvert\sum_k c_k s_k\rvert \le \lVert c\rVert\,\lVert s\rVert$ (the
+Cauchy–Schwarz inequality), with equality for $c \propto s$. Hence
+
+$$
+\mathrm{SNR} = \frac{\lvert g\rvert\,\lVert s\rVert}{\operatorname{std}\phi(n)} = \lvert r\rvert\,\rho, \qquad
+r = \frac{\sigma g}{\operatorname{std}\phi(n)} = \frac{E[n\,\phi(n)]}{\operatorname{std}(n)\,\operatorname{std}\phi(n)} = \operatorname{corr}\big(n, \phi(n)\big),
+$$
+
+since $E[n] = 0$ makes $E[n\,\phi(n)]$ the covariance of $n$ and $\phi(n)$.
+All the functions here have $g \ge 0$. As a correlation, $\lvert r\rvert \le 1$,
+and $r = 1$ only if $\phi$ is linear plus a constant. The fraction of SNR²
+kept is $r^2$.
+
+**GELU and ReLU.** Each is $x/2$ plus an even function $e(x)$:
+${\rm ReLU}(x) = x/2 + \lvert x\rvert/2$, and
+${\rm GELU}(x) = x/2 + x\big(\Phi_{\mathcal N}(x) - \tfrac12\big)$
+([GELU section](#oct16-s4d-gelu-linear); Hendrycks and Gimpel 2016,
+[arXiv:1606.08415](https://arxiv.org/abs/1606.08415)). Because $x\,e(x)$ is
+odd and $p$ is even, $E[n\,e(n)] = 0$. So $g = 1/2$ at every $\sigma$, and
+${\rm Var}\,\phi(n) = \sigma^2/4 + {\rm Var}\,e(n)$:
+
+$$
+r^2 = \frac{\sigma^2/4}{\sigma^2/4 + {\rm Var}\,e(n)} ,
+$$
+
+so the even part costs SNR only by adding noise. Also $E\,e(s + n)$ is even
+in $s$ (replace $n$ by $-n$), so $m(s) - m(-s) = s$ exactly. For a signal
+whose samples come in pairs $\pm s$, the mean of the in-step sum therefore
+moves by exactly $g\,\lVert c\rVert\,\lVert s\rVert$, and $\mathrm{SNR} =
+r\rho$ holds at any signal strength. For other signals the next term,
+$\tfrac12 h\sum_k c_k s_k^2$, is small next to $g\sum_k c_k s_k$ when every
+$\lvert s_k\rvert$ is small next to $\sigma$.
+
+**ReLU, closed form.** $E\,{\rm ReLU}(n) = \sigma/\sqrt{2\pi}$ and
+$E\,{\rm ReLU}(n)^2 = \sigma^2/2$, so
+${\rm Var}\,{\rm ReLU}(n) = \sigma^2\big(\tfrac12 - \tfrac{1}{2\pi}\big)$ and
+$r = \tfrac12\big/\sqrt{\tfrac12 - \tfrac{1}{2\pi}} = 1/\sqrt{2 - 2/\pi}$, the
+same at every $\sigma$ because $\max(0, x)$ has no scale of its own.
+
+**Threshold at zero, closed form.** Write $H(x) = 1$ for $x > 0$ and 0
+otherwise. $E[n\,H(n)] = \int_0^\infty x\,p(x)\,dx = \sigma/\sqrt{2\pi}$, and
+$H(n)$ is 0 or 1 with chance 1/2 each, so ${\rm Var}\,H(n) = 1/4$ and
+$r = (\sigma/\sqrt{2\pi})/(\sigma/2) = \sqrt{2/\pi}$. The sign function,
+$2H(x) - 1$, is a scaled and shifted copy and has the same correlation. Here
+$m(s) = \Phi_{\mathcal N}(s/\sigma)$, whose odd part is not linear:
+$m(s) - \tfrac12 = p(0)\big(s - s^3/(6\sigma^2)\big) + O(s^5)$, and $h = 0$.
+
+**GELU, closed form.** With $\Phi_{\mathcal N}^\prime(x) = e^{-x^2/2}/\sqrt{2\pi}$,
+$\Phi_{\mathcal N}^{\prime\prime}(x) = -x\,\Phi_{\mathcal N}^\prime(x)$, and the Gaussian
+integrals $E[e^{-n^2/2}] = 1/\sqrt{1+\sigma^2}$ and
+$E[e^{-n^2}] = 1/\sqrt{1+2\sigma^2}$, integrating by parts as above,
+$E[n\,f(n)] = \sigma^2 E[f^\prime(n)]$, gives
+$E[n\,\Phi_{\mathcal N}(n)] = \sigma^2 E[\Phi_{\mathcal N}^\prime(n)] =
+\sigma^2/\sqrt{2\pi(1+\sigma^2)}$ and
+
+$$
+E\big[n^2\,\Phi_{\mathcal N}(n)^2\big] = \sigma^2\Big(E\big[\Phi_{\mathcal N}(n)^2\big] + 2E\big[n\,\Phi_{\mathcal N}(n)\,\Phi_{\mathcal N}'(n)\big]\Big),
+$$
+
+$$
+E\big[n\,\Phi_{\mathcal N}(n)\,\Phi_{\mathcal N}'(n)\big] = \frac{\sigma^2 E\big[\Phi_{\mathcal N}'(n)^2\big]}{1+\sigma^2} = \frac{\sigma^2}{2\pi(1+\sigma^2)\sqrt{1+2\sigma^2}} ,
+$$
+
+the last from $E[n\,f(n)] = \sigma^2 E[f^\prime(n)]$ with
+$f = \Phi_{\mathcal N}\Phi_{\mathcal N}^\prime$, whose derivative is
+$\big(\Phi_{\mathcal N}^\prime\big)^2 - x\,\Phi_{\mathcal N}\Phi_{\mathcal N}^\prime$.
+$E[\Phi_{\mathcal N}(n)^2]$ is the chance that two standard normal variables
+$Z_1$, $Z_2$, independent of each other and of $n$, both lie below $n$. The
+differences $U_i = Z_i - n$ are Gaussian with variance $1 + \sigma^2$ and
+correlation $c = \sigma^2/(1 + \sigma^2)$. Writing $U_1 \propto V$ and
+$U_2 \propto cV + \sqrt{1 - c^2}\,W$, with $V$ and $W$ independent standard
+normal, both are negative in a wedge of the $(V, W)$ plane whose opening is
+$\pi/2 + \arcsin c$, and the density of $(V, W)$ is round, so the chance is
+$\tfrac14 + \arcsin(c)/(2\pi)$ (a result of Sheppard 1899, Phil. Trans. R.
+Soc. Lond. A 192, 101, §27,
+[doi:10.1098/rsta.1899.0003](https://doi.org/10.1098/rsta.1899.0003)). These
+give the variance, and with $g = 1/2$ the correlation:
+
+$$
+\frac{\operatorname{Var}\,\mathrm{GELU}(n)}{\sigma^2} = \frac14 + \frac{1}{2\pi}\Big(\arcsin c - c + \frac{2c}{\sqrt{1+2\sigma^2}}\Big),
+$$
+
+$$
+r_{\rm GELU}(\sigma) = \Big[1 + \frac{2}{\pi}\Big(\arcsin c - c + \frac{2c}{\sqrt{1+2\sigma^2}}\Big)\Big]^{-1/2} .
+$$
+
+As $\sigma \to 0$, $c \to 0$ and $r = 1 - 2\sigma^2/\pi$ to leading order:
+near zero the GELU is $x/2$ plus a term of order $x^2$. As
+$\sigma \to \infty$, $c \to 1$, the term in parentheses tends to
+$\pi/2 - 1$, and
+$r \to 1/\sqrt{2 - 2/\pi}$, the ReLU value. In between, $r$ has one minimum,
+0.838159 at $\sigma = 1.678$. Other values: 0.966450 at $\sigma = 0.25$,
+0.848192 at 4 and 0.854688 at 10.
+
+**Pieces that all carry the same signal.** If each of $N$ pieces carries the
+same signal $a$, as in the [$N^{1/4}$ section](#semi-coherent), equal weights
+are in step, and the mean of $\sum_k \phi(z_k)$ moves by
+$N\big(m(a) - m(0)\big)$ exactly, so
+
+$$
+\mathrm{SNR} = \frac{\sqrt N\,\big(m(a) - m(0)\big)}{\operatorname{std}\phi(n)} ,
+$$
+
+with, from the same Gaussian integrals,
+$m(a) = a\,\Phi_{\mathcal N}(b) + \sigma^2\,\Phi_{\mathcal N}^\prime(b)/\sqrt{1+\sigma^2}$,
+$b = a/\sqrt{1+\sigma^2}$, for the GELU;
+$a\,\Phi_{\mathcal N}(a/\sigma) + \sigma\,\Phi_{\mathcal N}^\prime(a/\sigma)$ for
+the ReLU; $\Phi_{\mathcal N}(a/\sigma)$ for the threshold at zero; and
+$a^2 + \sigma^2$ for the square. At $N = 600$, $\rho = 8$, $\sigma = 1$ and
+$a = 8/\sqrt{600} = 0.327$ this gives 7.737 for the GELU, 7.736 for the ReLU,
+6.271 for the threshold at zero and 1.848 for the square, the
+$\rho^2/\sqrt{2N}$ of that section. The GELU and the ReLU are above
+$r\rho = 6.804$ and 6.851 because their term $\tfrac12 h\sum_k s_k^2$ is
+positive and adds to the linear one (at $\sigma = 1$,
+$h = 3/(4\sqrt\pi) = 0.423$ for the GELU, whose second derivative is
+$(2 - x^2)\,\Phi_{\mathcal N}^\prime(x)$, and $h = 1/\sqrt{2\pi} = 0.399$ for the
+ReLU); the threshold at zero is below
+$r\rho = 6.383$ because of its term in $s^3$, $-a^2/6 = -1.8\%$ of the
+linear one.
+
+**Even functions keep nothing linear.** If $\phi(-x) = \phi(x)$, then
+$x\,\phi(x)$ is odd and $E[n\,\phi(n)] = 0$ at every $\sigma$: $g = 0$ and
+$r = 0$. Also $m(-s) = E\,\phi(n - s) = E\,\phi(s - n) = E\,\phi(s + n) = m(s)$,
+using first that $\phi$ is even and then that $-n$ has the same
+distribution as $n$. So $m$ is even, and
+
+$$
+m(s) - m(0) = \tfrac12\,h\,s^2 + O(s^4) .
+$$
+
+To leading order each piece responds to its power $s_k^2$, and a weighted
+sum to $\sum_k c_k s_k^2$, a sum of powers. With equal weights, and with
+$\operatorname{std}(n^2 - \sigma^2) = \sqrt2\,\sigma^2$, its SNR to leading
+order is
+
+$$
+\mathrm{SNR} = r_2\,\frac{\rho^2}{\sqrt{2K}}, \qquad
+r_2 = \frac{\sigma^2 h}{\sqrt2\,\operatorname{std}\phi(n)} = \operatorname{corr}\big(\phi(n),\, n^2 - \sigma^2\big) \le 1 ;
+$$
+
+for the square $r_2 = 1$, the $\rho^2/\sqrt{2N}$ of the
+[$N^{1/4}$ section](#semi-coherent). Weights in step see nothing: for a
+signal in pairs $\pm s$, $\sum_k s_k\big(m(s_k) - m(0)\big) = 0$ at every
+order. The energy of a complex channel output, the squared size of a
+quantity linear in the data, is even in the data and belongs here. With
+equal weights and a signal whose samples add to zero, as for an oscillation
+averaged over time ([averaging over the window](#oct7-time-average)), the
+first-order term cancels for any function, and the leading term left is this
+power term ([averaging after a GELU](#ck-gelu-mean)).
+
+**Only even functions lose the linear part at every spread.**
+$E[n\,\phi(n)]$ depends only on the odd part
+$\phi_{\rm o}(x) = \big(\phi(x) - \phi(-x)\big)/2$, and with $u = x^2$,
+
+$$
+E[n\,\phi(n)] = \frac{1}{\sigma\sqrt{2\pi}}\int_0^\infty \phi_{\rm o}\big(\sqrt u\big)\,e^{-u/(2\sigma^2)}\,du ,
+$$
+
+the Laplace transform of $\phi_{\rm o}(\sqrt u)$ at $1/(2\sigma^2)$. If this
+vanishes for every $\sigma > 0$, and $\phi$ is continuous and grows no faster
+than a power of $x$, then $\phi_{\rm o} = 0$ by the uniqueness of the Laplace
+transform (NIST Digital Library of Mathematical Functions, §1.14(iii),
+[dlmf.nist.gov/1.14.iii](https://dlmf.nist.gov/1.14.iii)), so $\phi$ is even.
+A function that is not even can still lose the linear part at one spread:
+$x^3 - 3x$ has $E[n\,\phi(n)] = 3\sigma^4 - 3\sigma^2$, which is zero only at
+$\sigma = 1$. The GELU, the ReLU and a threshold at zero keep it at every
+spread, with the $r$ above.
+
+**Check.** Python with numpy, scipy, mpmath and PyTorch on the CPU, three
+codes (`check_nonlin.py`, `check_nonlin_mp.py` and a third written to check
+this section):
+
+- Numerical integration against the Gaussian density, with scipy
+  `integrate.quad` and with mpmath at 30 digits: $r$ equals the closed forms
+  to $3\times10^{-16}$ and $10^{-31}$ for the ReLU, the threshold at zero, the
+  sign and the GELU ($\sigma$ from 0.25 to 10), and is 0 for the square, the
+  absolute value, a threshold on $\lvert x\rvert > \sigma$ and $\cos x$
+  ($\sigma$ = 0.5, 1, 2). The GELU's mean and mean square agree with the
+  formulas above to 20 digits.
+- The minimum of $r_{\rm GELU}$: a bounded minimization gives 0.838159 at
+  $\sigma = 1.678$, and the root of $dr/d\sigma$ is at $\sigma = 1.678185$,
+  where $r = 0.8381593$. The slope changes sign once on 400,001 values of
+  $\sigma$ from $10^{-3}$ to $10^3$, and once on 601 values in the second
+  code; $r_{\rm GELU}(10^3) = 0.856429$, and at $\sigma = 0.01$
+  $r = 0.99993636$ against $1 - 2\sigma^2/\pi = 0.99993634$. PyTorch's
+  `nn.GELU()`, the function in ml4gw's S4D layer, equals
+  $x\,\Phi_{\mathcal N}(x)$ to $1.8\times10^{-15}$ on $[-12, 12]$ in double
+  precision.
+- Monte Carlo of $r$ with $10^7$ Gaussian draws per case: GELU 0.90959,
+  0.85030, 0.83825 and 0.83907 at $\sigma$ = 0.5, 1, 1.678 and 2; ReLU
+  0.85641; threshold at zero 0.79785 (standard errors 0.00005 to 0.00011);
+  square 0.00003 and absolute value $-0.00020$ (standard error 0.00032). All
+  lie within two standard errors of the closed forms.
+- Monte Carlo of the sum: $K$ = 8,192 pieces (4 s at 2048 Hz) at $\rho = 8$,
+  each noise draw used with and without the signal, SNR from the measured
+  noise spread. Signal $+a$ and $-a$ in turn, 20,000 draws, weights in step:
+  GELU $7.225 \pm 0.036$, $6.806 \pm 0.034$ and $6.698 \pm 0.033$ at
+  $\sigma$ = 0.5, 1 and 2, against $r\rho$ = 7.276, 6.804 and 6.712; ReLU
+  $6.903 \pm 0.035$ against 6.851; threshold at zero $6.403 \pm 0.032$
+  against 6.375 from its exact mean (6.383 at first order); square
+  $0.001 \pm 0.001$ against 0. Equal weights: GELU $0.2056 \pm 0.0011$,
+  $0.2549 \pm 0.0014$ and $0.2537 \pm 0.0014$ against
+  $r_2\rho^2/\sqrt{2K}$ = 0.2065, 0.2545 and 0.2540; ReLU
+  $0.2422 \pm 0.0013$ against 0.2416; square $0.5006 \pm 0.0027$ against
+  $\rho^2/\sqrt{2K} = 0.5$; absolute value $0.4647 \pm 0.0025$ against
+  0.4680; threshold at zero $-0.0012 \pm 0.0026$ against 0.
+- The same with a 101.3 Hz cosine of random phase, two runs of 8,000 and
+  16,000 draws. For the GELU and the ReLU the in-step mean shift is
+  $g\lVert s\rVert$ exactly on average over the phase (each value of the
+  cosine has its negative at another phase), so dividing the measured shift
+  by the exact noise spread tests $r\rho$ itself: the GELU at $\sigma$ = 0.5,
+  1, 1.678 and 2 and the ReLU agree with it to 0.04% (at most 2.4 standard
+  errors in the first run, 1.5 in the second). The threshold at zero gives
+  $6.374 \pm 0.005$ and $6.369 \pm 0.003$ against 6.371, its exact value
+  for this cosine averaged over 4,000 phases (the first-order
+  $r\rho = 6.383$ lowered by its $s^3$ term). With equal weights, divided by
+  the exact spread in the same way, the GELU, the ReLU, the square and the
+  absolute value agree with $r_2\rho^2/\sqrt{2K}$ to 0.5% (at most 1.4
+  standard errors), and the threshold at zero gives $-0.003 \pm 0.004$ and
+  $-0.001 \pm 0.003$ against 0.
+- The setting of the [$N^{1/4}$ section](#semi-coherent), 600 pieces of
+  0.327 each in unit noise, equal weights, 20,000 draws: GELU
+  $7.72 \pm 0.04$ (exact 7.737), ReLU $7.72 \pm 0.04$ (7.736), threshold at
+  zero $6.29 \pm 0.03$ (6.271), square $1.847 \pm 0.010$ (1.848). The closed
+  forms of $m(a)$ above equal mpmath integration to the digits shown, and so
+  do $h$ = 0.423142 (GELU), 0.398942 (ReLU) and 0 (threshold at zero) at
+  $\sigma = 1$.
+- By numerical integration, $m(a) - m(-a) - a$ is at most
+  $1.4\times10^{-15}$ (rounding) in two codes for the GELU and the ReLU at
+  $\sigma$ = 0.5, 1 and 2 and $a$ = 0.1, 1 and 3, and $E[n(n^3 - 3n)]$ is
+  $-0.5625$, 0 and 36 at $\sigma$ = 0.5, 1 and 2, as $3\sigma^4 - 3\sigma^2$
+  gives.
+- Our analysis of 15 October, with its own integration and Monte Carlo
+  codes, gave the same $r$ to six digits.
+- The third code (scipy quadrature) reproduces the
+  closed forms, the minimum, $g$, $h$, $r_2$, the exact SNRs of the 600
+  pieces and the threshold's 6.375 and 6.371 to the digits shown.
+
+## The 512 Hz bin and the GPU offset {#oct16-s4d-fft-offset}
+
+**Claim** (16 October update): our long-convolution code halves the sample
+rate by taking the real FFT of each 4 s window (8,192 samples at 2048 Hz),
+keeping its first 2,049 bins (0 to 512 Hz, 0.25 Hz apart), and inverting
+them as a real signal of 4,096 samples at 1024 Hz. The last kept bin, at
+512 Hz, is complex in general, but it is the Nyquist bin of the new signal,
+which must be real. On the GPU, when one call transforms 64 or more signals,
+the inverse real FFT then adds $-\mathrm{Im}(X_{512})/4096$ to every output
+sample: one constant per window and detector. With 62 or fewer it does not.
+Training used batches of 32 windows of two detectors, 64 signals. Where the
+rate is not halved, nothing is added.
+
+**Derivation.** For a real signal $x_n$ of even length $M$, the DFT bin at
+$M/2$ is $X_{M/2} = \sum_n x_n e^{-i\pi n} = \sum_n x_n(-1)^n$, which is real.
+The kept bin is instead bin 2,048 of an 8,192-point transform,
+$\sum_n x_n e^{-i\pi n/2}$, whose imaginary part $-\sum_n x_n\sin(\pi n/2)$ is
+not zero in general. In the inverse transform of length $M$ = 4,096, the term
+of bin $M/2$ is $X_{M/2}(-1)^n/M$; its imaginary part would add
+$i\,\mathrm{Im}(X_{M/2})(-1)^n/M$, which a real output cannot hold. PyTorch
+documents for its inverse real FFT that "Some input frequencies must be
+real-valued to satisfy the Hermitian property. In these cases the imaginary
+component will be ignored" (documentation of `torch.fft.irfft`), and NVIDIA
+documents for cuFFT that "Complex-to-real (C2R) transforms accept
+complex-Hermitian input. For one-dimensional signals, this requires the 0th
+element (and the N/2 th input if N is even) to be real-valued, i.e. its
+imaginary part should be zero. [...] Otherwise, the behavior of the transform
+is undefined" (cuFFT documentation, section 2.3, Fourier Transform Types).
+Our code passes a complex bin there, so the GPU result is not defined by
+either; the measured behaviour is below. Where the rate is not halved, the
+kept bins are the whole spectrum of a real signal, the last one is its true
+Nyquist bin, and it is real.
+
+**Check.** On the GPU, random unit-variance data, 2 to 128 signals per call,
+compared with numpy in float64 on the same spectra. For 62 signals or fewer
+the GPU result differs from numpy's by at most $2.4\times10^{-6}$ (float32
+rounding), and the mean difference does not follow
+$-\mathrm{Im}(X_{512})/4096$. For 64, 66, 96 and 128 signals the difference is
+a constant per signal equal to $-\mathrm{Im}(X_{512})/4096$ to within
+$1.0\times10^{-8}$, with an rms residual of $4.0\times10^{-7}$ after
+removing it (the offset itself has rms 0.014 to 0.018). The trained networks
+were then scored on the same 20,000 test windows with the offset (as in
+training) and without it, each with its own read-out:
+
+<div markdown="1">
+
+| network | within 1%, with the offset | without it |
+|---|---|---|
+| S4D, 32 resonators per channel (S4D-Lin start) | 7.215% | 6.15% |
+| S4D, 256 per channel (S4D-Lin start) | 21.23% | 20.575% |
+| S4D, 256 per channel, band init | 9.44% | 9.425% |
+| free kernels | 39.96% | 39.955% |
+
+</div>
+
+A second code, which computed the channel outputs separately for the
+read-out tests of the 16 October update, gave 6.14% and 20.59% without the
+offset for the first two. Scores of the same network from different codes
+differ by up to 0.03 points, because of near-ties between neighbouring
+chirp-mass bins (1 to 6 of 20,000 decisions).
+
+## Inverted dropout keeps only averages that are linear in the dropped values {#oct16-dropout-linear}
+
+**Claim** (16 October update): in training, inverted dropout of rate $p$
+replaces each value $v$ by $\xi v$, where $\xi = 1/(1-p)$ with probability
+$1-p$ and $\xi = 0$ with probability $p$, drawn anew for every example at
+every training step; in evaluation it does nothing. Then $E[\xi] = 1$,
+$E[\xi^2] = 1/(1-p)$ and ${\rm Var}[\xi] = p/(1-p)$, which are 1, 1.25 and
+0.25 at $p = 0.2$. The average over dropout patterns of any quantity that is
+linear in the dropped values (a sum, a mean over time, a convolution, a
+linear layer) equals its value in evaluation. For a quantity that is not
+linear in them the two differ in general: the average of a nonlinear
+function is not the function of the average. At $p = 0.2$ the square of a
+dropped value is 1.25 times larger on average; ${\rm GELU}(\xi v)$ averages
+0.894 at $v = 1$, against ${\rm GELU}(1) = 0.841$, and $-0.106$ at $v = -1$,
+against $-0.159$; a GLU whose two halves are the same dropped value averages
+0.777 at $+1$, against 0.731, and $-0.223$ at $-1$, against $-0.269$.
+
+**Derivation.** From the two values of $\xi$,
+
+$$
+E[\xi] = (1-p)\,\frac{1}{1-p} = 1, \qquad
+E[\xi^2] = (1-p)\,\frac{1}{(1-p)^2} = \frac{1}{1-p}, \qquad
+{\rm Var}[\xi] = \frac{1}{1-p} - 1 = \frac{p}{1-p}.
+$$
+
+Let $L(v) = b + \sum_i w_i v_i$ be linear in values $v_i$, each multiplied
+by its own factor $\xi_i$. By linearity of expectation,
+
+$$
+E\left[L(\xi v)\right] = b + \sum_i w_i\,E[\xi_i]\,v_i = L(v).
+$$
+
+This needs no independence between the $\xi_i$, so it also holds for
+channel dropout, where one factor multiplies every time sample of a
+channel. For any function $f$ of one dropped value,
+
+$$
+E\left[f(\xi v)\right] = (1-p)\,f\!\left(\frac{v}{1-p}\right) + p\,f(0).
+$$
+
+For $f(x) = x^2$ this is $v^2/(1-p)$, 1.25 times the dropout-off value at
+$p = 0.2$. With ${\rm GELU}(x) = x\,\Phi_{\mathcal N}(x)$, $\Phi_{\mathcal
+N}$ the standard normal cumulative distribution (Hendrycks and Gimpel 2016,
+[arXiv:1606.08415](https://arxiv.org/abs/1606.08415)), and ${\rm GLU}(a, b)
+= a\,\sigma(b)$, $\sigma(x) = 1/(1 + e^{-x})$ (Dauphin, Fan, Auli and
+Grangier, ICML 2017, [arXiv:1612.08083](https://arxiv.org/abs/1612.08083)),
+the same formula gives the GELU and GLU numbers in the claim.
+
+Srivastava et al. chose the scaling so that "for any hidden unit the
+expected output (under the distribution used to drop units at training
+time) is the same as the actual output at test time" (JMLR 15, 1929 (2014),
+section 1). That is a statement about each dropped value; by linearity it
+carries over to anything linear in the dropped values, and to nothing else.
+Their section 10 states that multiplying the kept values by $1/q$ in
+training, with $q$ the probability of keeping a value (their $p$), is
+equivalent to scaling the weights at test time, "with appropriate scaling
+of the learning rate and weight initializations at each layer". PyTorch
+uses that form; the documentation of `nn.Dropout` (PyTorch 2.10) reads "the
+outputs are scaled by a factor of 1/(1−p) during training. This means that
+during evaluation the module simply computes an identity function".
+`nn.Dropout1d`, the version our S4D layers use, zeroes whole channels; it
+follows SpatialDropout
+(Tompson, Goroshin, Jain, LeCun and Bregler, CVPR 2015,
+[arXiv:1411.4280](https://arxiv.org/abs/1411.4280)).
+
+Ma et al. write the dropout-off network as an approximation to the average
+over dropout patterns, $E_S[H^{(L)}(x, S; \theta)] \approx h^{(L)}(x, E[S];
+\theta)$, and call the difference the inference gap (ICLR 2017,
+[arXiv:1609.08017](https://arxiv.org/abs/1609.08017), section 2.3,
+equation 3). It is zero for a layer that is linear plus a constant; for it
+to be zero for every input, "essentially the transformation function f has
+to be affine" (their section 4). Li, Chen, Hu and Yang find that "Dropout
+would shift the variance of a specific neural unit when we transfer the
+state of that network from train to test", and name the resulting mismatch
+with the variance that a batch normalization stores during training the
+variance shift (CVPR 2019,
+[arXiv:1801.05134](https://arxiv.org/abs/1801.05134)). For one dropped
+value the spread over patterns is ${\rm Var}[\xi]\,v^2 = 0.25\,v^2$ in
+training and zero in evaluation.
+
+**Check.** PyTorch 2.10, CPU (`checks_linear.py`). `nn.Dropout1d(0.2)` in
+training mode on a tensor of ones of shape 1,000 × 64 × 100 (examples ×
+channels × time) returns only the values 0 and 1.25, constant along time
+within each channel, with 20.07% of the channels zeroed and mean 0.9991. In
+evaluation mode it returns its input unchanged, and with $p = 0$ it returns
+its input unchanged in training mode too. $10^7$ draws of $\xi$ at $p =
+0.2$: mean 0.99992, mean square 1.24990, variance 0.25006. The GELU averages
+were computed over the two values of $\xi$ with
+`torch.nn.functional.gelu` in double precision, the GLU averages with
+numpy.
+
+## Where the dropouts sit in our S4D regressors {#oct16-dropout-where}
+
+**Claim** (16 October update): the real S4D 64 × 32 × 4 regressors have
+eight channel dropouts with $p = 0.2$, two in each of the four blocks.
+Between each of them and the output there is at least one step that is not
+linear (a GLU, a later group norm or GELU, or the maximum over time), with
+one exception: the second dropout of the fourth block, when the read-out is
+the mean over time. So with the mean read-out seven of the eight dropouts
+can shift the average output, and with the maximum all eight. The complex
+energy-and-maximum regressor has six, all in blocks 1 to 3.
+
+**Derivation** (from the code of the runs). A linear layer turns the two
+detector samples at each time into 64 channels, $x_0$. Block $k = 1, \dots,
+4$ then computes
+
+$$
+z = {\rm GN}_k(x_{k-1}), \quad
+u = {\rm GELU}\big(K_k * z + d_k \odot z\big), \quad
+h = {\rm GLU}\big(W_k\,\Delta^{(1)}_k(u) + c_k\big), \quad
+x_k = x_{k-1} + \Delta^{(2)}_k(h).
+$$
+
+${\rm GN}_k$ is a group norm (32 groups of 2 channels). $K_k *$ convolves
+each channel with its own S4D kernel, as long as the window, and $d_k$ is a
+learned multiple of each channel. $W_k$ and $c_k$ form a linear layer,
+applied at each time, from 64 to 128 channels, and the GLU splits these
+into halves $a$ and $b$ and returns $a\,\sigma(b)$, 64 channels.
+$\Delta^{(1)}_k$ and $\Delta^{(2)}_k$ are channel dropouts: the first inside
+the S4D layer (`S4D` in ml4gw), the second in the block (`S4Model`). The
+read-outs apply a linear layer to $\frac1T \sum_t x_4(t)$ (mean) or to
+$\max_t x_4(t)$ (maximum), each channel separately. The group norms act only
+on the input of each block's branch, so the series that the read-out pools
+is never normalized: $x_4 = x_0 + \sum_k \Delta^{(2)}_k(h_k)$.
+
+Following each dropout to the output:
+
+- $\Delta^{(2)}_4$ is followed by the residual sum, the pooling and the
+  linear layer. With the mean this path is linear, so this dropout leaves
+  the average output unchanged
+  ([previous section](#oct16-dropout-linear)); with the maximum it does not.
+- $\Delta^{(1)}_4$ is followed by the GLU, which multiplies a linear
+  function of the dropped values by $\sigma$ of another.
+- $\Delta^{(1)}_k$ and $\Delta^{(2)}_k$ for $k \le 3$ are followed by the
+  group norm, GELU and GLU of every later block (and $\Delta^{(1)}_k$ by
+  its own block's GLU).
+
+The complex regressor runs blocks 1 to 3 in the same way and then computes
+a linear layer of $\max_t \log\big(1 + |K^{\rm c} * {\rm GN}_4(x_3)|^2\big)$,
+with $K^{\rm c}$ a complex S4D kernel; the fourth block's real S4D layer and
+its two dropouts are not used.
+
+**Check.** I built the three regressors with the settings of the runs (64
+channels, state size 32, 4 blocks, a group norm with 32 groups before each
+block's S4D layer, dropout 0.2; PyTorch 2.10, CPU; `checks_arch.py`) and
+recorded which dropout steps with $p > 0$ run in one pass through the
+network in training mode: eight for the real mean and the real maximum
+regressors (after the GELU inside each S4D layer and after each GLU), six
+for the complex regressor (blocks 1 to 3). The real regressors have 51,010
+learned numbers (parameters). Validation runs in evaluation mode: our
+training runs in PyTorch Lightning 2.2.1, whose documentation of the hook
+`on_validation_model_eval` reads "The validation loop by default calls
+`.eval()` on the LightningModule before it starts", and our training code
+does not change that hook. Each validation pass has 64 batches of 32
+windows (`val_batches` and `batch_size` in the run configurations).
+
+## A maximum adds a bias of its own {#oct16-dropout-max}
+
+**Claim** (16 October update): for any random time series $y(t)$,
+$E[\max_t y(t)] \ge \max_t E[y(t)]$. Comparing training with evaluation,
+where the series is $y_{\rm off}(t)$,
+
+$$
+E\Big[\max_t y(t)\Big] - \max_t y_{\rm off}(t)
+= \underbrace{E\Big[\max_t y(t)\Big] - \max_t E[y(t)]}_{J\ \ge\ 0}
++ \underbrace{\max_t E[y(t)] - \max_t y_{\rm off}(t)}_{G} .
+$$
+
+$J$, the excess of the maximum, is never negative. $G$ is zero when every
+step between the dropouts and the maximum is linear, because then
+$E[y(t)] = y_{\rm off}(t)$; otherwise it can have either sign. A mean over
+time has no term like $J$: its change is $\frac1T \sum_t (E[y(t)] - y_{\rm
+off}(t))$, zero in the linear case.
+
+**Derivation.** For every dropout pattern and every time $s$, $\max_t y(t)
+\ge y(s)$. Averaging over patterns, $E[\max_t y(t)] \ge E[y(s)]$ for every
+$s$, so also for the $\hat s$ at which $E[y(s)]$ is largest. Hence $J =
+E[\max_t y(t) - y(\hat s)] \ge 0$: it is zero only if $\hat s$ holds the maximum
+for (almost) every pattern, and it grows with how often, and by how much,
+other times overtake $\hat s$. This is Jensen's inequality, $f(E\,x) \le
+E\,f(x)$ for a convex function $f$ (Boyd and Vandenberghe, *Convex
+Optimization*, Cambridge University Press 2004, section 3.1.8, equation
+3.5), for $f(y) = \max_t y(t)$, which is convex (their section 3.1.5). The
+split into $J$ and $G$ adds and subtracts $\max_t E[y(t)]$. When the steps
+are linear, $E[y(t)] = y_{\rm off}(t)$
+([linear section](#oct16-dropout-linear)) and $G = 0$.
+
+**Check.** In the toy model ([next section](#oct16-dropout-toy)) only $J$
+is present, and the average maximum with dropout exceeded the dropout-off
+maximum in all 200 draws. In the trained real maximum regressor (dropout
+0.2, epoch 232), on the first 512 cached clean windows with a signal
+([measurement](#oct16-dropout-same-windows)), I averaged each window's 64
+maxima over 16 dropout patterns (`offset_check.py`). Of the 32,768
+window-channel pairs, the average was above the dropout-off value for
+76.7%; above it by more than three times the uncertainty of a 16-pattern
+average (the patterns' standard deviation divided by 4) for 33.5%, and
+below it by more than three times for 1.2%. If the 16 values were Gaussian,
+chance alone would put 0.45% of pairs beyond three times on each side
+(Student-t distribution with 15 degrees of freedom). Since $J$ can only
+raise the average, the pairs that are clearly below need $G < 0$, which only
+the nonlinear steps can produce. The mean of all 64 maxima was 0.652 with
+dropout off and 0.778 averaged over the patterns, 1.19 times larger.
+
+## A toy: the maximum of a sum of 64 channels under channel dropout {#oct16-dropout-toy}
+
+**Claim** (16 October update): take 64 channels of independent standard
+Gaussian values over 1,000 time steps, add the channels (a linear layer with
+all weights 1), and read the sum out by its maximum or its mean over time.
+With channel dropout $p = 0.2$ on the 64 channels, the mean over time is
+unchanged on average and the average maximum is 11.8% higher, close to
+$1/\sqrt{1-p} - 1$. The only step between the dropout and the read-out is
+linear, so the whole rise is the excess $J$ of the
+[previous section](#oct16-dropout-max). The more the channels share, the
+smaller the rise: 0.7% when a peak common to all channels dominates.
+
+**Setup.** Draw $g_c(t)$, $c = 1, \dots, 64$, $t = 1, \dots, 1000$,
+independent standard Gaussians, once, and keep them fixed, as a trained
+network's channels are fixed for a given input. Without dropout the read-out
+sees $y_0(t) = \sum_c g_c(t)$. With channel dropout it sees $y_\xi(t) =
+\sum_c \xi_c\, g_c(t)$, one factor $\xi_c$ per channel for all $t$.
+
+**Derivation.** The mean over time is linear in the $\xi_c$, so its average
+is unchanged ([linear section](#oct16-dropout-linear)). For the maximum, fix
+a pattern that keeps $K$ channels. Then $y_\xi(t) = \frac{1}{1-p}
+\sum_{c\ \rm kept} g_c(t)$ is, at each $t$, Gaussian with mean 0 and
+standard deviation $\sigma_\xi = \sqrt{K}/(1-p)$, independently across $t$;
+without dropout $\sigma_0 = \sqrt{64} = 8$. For $T$ independent Gaussian
+values with mean 0 and standard deviation $\sigma$, $\max_t \sigma Z_t =
+\sigma \max_t Z_t$, so the average maximum is $\sigma\,e_T$, where $e_T =
+\int x\,T\,\varphi(x)\,\Phi_{\mathcal N}(x)^{T-1}\,dx$ is the average
+maximum of $T$ standard Gaussian values ($\varphi$ their density); $e_{1000}
+= 3.241$. Averaging over the channel values and over the patterns, with $K$
+binomial with 64 trials and probability $1-p$,
+
+$$
+\frac{E[\max_t y_\xi(t)]}{E[\max_t y_0(t)]}
+= \frac{E[\sigma_\xi]}{\sigma_0}
+= \frac{E\big[\sqrt{K}\,\big]}{(1-p)\sqrt{64}} = 1.1175
+\quad (p = 0.2).
+$$
+
+Since $K$ varies little around $64(1-p)$, this is close to $1/\sqrt{1-p} =
+1.1180$: dropout multiplies the variance of the sum by $E[\xi^2] = 1/(1-p)$,
+and the maximum follows the standard deviation.
+
+If the channels share a part, $g_c(t) = a\,s(t) + n_c(t)$, with $s(t)$ a
+peak common to all channels (a Gaussian bump of height 1 and width 20
+samples centred at $t = 700$) and $n_c(t)$ independent standard Gaussians,
+the shared part enters the sum as $a\,s(t)\sum_c \xi_c$. While the peak of
+$s$ decides where the maximum is, that term is linear in the $\xi_c$ and
+adds nothing on average; only the independent parts, whose spread dropout
+widens, raise the maximum, and they matter less as $a$ grows.
+
+**Check.** numpy (`toy_mc.py`, seed 20261015; a rerun on 16 October gave
+the same numbers to 12 digits), 10,000 dropout patterns per draw of the
+channels:
+
+- 200 draws: average dropout-off maximum 25.88, average maximum with
+  dropout 28.94, ratio 1.118 (prediction 1.1175). Per draw the ratio was
+  $1.124 \pm 0.057$ (mean and standard deviation over draws), from 1.006 to
+  1.300, above 1 in all 200. The mean over time agreed with its dropout-off
+  value within the uncertainty of the 10,000-pattern average: largest
+  difference 0.0032, typical uncertainty 0.0013; the differences divided by
+  their uncertainties had standard deviation 0.98 (1 is expected for pure
+  sampling noise), largest 2.7.
+- Other rates, 50 draws each, ratio of the average maxima (prediction
+  $E[\sqrt K]/((1-p)\sqrt{64})$ in brackets): $p = 0.1$: 1.056 (1.054);
+  $p = 0.3$: 1.184 (1.194); $p = 0.5$: 1.428 (1.411).
+- A shared peak, 50 draws each: $a = 0$: 1.114; $a = 0.5$: 1.036; $a = 1$:
+  1.025; $a = 3$: 1.007.
+- $e_{1000}$ by numerical integration (scipy `integrate.quad`): 3.24144;
+  from 20,000 simulated sets of 1,000 values: $3.2414 \pm 0.0025$.
+
+## From shifted pooled values to a chirp-mass offset {#oct16-dropout-offset}
+
+**Claim** (16 October update): in each of our S4D regressors the read-out
+ends in a linear layer, $\mu = b + \sum_c w_c m_c$, of the 64 pooled values
+$m_c$, and the chirp-mass estimate is $\hat{\mathcal M} = 1.8 + 0.55\,\mu$
+M☉. Training pulls the average of $\mu$ over dropout patterns toward the
+true value. In evaluation the estimate differs from that average by exactly
+$\Delta\hat{\mathcal M} = 0.55\,\Delta\mu$ M☉, with $\Delta\mu = \sum_c w_c
+(m_c^{\rm off} - E[m_c])$. A shift alone uses up the whole 1% margin once
+$|\Delta\mu|$ reaches $0.01\,\mathcal M/0.55$: 0.0155 at a chirp mass of
+0.855 M☉ and 0.0500 at 2.749 M☉. The measured median of
+$|\Delta\hat{\mathcal M}|/\mathcal M$ is 4.9% for the real maximum read-out
+at epoch 232, 1.5% for the real mean read-out at epoch 48, and 0.11% for the
+complex energy-and-maximum read-out at epoch 62.
+
+**Derivation.** The estimate is $\hat{\mathcal M} = \bar y + s\,\mu$, with
+the target's standardization $\bar y = 1.8$ M☉ and $s = 0.55$ M☉ (`y_mean`
+and `y_std` in the run configurations). In training each example is scored
+under its own dropout pattern $\xi$, by a β-weighted Gaussian likelihood
+(Seitzer et al. 2022, [arXiv:2203.09168](https://arxiv.org/abs/2203.09168)).
+For a predicted variance that is the same for every pattern, that term
+depends on the estimate only through $(\tau - \mu_\xi)^2$, with $\tau =
+(\mathcal M - \bar y)/s$, and
+
+$$
+E_\xi\big[(\tau - \mu_\xi)^2\big] = \big(\tau - E_\xi[\mu_\xi]\big)^2 +
+{\rm Var}_\xi[\mu_\xi] ,
+$$
+
+so lowering the average loss pulls $E_\xi[\mu_\xi]$ toward $\tau$. (The
+loss also has a penalty, with weight 0.2, when the estimates in a batch
+spread less than the true values; I leave it out of this argument.) The
+read-out is linear in the $m_c$, so $E_\xi[\mu_\xi] = b + \sum_c w_c
+E[m_c]$ ([linear section](#oct16-dropout-linear)), and $\mu_{\rm off} -
+E_\xi[\mu_\xi] = \sum_c w_c (m_c^{\rm off} - E[m_c])$ with no
+approximation. An estimate is within 1% if $|\hat{\mathcal M} - \mathcal M|
+< 0.01\,\mathcal M$; a shift alone uses up that margin when $0.55\,|\Delta
+\mu| = 0.01\,\mathcal M$.
+
+**Check.** On the first 512 cached clean windows with a signal
+([measurement](#oct16-dropout-same-windows)) I compared each window's
+dropout-off estimate with the average of the estimates from 16 dropout
+patterns (`offset_check.py`, `diag_cpu.py`). The smallest and largest chirp
+masses among them are 0.855 and 2.749 M☉.
+
+- Real maximum, dropout 0.2, epoch 232: mean of the 64 maxima 0.652 off,
+  0.778 averaged over patterns. $\Delta\mu$ averaged $-0.138$ (median
+  $-0.133$, standard deviation 0.177 over windows), $-0.076$ M☉ in chirp
+  mass. The dropout-off estimates moved by a median of 4.9% of the true
+  chirp mass, downward for 70% of the windows, and by more than 1% for 91%.
+  Within 1%: 9.4% of the windows with dropout off, 58.7% for single
+  patterns, 87.7% for the 16-pattern average. Median error: 4.9% with
+  dropout off, 0.44% for the average.
+- Real maximum, dropout 0.2, epoch 63: $\Delta\mu$ averaged $-0.213$; median
+  shift 6.1%, mean shift $-5.4\%$. Within 1%: 14.3% off, 70.3% for the
+  average.
+- Real mean, dropout 0.2, epoch 48: mean of the 64 means over time 0.120
+  off, 0.109 averaged over patterns (0.914 times). $\Delta\mu$ averaged
+  $-0.046$; median shift 1.5%, mean shift $-0.88\%$, so more than half of the
+  windows moved by more than 1%. Within 1%: 37.7% off, 86.9% for the
+  average.
+- Complex energy and maximum, dropout 0.2, epoch 62: mean of the 64 maxima
+  of the log energies 2.311 off, 2.329 averaged over patterns (1.008
+  times). $\Delta\mu$ averaged $+0.0005$; median shift 0.11%. Within 1%:
+  96.3% off, 95.7% for the average.
+
+## Same weights, same windows: how the dropout-off and dropout-on numbers were measured {#oct16-dropout-same-windows}
+
+**Claim** (16 October update): the table "The same weights with dropout off
+and on" on the update page.
+
+**Method.** The windows are the first 4,096 of 50,400 that our training
+pipeline produced and stored on 7 October from the training waveforms,
+with SNR drawn from a power law with index −3 between 8 and 100 and a
+signal in each window with probability 0.96. The 3,915 of them that carry a
+signal have SNR from 8.00 to 99.63 and chirp mass from 0.851 to 2.750 M☉.
+Each network gets the clean whitened signal, as in training. I loaded the
+last checkpoint of each run and, for the dropout-0.2 maximum run, also
+epoch 63, which was kept because it was that run's best by validation. For
+each checkpoint: the estimates with dropout off (evaluation mode); with dropout
+on (training mode) for three random seeds, each scored on its own and the
+three fractions averaged; and on the first 512 windows, the average of the
+estimates from 16 dropout patterns (Monte Carlo dropout; Gal and
+Ghahramani, ICML 2016, [arXiv:1506.02142](https://arxiv.org/abs/1506.02142),
+section 4). An estimate is within 1% if it differs from the true chirp mass
+by less than 1% of it. The pooled value is the mean, over windows and
+channels, of the 64 numbers the final linear layer receives: maxima over
+time, means over time, or maxima of the log energies. CPU, PyTorch 2.10, 32
+windows per batch, peak memory 1.6 GB (`diag_cpu.py`, 15 October).
+
+**Results.** Within 1% with dropout off, with dropout on (the three seeds in
+brackets), and for the 16-pattern average (dropout off on the same 512
+windows in brackets); then the pooled value off and on:
+
+- Real maximum, dropout 0.2, epoch 232: 8.2%; 59.1% (59.6, 58.6, 59.0);
+  87.7% (9.4%). Pooled 0.659 off, 0.788 on (1.196 times). Median error
+  5.04% off, 0.81% on; mean signed error $-3.21\%$ off, $-0.20\%$ on.
+- Real maximum, dropout 0.2, epoch 63: 13.0%; 39.5% (39.5, 39.8, 39.3);
+  70.3% (14.3%). Pooled 0.885 off, 1.113 on (1.257 times). Median error
+  6.39% off, 1.31% on; mean signed error $-5.77\%$ off, $-0.20\%$ on.
+- Real mean, dropout 0.2, epoch 48: 35.5%; 51.3% (50.6, 52.6, 50.8); 86.9%
+  (37.7%). Pooled 0.1179 off, 0.1065 on (0.903 times). Median error 1.59%
+  off, 0.97% on; mean signed error $-0.96\%$ off, $+0.01\%$ on.
+- Complex energy and maximum, dropout 0.2, epoch 62: 96.1%; 88.9% (88.9,
+  89.2, 88.6); 95.7% (96.3%). Pooled 2.316 off, 2.334 on (1.008 times).
+  Median error 0.31% off, 0.40% on.
+- Real maximum, dropout 0, epoch 29 (the latest checkpoint on 15 October):
+  90.0% off and 90.0% for every seed on; pooled 2.014 in both modes, as
+  expected with nothing to switch.
+
+Epochs 5 and 30 of the dropout-0.2 maximum run were measured on 14 October
+on the same 3,915 windows: within 1% 14.7% off and 4.6% on at epoch 5, 0.1%
+off and 31.3% on at epoch 30, and pooled values 0.905 off and 1.184 on at
+epoch 30 (1.308 times). Those checkpoints were overwritten later and that
+script was not kept, so how many dropout patterns the "on" values average
+is not recorded.
+
+## Why the energy-and-maximum read-out moves little {#oct16-dropout-energy}
+
+**Claim** (16 October update): two features of the complex
+energy-and-maximum regressor set it apart from the real ones. No dropout
+acts after block 3, so none acts directly on the values that the maximum
+picks from.
+And the values entering the energy pass a group norm that recomputes, for
+each example and in both modes, the mean and the standard deviation of each
+pair of channels over the window, so any change that dropout makes to a
+pair's overall level and size is divided out in the same way in training
+and in evaluation. Measured: its pooled values are 1.008 times larger with
+dropout on, against 1.196 for the real maximum read-out and 0.903 for the
+real mean; its dropout-off estimates move by a median of 0.11%, against
+4.9% and 1.5%. I have not tested which of the two features matters, nor
+whether the energy and the logarithm play a part.
+
+**Derivation.** The group norm here has 32 groups of 2 channels (ml4gw's
+`GroupNorm1D`; group normalization: Wu and He, ECCV 2018,
+[arXiv:1803.08494](https://arxiv.org/abs/1803.08494)). For each example and
+each group $g$ it computes the mean $m_g$ of the two channels over all
+times, and $s_g = (\langle x^2 \rangle_g - m_g^2 + \epsilon)^{1/2}$ with
+$\epsilon = 10^{-5}$, and returns $\gamma_c\,(x_c(t) - m_g)/s_g + \beta_c$,
+with $\gamma_c$ and $\beta_c$ learned per channel. If a dropout pattern
+changes a group's values to $\alpha x + \delta$, with $\alpha > 0$ and
+$\delta$ the same for both channels and all times, then $m_g \to \alpha m_g
++ \delta$ and $s_g \to \alpha s_g$ (up to $\epsilon$), and the output is
+unchanged. It computes $m_g$ and $s_g$ from its input in evaluation too and
+stores nothing from training, so the mismatch that Li et al. describe for a
+batch normalization, a variance stored in training and applied in
+evaluation ([linear section](#oct16-dropout-linear)), cannot occur in it.
+What a dropout pattern changes in other ways, the shape over time and the
+balance between the two channels of a pair, passes through. In the real
+regressors the group norms act only on the input of each block's branch,
+and the series the read-out pools is a sum of dropped branch outputs that
+is never normalized ([where the dropouts sit](#oct16-dropout-where)).
+
+**Check.** `GroupNorm1D` with 64 channels and 32 groups, random $\gamma_c$
+and $\beta_c$, on random input of shape 4 × 64 × 8,192 (PyTorch 2.10, CPU;
+`checks_arch.py`): multiplying each group by a random $\alpha$ between 0.5
+and 2.5 and adding a random offset changes the output by at most $9 \times
+10^{-5}$ (from $\epsilon$ and single-precision rounding), and the outputs
+in training and evaluation mode are identical. The pooled values and
+shifts are from the [same-windows measurement](#oct16-dropout-same-windows)
+and the [offset section](#oct16-dropout-offset).
