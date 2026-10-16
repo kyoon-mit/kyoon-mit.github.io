@@ -1,21 +1,34 @@
 ---
 layout: default
 ---
-{%- assign all = site.updates | where: "project", page.project | sort: "date" -%}
+{%- if page.project == 'ligo' -%}
+  {%- assign all = site.ligo_updates | sort: "date" -%}
+  {%- assign p_base = '/projects/agentic-ligo/' -%}
+  {%- assign p_name = 'Agentic LIGO' -%}
+{%- else -%}
+  {%- assign all = site.updates | where: "project", page.project | sort: "date" -%}
+  {%- assign p_base = '/projects/bns/' -%}
+  {%- assign p_name = 'Binary Neutron Stars' -%}
+{%- endif -%}
+{%- assign p_updates = p_base | append: 'updates/' -%}
 <div class="wrap doc">
   <nav class="breadcrumb" aria-label="Breadcrumb">
     <a href="{{ '/' | relative_url }}">Home</a>
     <span aria-hidden="true">/</span>
-    <a href="{{ '/projects/bns/' | relative_url }}">Binary Neutron Stars</a>
+    <a href="{{ p_base | relative_url }}">{{ p_name }}</a>
     <span aria-hidden="true">/</span>
-    <a href="{{ '/projects/bns/updates/' | relative_url }}">Updates</a>
+    <a href="{{ p_updates | relative_url }}">Updates</a>
     <span aria-hidden="true">/</span>
     <span aria-current="page">{{ page.date | date: "%b %-d, %Y" }}</span>
   </nav>
 
   <div class="doc__layout">
     <aside class="doc__aside">
-      {% include project-subnav.html %}
+      {%- if page.project == 'ligo' -%}
+        {% include ligo-subnav.html %}
+      {%- else -%}
+        {% include project-subnav.html %}
+      {%- endif -%}
     </aside>
 
     <article class="doc__body">
@@ -40,6 +53,7 @@ layout: default
         {{ content }}
       </div>
 
+      {%- if all.size > 1 %}
       <nav class="pager pager--split">
         {%- assign idx = 0 -%}
         {%- for u in all -%}{%- if u.url == page.url -%}{%- assign idx = forloop.index0 -%}{%- endif -%}{%- endfor -%}
@@ -64,6 +78,7 @@ layout: default
           </a>
         {%- endif -%}
       </nav>
+      {%- endif %}
     </article>
   </div>
 </div>

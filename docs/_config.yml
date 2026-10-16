@@ -27,6 +27,9 @@ collections:
   updates:
     output: true
     permalink: /projects/bns/updates/:name/
+  ligo_updates:
+    output: true
+    permalink: /projects/agentic-ligo/updates/:name/
 
 defaults:
   - scope:
@@ -35,6 +38,12 @@ defaults:
     values:
       layout: update
       project: bns
+  - scope:
+      path: ""
+      type: ligo_updates
+    values:
+      layout: update
+      project: ligo
 
 # --- Build settings ----------------------------------------------------------
 plugins:

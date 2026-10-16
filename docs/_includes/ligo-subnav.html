@@ -1,0 +1,22 @@
+{%- comment -%}
+  Section navigation for the Agentic LIGO project.
+{%- endcomment -%}
+{%- assign base = '/projects/agentic-ligo/' -%}
+{%- assign u_overview = base -%}
+{%- assign u_roadmap = base | append: 'roadmap/' -%}
+{%- assign u_updates = base | append: 'updates/' -%}
+
+<nav class="subnav" aria-label="Project sections">
+  <p class="subnav__label">Agentic LIGO</p>
+  <ul class="subnav__list">
+    <li>
+      <a href="{{ u_overview | relative_url }}" class="subnav__link {% if page.url == u_overview %}is-current{% endif %}">Overview</a>
+    </li>
+    <li>
+      <a href="{{ u_roadmap | relative_url }}" class="subnav__link {% if page.url == u_roadmap %}is-current{% endif %}">Roadmap</a>
+    </li>
+    <li>
+      <a href="{{ u_updates | relative_url }}" class="subnav__link {% if page.url contains u_updates %}is-current{% endif %}">Updates</a>
+    </li>
+  </ul>
+</nav>

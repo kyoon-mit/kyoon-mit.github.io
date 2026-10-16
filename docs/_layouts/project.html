@@ -1,12 +1,19 @@
 ---
 layout: default
 ---
+{%- if page.project == 'ligo' -%}
+  {%- assign p_base = '/projects/agentic-ligo/' -%}
+  {%- assign p_name = 'Agentic LIGO' -%}
+{%- else -%}
+  {%- assign p_base = '/projects/bns/' -%}
+  {%- assign p_name = 'Binary Neutron Stars' -%}
+{%- endif -%}
 <div class="wrap doc">
   <nav class="breadcrumb" aria-label="Breadcrumb">
     <a href="{{ '/' | relative_url }}">Home</a>
     <span aria-hidden="true">/</span>
-    <a href="{{ '/projects/bns/' | relative_url }}">Binary Neutron Stars</a>
-    {%- if page.url != '/projects/bns/' -%}
+    <a href="{{ p_base | relative_url }}">{{ p_name }}</a>
+    {%- if page.url != p_base -%}
       <span aria-hidden="true">/</span>
       <span aria-current="page">{{ page.title }}</span>
     {%- endif -%}
@@ -14,7 +21,11 @@ layout: default
 
   <div class="doc__layout">
     <aside class="doc__aside">
-      {% include project-subnav.html %}
+      {%- if page.project == 'ligo' -%}
+        {% include ligo-subnav.html %}
+      {%- else -%}
+        {% include project-subnav.html %}
+      {%- endif -%}
     </aside>
 
     <article class="doc__body">
