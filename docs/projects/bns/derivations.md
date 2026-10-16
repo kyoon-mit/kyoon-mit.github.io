@@ -2620,7 +2620,12 @@ signal-only runs and 160 for noisy runs, and added the cycle rule so that a
 run whose best falls early in a long cycle is still carried to that cycle's
 low point.
 
-**Check.** The replay script reads the local training logs; the cycle end
+**Check.** The replay script
+([replay_patience.py](https://github.com/kyoon-mit/aframe/blob/reg-dev-latest/dev/analysis/claude_tests/stopping_rule/replay_patience.py))
+reads the local training logs. Rerun on 16 October at 18:04, when 36
+histories had at least 60 validation epochs (18 signal-only, 18 noisy), it
+gives the same signal-only shortfalls, and at $P = 160$ one of the 18 noisy
+runs is still more than 0.5 points short. The cycle end
 after a given epoch is computed by the stopping callback itself and is tested
 against the schedule (epochs 0, 49, 50, 130, 151, 207, 289, 290 map to 49,
 49, 129, 289, 289, 289, 289, 609).
