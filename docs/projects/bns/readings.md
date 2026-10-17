@@ -7,8 +7,9 @@ summary: >-
   What to read to follow the October 2026 work: why chirp mass needs a
   matched filter, why plain SNR fails on real noise, what an S4D layer can
   and cannot hold, what the free kernels are, and whether a Gaussian
-  describes the uncertainty of a chirp-mass estimate and how to check it. In
-  reading order.
+  describes the uncertainty of a chirp-mass estimate and how to check it;
+  denoising and learning the noise; and the standard generative models, GANs
+  and diffusion. In reading order.
 ---
 
 {%- assign u = '/projects/bns/updates/' -%}
@@ -562,3 +563,229 @@ et al. under 10, Gneiting et al. under 12, and Angelopoulos and Bates under 14.
       simulated calibration events to match the real data when the two
       differ, which restored coverage in their tests. The same issue arises
       when we calibrate on simulated injections.
+
+## Denoising and learning the noise
+
+Our den-reg rebuilds the signal from noisy data: it denoises. The other side
+of the problem is to learn the noise itself, from the detector's strain alone,
+so that a search knows what real noise looks like instead of assuming it is
+Gaussian. The readings below cover networks that denoise gravitational-wave
+data, what is optimal when the noise is not Gaussian, how far real noise is
+from Gaussian, and networks that have learned real detector noise. If you
+read only two, read Legin et al. under 19 and Allen et al. 2002 under 17.
+
+{: start="16"}
+16. **Networks that denoise gravitational-wave signals.**
+    - H. Shen, D. George, E. A. Huerta and Z. Zhao, "Denoising gravitational
+      waves using deep learning with recurrent denoising autoencoders", ICASSP
+      2019, [doi:10.1109/ICASSP.2019.8683061](https://doi.org/10.1109/ICASSP.2019.8683061),
+      [arXiv:1711.09919](https://arxiv.org/abs/1711.09919). A recurrent
+      autoencoder, trained only on simulated Gaussian noise, recovers
+      gravitational-wave signals in real, non-Gaussian LIGO noise.
+    - W. Wei and E. A. Huerta, "Gravitational wave denoising of binary black
+      hole mergers with deep learning", Phys. Lett. B 800, 135081 (2020),
+      [arXiv:1901.00869](https://arxiv.org/abs/1901.00869). Denoises
+      GW150914, GW170104, GW170608 and GW170814 from LIGO noise, with overlaps
+      of 0.99 or more against numerical-relativity waveforms.
+    - P. Bacon, A. Trovato and M. Bejger, "Denoising gravitational-wave
+      signals from binary black holes with dilated convolutional
+      autoencoder", [arXiv:2205.13513](https://arxiv.org/abs/2205.13513)
+      (2022). An encoder-decoder network trained on simulated signals in real
+      O1 noise and on a set of glitches, tested on real events of O1 and O2.
+    - C. Ma, X. Yu, Z. Cao and M. Jia, "Extraction of binary neutron star
+      gravitational wave waveforms from Einstein Telescope using deep
+      learning", [arXiv:2406.15813](https://arxiv.org/abs/2406.15813) (2024).
+      The nearest to our case: neutron-star binaries, with separate denoising
+      networks for the early inspiral, the late inspiral and the merger.
+    - R. Raha and P. Kumar, "Survey of novel deep learning architectures for
+      denoising gravitational-wave signals",
+      [arXiv:2609.13272](https://arxiv.org/abs/2609.13272) (2026). Five
+      architectures trained the same way across spinning binary black holes;
+      networks whose branches follow the frequency ranges of inspiral, merger
+      and ringdown did better than larger generic ones. On real noise with no
+      known signal their output stays near zero except at noise transients.
+    - Ours: the [8 September update]({{ u | append: '2026-09-08-denoiser-loss/' | relative_url }}).
+
+17. **What is optimal when the noise is not Gaussian.** In stationary Gaussian
+    noise the matched filter is the optimal detector for a known waveform;
+    real noise has a heavier tail, and then it is not.
+    - B. Allen, W. G. Anderson, P. R. Brady, D. A. Brown and J. D. E.
+      Creighton, "FINDCHIRP: an algorithm for detection of gravitational waves
+      from inspiraling compact binaries", Phys. Rev. D 85, 122006 (2012),
+      [arXiv:gr-qc/0509116](https://arxiv.org/abs/gr-qc/0509116). The matched
+      filter as the standard search computes it, under the Gaussian
+      assumption.
+    - B. Allen, J. D. E. Creighton, É. E. Flanagan and J. D. Romano, "Robust
+      statistics for deterministic and stochastic gravitational waves in
+      non-Gaussian noise I: frequentist analyses", Phys. Rev. D 65, 122002
+      (2002), [arXiv:gr-qc/0105100](https://arxiv.org/abs/gr-qc/0105100).
+      For weak signals in noise with a heavier tail than Gaussian, the best
+      detector clips or truncates the whitened data before correlating it
+      with the waveform: close to optimal in Gaussian noise, and far less
+      sensitive to the large excursions of the tail.
+    - S. A. Kassam, *Signal Detection in Non-Gaussian Noise* (Springer, 1988),
+      [doi:10.1007/978-1-4612-3834-8](https://doi.org/10.1007/978-1-4612-3834-8).
+      The general theory of detectors that are optimal for weak signals in
+      non-Gaussian noise.
+
+18. **How far real noise is from Gaussian, and how it changes with time.**
+    - R. Macas and A. Lundgren, "Sensitive test of non-Gaussianity in
+      gravitational-wave detector data", Phys. Rev. D 108, 063016 (2023),
+      [arXiv:2306.09019](https://arxiv.org/abs/2306.09019). A test that
+      measures how far real data depart from Gaussian. Around GW200129 it
+      found that cleaning removed much of the excess noise below 50 Hz, that
+      some remained, and that above 85 Hz none was removed.
+    - S. Mozzon, L. K. Nuttall, A. Lundgren, T. Dent, S. Kumar and A. H.
+      Nitz, "Dynamic normalization for compact binary coalescence searches in
+      non-stationary noise", [arXiv:2002.09407](https://arxiv.org/abs/2002.09407)
+      (2020). Broadband noise changes the sensitivity over tens of seconds and
+      raises the rate of false events. A statistic for that change, used to
+      re-rank the PyCBC candidates of the second observing run, gave a 5%
+      larger sensitive volume for low-mass binaries, particularly neutron-star
+      binaries.
+    - T. Venumadhav, B. Zackay, J. Roulet, L. Dai and M. Zaldarriaga, "A new
+      search pipeline for compact binary mergers: results for binary black
+      holes in the first observing run of Advanced LIGO", Phys. Rev. D 100,
+      023011 (2019), [arXiv:1902.10341](https://arxiv.org/abs/1902.10341). An
+      independent search with its own treatment of glitches and of noise that
+      changes with time.
+    - K. Chatziioannou, N. Cornish, M. Wijngaarden and T. B. Littenberg,
+      "Modeling compact binary signals and instrumental glitches in
+      gravitational wave data", Phys. Rev. D 103, 044013 (2021),
+      [arXiv:2101.01200](https://arxiv.org/abs/2101.01200). Fits the signal
+      with waveforms and the glitches with short wave packets at the same
+      time, instead of cleaning the data first.
+
+19. **Networks that have learned real detector noise.**
+    - R. Legin, M. Isi, K. W. K. Wong, Y. Hezaveh and L. Perreault-Levasseur,
+      "Gravitational-wave parameter estimation in non-Gaussian noise using
+      score-based likelihood characterization", Astrophys. J. Lett. 985, L46
+      (2025), [arXiv:2410.19956](https://arxiv.org/abs/2410.19956). Diffusion
+      models learn the distribution of real LIGO noise from detector data,
+      without assuming it Gaussian or stationary, and are combined with a
+      waveform model into a likelihood. On 400 simulated events in real
+      Hanford or Livingston noise, the estimates stay unbiased, even with loud
+      glitches and no cleaning. The closest existing work to learning the
+      noise; it estimates parameters and does not search.
+    - M. Lopez, V. Boudart, K. Buijsman, A. Reza and S. Caudill, "Simulating
+      transient noise bursts in LIGO with generative adversarial networks",
+      Phys. Rev. D 106, 023027 (2022),
+      [arXiv:2203.06494](https://arxiv.org/abs/2203.06494). A GAN learns one
+      glitch type (blips; glitches in general occur at around one per minute)
+      and generates populations of them.
+    - J. Powell, L. Sun, K. Gereb, P. D. Lasky and M. Dollmann, "Generating
+      transient noise artefacts in gravitational-wave detector data with
+      generative adversarial networks", Class. Quantum Grav. 40, 035006 (2023),
+      [arXiv:2207.00207](https://arxiv.org/abs/2207.00207). GANs generate
+      images of the 22 most common glitch types of LIGO, KAGRA and Virgo; a
+      classifier assigns the generated ones to the right type 99.0% of the
+      time.
+    - T. Dooney, L. Curier, D. Tan, M. Lopez, C. Van Den Broeck et al., "One
+      flexible model for multiclass gravitational wave signal and glitch
+      generation", Phys. Rev. D 110, 022004 (2024),
+      [arXiv:2401.16356](https://arxiv.org/abs/2401.16356). One GAN generates
+      several kinds of signals and glitches in time, with a second
+      discriminator that looks at the time derivative.
+
+    These learn glitches one type at a time, or short stretches of noise for
+    parameter estimation. None of them uses a learned noise model to search
+    for signals.
+
+20. **Removing noise with witness sensors (not our route; we use the strain
+    only).** G. Vajente et al., "Machine-learning non-stationary noise out of
+    gravitational wave detectors", Phys. Rev. D 101, 042003 (2020),
+    [arXiv:1911.09083](https://arxiv.org/abs/1911.09083); R. Ormiston et al.,
+    "Noise reduction in gravitational-wave data via deep learning", Phys. Rev.
+    Research 2, 033066 (2020), [arXiv:2005.06534](https://arxiv.org/abs/2005.06534);
+    M. Saleem et al., "Demonstration of machine learning-assisted real-time
+    noise regression in gravitational wave detectors",
+    [arXiv:2306.11366](https://arxiv.org/abs/2306.11366) (2023), on O3 data.
+
+## Generative models: GANs and diffusion
+
+A generative model learns to produce new samples that look like its training
+data. Trained on detector noise, it would give unlimited realistic noise and,
+for some kinds, the probability of any stretch of noise. The two standard
+families are GANs and diffusion models; for raw waveforms there are also
+models that predict one sample at a time.
+
+{: start="21"}
+21. **GANs.** A generator makes samples and a second network, the
+    discriminator, learns to tell them from real data; each is trained
+    against the other.
+    - I. J. Goodfellow et al., "Generative adversarial networks",
+      [arXiv:1406.2661](https://arxiv.org/abs/1406.2661) (2014). The original.
+    - A. Radford, L. Metz and S. Chintala, "Unsupervised representation
+      learning with deep convolutional generative adversarial networks",
+      [arXiv:1511.06434](https://arxiv.org/abs/1511.06434) (2015). The
+      convolutional GAN design.
+    - T. Salimans et al., "Improved techniques for training GANs",
+      [arXiv:1606.03498](https://arxiv.org/abs/1606.03498) (2016). Ways to
+      keep training stable and to stop the generator from making only a few
+      kinds of output.
+    - M. Arjovsky, S. Chintala and L. Bottou, "Wasserstein GAN",
+      [arXiv:1701.07875](https://arxiv.org/abs/1701.07875) (2017). A different
+      measure of the distance between real and generated data, for more
+      stable training.
+    - C. Donahue, J. McAuley and M. Puckette, "Adversarial audio synthesis",
+      [arXiv:1802.04208](https://arxiv.org/abs/1802.04208) (2018). GANs on raw
+      audio waveforms, the nearest kind of data to strain.
+
+22. **Diffusion models.** Training buries real samples under added random
+    static of every strength and teaches a network to remove it; generating
+    starts from pure static and removes it step by step. The static is
+    Gaussian; the output is not, it looks like the training data.
+    - J. Sohl-Dickstein et al., "Deep unsupervised learning using
+      nonequilibrium thermodynamics",
+      [arXiv:1503.03585](https://arxiv.org/abs/1503.03585) (2015). The
+      original idea, taken from statistical physics.
+    - Y. Song and S. Ermon, "Generative modeling by estimating gradients of
+      the data distribution", [arXiv:1907.05600](https://arxiv.org/abs/1907.05600)
+      (2019). The same idea seen as learning which way to nudge a sample to
+      make it more probable.
+    - J. Ho, A. Jain and P. Abbeel, "Denoising diffusion probabilistic
+      models", [arXiv:2006.11239](https://arxiv.org/abs/2006.11239) (2020).
+      The version that made diffusion practical.
+    - Y. Song et al., "Score-based generative modeling through stochastic
+      differential equations", [arXiv:2011.13456](https://arxiv.org/abs/2011.13456)
+      (2020). Joins the two views and shows how to compute the probability of
+      a sample.
+    - P. Dhariwal and A. Nichol, "Diffusion models beat GANs on image
+      synthesis", [arXiv:2105.05233](https://arxiv.org/abs/2105.05233)
+      (2021). Why diffusion overtook GANs on images.
+    - T. Karras, M. Aittala, T. Aila and S. Laine, "Elucidating the design
+      space of diffusion-based generative models",
+      [arXiv:2206.00364](https://arxiv.org/abs/2206.00364) (2022). Which
+      design choices matter, and settings that work.
+    - P. Vincent, "A connection between score matching and denoising
+      autoencoders", Neural Computation 23, 1661 (2011),
+      [doi:10.1162/NECO_a_00142](https://doi.org/10.1162/NECO_a_00142). Why a
+      network trained to remove added static has learned the shape of the
+      data's distribution: the link between denoising and learning the
+      distribution.
+
+23. **Generating raw waveforms, including with state-space models.**
+    - A. van den Oord et al., "WaveNet: a generative model for raw audio",
+      [arXiv:1609.03499](https://arxiv.org/abs/1609.03499) (2016). Predicts
+      each sample from all earlier ones, so the probability of a whole
+      waveform follows exactly.
+    - Z. Kong et al., "DiffWave: a versatile diffusion model for audio
+      synthesis", [arXiv:2009.09761](https://arxiv.org/abs/2009.09761) (2020).
+      Diffusion on raw waveforms.
+    - K. Goel, A. Gu, C. Donahue and C. Ré, "It's raw! Audio generation with
+      state-space models", [arXiv:2202.09729](https://arxiv.org/abs/2202.09729)
+      (2022). SaShiMi, a network built from S4 layers: the best at generating
+      waveforms one sample at a time in their tests, and better than the
+      original network when used inside DiffWave.
+
+24. **Judging a generator with a classifier, and correcting it.**
+    - D. Lopez-Paz and M. Oquab, "Revisiting classifier two-sample tests",
+      [arXiv:1610.06545](https://arxiv.org/abs/1610.06545) (2016). Train a
+      classifier to tell real samples from generated ones: if on held-out
+      data it does no better than chance, the two match, and what it does
+      catch shows what the generator is missing.
+    - A. Grover et al., "Bias correction of learned generative models using
+      likelihood-free importance weighting",
+      [arXiv:1906.09531](https://arxiv.org/abs/1906.09531) (2019). The
+      classifier's output becomes a weight that corrects the generator's
+      errors without retraining it.

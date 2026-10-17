@@ -1642,12 +1642,85 @@
 
 - id: diffusion
   term: diffusion
-  also: [diffusion model]
+  also: [diffusion model, diffusion models]
   group: Machine learning
   short: >-
-    A generative network that learns to turn noise into realistic samples, here a possible prior over clean waveforms.
+    A generative model trained to remove added random static from real samples; generating starts from pure static and removes it step by step. Here a possible model of clean waveforms or of detector noise.
   source: >-
-    Goodfellow, Bengio and Courville, *Deep Learning* (2016), chapter 20.
+    Sohl-Dickstein et al. (2015), [arXiv:1503.03585](https://arxiv.org/abs/1503.03585); Ho, Jain and Abbeel (2020), [arXiv:2006.11239](https://arxiv.org/abs/2006.11239).
+
+- id: generative-model
+  term: generative model
+  also: [generative models, generative network, generative networks]
+  group: Machine learning
+  short: >-
+    A network that learns to produce new samples that look like its training data; some kinds also give the probability of any sample.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016), chapter 20, "Deep Generative Models".
+
+- id: gan
+  term: GAN
+  also: [GANs, generative adversarial network, generative adversarial networks]
+  case: true
+  group: Machine learning
+  short: >-
+    A generative model trained as a contest: a generator makes samples, a discriminator learns to tell them from real data, and each is trained against the other.
+  source: >-
+    Goodfellow et al., "Generative adversarial networks" (2014), [arXiv:1406.2661](https://arxiv.org/abs/1406.2661).
+
+- id: discriminator
+  term: discriminator
+  also: [discriminators]
+  group: Machine learning
+  short: >-
+    In a GAN, the network that learns to tell real samples from generated ones.
+  source: >-
+    Goodfellow et al. (2014), [arXiv:1406.2661](https://arxiv.org/abs/1406.2661).
+
+- id: autoencoder
+  term: autoencoder
+  also: [autoencoders, encoder-decoder, denoising autoencoder, denoising autoencoders]
+  group: Machine learning
+  short: >-
+    A network that compresses its input and rebuilds it; a denoising autoencoder is trained to rebuild the clean input from a noisy one.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016), chapter 14, "Autoencoders".
+
+- id: autoregressive-model
+  term: autoregressive model
+  also: [autoregressive models, autoregressive, next-sample model, next-sample models]
+  group: Machine learning
+  short: >-
+    A model that predicts each sample from all earlier ones; multiplying these predictions gives the exact probability of a whole series.
+  source: >-
+    van den Oord et al., "WaveNet: a generative model for raw audio" (2016), [arXiv:1609.03499](https://arxiv.org/abs/1609.03499).
+
+- id: score-based-model
+  term: score-based model
+  also: [score-based models, score-based, score matching]
+  group: Machine learning
+  short: >-
+    A network that learns, for any sample, which way to nudge it to make it more probable under the training data; diffusion models are of this kind.
+  source: >-
+    Song and Ermon (2019), [arXiv:1907.05600](https://arxiv.org/abs/1907.05600); Song et al. (2020), [arXiv:2011.13456](https://arxiv.org/abs/2011.13456).
+
+- id: two-sample-test
+  term: two-sample test
+  also: [two-sample tests, classifier two-sample test, classifier two-sample tests]
+  group: Statistics
+  short: >-
+    A test of whether two sets of samples come from the same distribution; with a classifier, train it to tell the sets apart and check whether it beats chance on held-out data.
+  source: >-
+    Lopez-Paz and Oquab, "Revisiting classifier two-sample tests" (2016), [arXiv:1610.06545](https://arxiv.org/abs/1610.06545).
+
+- id: witness-sensor
+  term: witness sensor
+  also: [witness sensors, witness channel, witness channels]
+  group: Detectors and data
+  short: >-
+    A sensor at the detector that measures a source of noise independently of the strain, so that the noise can be subtracted.
+  source: >-
+    "To improve the signal to noise ratio of the detection, witness sensors are often used to independently measure background noises and subtract them from the main signal" (quoted), Vajente et al., Phys. Rev. D 101, 042003 (2020), [arXiv:1911.09083](https://arxiv.org/abs/1911.09083).
 
 - id: gpu
   term: GPU
