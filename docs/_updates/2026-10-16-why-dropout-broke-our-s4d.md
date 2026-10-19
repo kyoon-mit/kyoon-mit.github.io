@@ -1,6 +1,7 @@
 ---
 title: "Why dropout broke our S4D chirp-mass regressor"
 date: 2026-10-16
+tags: [s4d, regression]
 math: true
 summary: >-
   Dropout switches random channels off in training and scales the rest up,

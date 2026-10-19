@@ -1,6 +1,7 @@
 ---
 title: Denoiser scans, conditioning and heterodyning
 date: 2026-09-23
+tags: [denoising]
 summary: >-
   With the loss repaired, the denoiser reaches an overlap of 0.797 with the
   true merger waveform and 0.900 before the merger, on SNR drawn uniformly

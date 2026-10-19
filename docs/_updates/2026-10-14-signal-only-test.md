@@ -1,6 +1,7 @@
 ---
 title: "Without noise: free kernels learn chirp mass, plain S4D does not"
 date: 2026-10-14
+tags: [regression, cnn, s4d]
 summary: >-
   Three networks regress chirp mass from the clean whitened signal, with no
   detector noise at all. One layer of learned 4 s kernels reaches 99.7% of

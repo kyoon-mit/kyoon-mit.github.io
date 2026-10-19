@@ -1,6 +1,7 @@
 ---
 title: "The matched filter as a network: the reference, and why den-reg cannot reach it"
 date: 2026-10-12
+tags: [matched-filter, regression]
 math: true
 summary: >-
   A matched filter written as a network (703 fixed waveform templates, SNR,

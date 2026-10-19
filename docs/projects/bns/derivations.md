@@ -4237,3 +4237,129 @@ and 2.5 and adding a random offset changes the output by at most $9 \times
 in training and evaluation mode are identical. The pooled values and
 shifts are from the [same-windows measurement](#oct16-dropout-same-windows)
 and the [offset section](#oct16-dropout-offset).
+
+## Gaussian reference values for the noise checks {#oct19-gaussian-references}
+
+**Claims** (19 October update). For stationary Gaussian noise, whitened to
+unit variance, with 4 s windows of $N = 8192$ samples:
+
+1. The power in one frequency bin of one window has an exponential
+   distribution. Its median is $\ln 2 = 0.693$ times its mean, and its
+   standard deviation equals its mean, so the Rayleigh statistic is 1.
+2. A steady sine wave whose power in the bin is $R$ times the noise's gives a
+   Rayleigh statistic of $\sqrt{1+2R}/(1+R)$, below 1: 0.866 at $R = 1$,
+   0.417 at $R = 10$, 0.140 at $R = 100$.
+3. The kurtosis of a Gaussian is 3. The kurtosis of one window's 8192
+   independent Gaussian values scatters with standard deviation
+   $\sqrt{24/N} = 0.054$, so 99.9% of windows fall between 2.82 and 3.18.
+4. A sine wave has kurtosis 3/2. A sine of variance $b$ added to Gaussian
+   noise of variance $a$ has kurtosis $3 - \tfrac{3}{2}\,b^2/(a+b)^2$.
+5. A window of $N$ independent unit-Gaussian values holds a value beyond
+   $a$ with probability $1 - (1 - 2Q(a))^N$, with $Q$ the Gaussian upper tail.
+   At 900 windows per hour that is 4.22 windows per hour beyond 5, 0.28
+   beyond 5.5, 0.015 beyond 6, and $9.0 \times 10^{-9}$ beyond 8. For
+   values of spread $\sigma$, replace $a$ by $a/\sigma$.
+
+**Derivation.** (1) Away from zero frequency and the Nyquist frequency,
+the real and imaginary parts of a bin's Fourier amplitude are independent
+zero-mean Gaussians of equal variance $\mu/2$ (a linear map of Gaussian
+values is Gaussian; for white noise the two parts are uncorrelated). The sum
+of their squares is $\mu/2$ times a χ² variable with two degrees of freedom,
+which is exponential: $P(p > q) = e^{-q/\mu}$. Its median solves
+$e^{-q/\mu} = 1/2$, so $q = \mu \ln 2$; its mean and standard deviation are
+both $\mu$. (2) With a steady sine the bin's amplitude is $A + n$, $A$ fixed
+and $n$ the noise above, $|A|^2 = R\mu$. The power is
+$|A|^2 + 2\,{\rm Re}(A^* n) + |n|^2$, with mean $\mu(1+R)$. The cross term
+has variance $4|A|^2 \mu/2 = 2R\mu^2$ and no covariance with $|n|^2$ (odd
+moments of $n$ vanish), and $|n|^2$ has variance $\mu^2$, so the variance is
+$\mu^2(1+2R)$ and the ratio is $\sqrt{1+2R}/(1+R)$. (3) $E[z^4] = 3$ for a
+unit Gaussian. The variance of the sample kurtosis of $N$ Gaussian values is
+$24N(N-1)^2/[(N-3)(N-2)(N+3)(N+5)]$ (Joanes and Gill, J. R. Stat. Soc. D
+47, 183 (1998)), whose square root is 0.0541 at $N = 8192$, close to
+$\sqrt{24/N} = 0.0541$; the 99.9% range uses the Gaussian 0.05% points,
+$\pm 3.29$ standard deviations. (4) For $x = A\cos\theta$ with $\theta$
+uniform, $E[x^2] = A^2/2$ and $E[x^4] = 3A^4/8$, so the kurtosis is
+$(3A^4/8)/(A^4/4) = 3/2$. Fourth cumulants of independent variables add;
+a Gaussian's is 0 and the sine's is $E[x^4] - 3E[x^2]^2 = -3A^4/8 =
+-\tfrac{3}{2}b^2$ with $b = A^2/2$. The kurtosis of the sum is
+$3 + \kappa_4/(a+b)^2$. (5) Each value is beyond $a$ in size with
+probability $2Q(a)$, independently, and a 4 s window is $1/900$ of an hour.
+
+**Check.** (2) Simulated with $10^6$ complex Gaussian draws: 0.998, 0.866,
+0.417 and 0.140 at $R$ = 0, 1, 10 and 100. (4) Simulated with 2000 windows
+of 8192 samples, a sine at 513.53 Hz of random phase: median kurtosis 2.776
+for $a = 1.10$, $b = 0.69$ (formula 2.777), and 2.624 for $a = b = 1$
+(formula 2.625). (3) and (5) against the Gaussian copies of all 62,516 windows,
+whose spread is a little above 1 ([next section](#oct19-copy-level)): in
+each of the four detector-run sets their kurtosis 0.05% point is 2.83 and
+their 99.95% point 3.19 to 3.20, against 2.82 and 3.18. Their windows per hour with a
+value beyond 5 are 13.58, 10.75, 14.44 and 11.92 (H1 O3a, L1 O3a, H1 O3b,
+L1 O3b), against 13.68, 10.37, 14.94 and 11.89 from (5) with each set's
+median spread, 1.049, 1.037, 1.053 and 1.043.
+
+## Why whitened Gaussian noise comes out slightly above unit variance {#oct19-copy-level}
+
+**Claim** (19 October update): our whitening, applied to Gaussian noise,
+gives a variance a few percent above 1, because it divides by a spectrum
+estimated from 20 s of data, and that estimate scatters.
+
+**Derivation.** The whitening divides each frequency by the square root of
+the estimate $\hat S$. For an unbiased estimate, $E[\hat S] = S$, the average
+whitened power $E[S/\hat S]$ is larger than $S/E[\hat S] = 1$, because
+$1/\hat S$ is convex (Jensen's inequality). For a small relative scatter
+$\epsilon$ of $\hat S$ it is $1 + \epsilon^2$ to second order. The whitening
+filter is cut to 1 s, which averages $1/\sqrt{\hat S}$ over neighbouring
+frequencies and so reduces the effect below that of a single bin.
+
+**Check.** 256 stretches of unit-variance white noise through the same
+whitening (20 s spectrum, 2 s median-averaged FFTs, 1 s filter, 20 Hz
+highpass; PyTorch 2.10 and ml4gw 0.8.3, CPU): the estimate is unbiased (mean
+1.002 of the true value between 40 and 1000 Hz) and scatters by 33% from bin
+to bin; the mean of true over estimate is 1.116. The whitened variance is
+1.049 (spread 1.024), the mean whitened power is 1.068, and the Rayleigh
+statistic is 1.017. The Gaussian copies, whose spectrum is itself an estimate
+from the real stretch, come out at variance 1.075 to 1.109 (spread 1.037 to
+1.053), mean whitened power 1.08 and Rayleigh statistic 1.06. Both effects
+point the same way; I have not separated them further.
+
+## Whitening a strong steady line {#oct19-line-whitening}
+
+**Claim** (19 October update): with aframe's whitening, a narrow line far
+above the background survives whitening, while Gaussian noise with the same
+spectrum, the line's power spread over the width the 2 s spectrum resolves,
+is removed. A 4 s whitening filter removes both.
+
+**Measurement 1, synthetic.** 64 stretches of 25 s: unit-variance white
+noise plus a sine at 513.53 Hz with random phase, whitened as our windows are
+(spectrum from the first 20 s, median of 2 s FFTs, whitening filter cut to
+`fduration`, 20 Hz highpass, last 4 s kept). The Gaussian copy of each
+stretch is drawn from its measured spectrum and whitened the same way.
+Spread of the whitened windows:
+
+| Sine variance (× noise) | Filter 1 s: sine | Filter 1 s: copy | Filter 4 s: sine | Filter 4 s: copy |
+|---|---|---|---|---|
+| 0.5 | 1.035 | 1.032 | 1.030 | 1.025 |
+| 5 | 1.096 | 1.034 | 1.026 | 1.026 |
+| 50 | 1.224 | 1.038 | 1.030 | 1.024 |
+| 500 | 1.245 | 1.037 | 1.028 | 1.023 |
+
+**Measurement 2, real.** The first 64 back-to-back stretches of H1 in O3b
+file `background-1256663958-9234`. Over 511.5 to 515.5 Hz, minus the
+background, the raw line power (25 s periodogram, Hann window) is
+$2.28\times 10^{-42}$ in the real data and $3.03\times 10^{-42}$ in the
+Gaussian copies; the real line's highest bin is 8 times the copies'. After
+whitening, the highest bin is 1,733 times white in the real windows and 10
+in the copies, and the spreads are 1.379 and 1.051.
+
+**What it leaves in the data.** The extra variance is the difference of the
+squared median spreads of real windows and copies: $1.339^2 - 1.053^2 = 0.68$
+for H1 in O3b and $1.200^2 - 1.043^2 = 0.35$ for L1, against 1.11 and 1.09
+for the copies' own variance. If all of it were one steady sine, claim 4 of
+the [reference values](#oct19-gaussian-references) would put the median
+kurtosis of H1 O3b windows at 2.78; it is 2.88.
+
+**What is not established.** Why the filter's length matters this much for
+a sine and not for the Gaussian copy of the same spectrum. Both are linear
+filters of the same spectrum, so the difference must come from the line being
+narrower than the 0.5 Hz resolution of the spectrum estimate, but I have not
+derived it.

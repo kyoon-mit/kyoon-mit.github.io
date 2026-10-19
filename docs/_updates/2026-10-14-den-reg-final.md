@@ -1,6 +1,7 @@
 ---
 title: "The den-reg run, finished: better at SNR 8 to 16, biased above 25"
 date: 2026-10-14
+tags: [denoising, regression]
 summary: >-
   The joint denoiser and regressor with the shape and amplitude terms,
   trained from SNR 8, finished its 800 epochs on 11 October. Validation

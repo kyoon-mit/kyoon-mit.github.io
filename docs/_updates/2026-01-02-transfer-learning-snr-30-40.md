@@ -1,6 +1,7 @@
 ---
 title: From scratch versus transfer learning at SNR 30–40
 date: 2026-01-02
+tags: [regression, s4d]
 summary: >-
   Two matched S4D models on the same target band — one trained from scratch, one
   pretrained on SNR 20–30 and fine-tuned — compared under equal data budgets.

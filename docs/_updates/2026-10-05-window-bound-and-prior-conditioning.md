@@ -1,6 +1,7 @@
 ---
 title: How much the window holds, and how DINGO-BNS and AFRAME reach low SNR
 date: 2026-10-05
+tags: [regression]
 summary: >-
   A Cramér–Rao estimate says even the 4 s merger window holds enough
   information for sub-percent chirp mass at SNR 4 to 8, so the window is not the

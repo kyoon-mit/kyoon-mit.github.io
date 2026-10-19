@@ -43,6 +43,7 @@ layout: default
           <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %-d, %Y" }}</time>
         </p>
         <h1 class="page__title">{{ page.title }}</h1>
+        {%- if page.tags and page.tags.size > 0 %}<p class="page__tags">{% include tags.html tags=page.tags %}</p>{% endif -%}
         {%- if page.summary %}<p class="page__lede">{{ page.summary }}</p>{% endif -%}
       </header>
 

@@ -1,6 +1,7 @@
 ---
 title: Carrying the Project 8 recipe to BNS
 date: 2026-10-01
+tags: [denoising, regression]
 summary: >-
   A larger joint model, mass ratio alongside chirp mass, each waveform in four
   different noise backgrounds, a little pure noise, and a smooth spectrum below

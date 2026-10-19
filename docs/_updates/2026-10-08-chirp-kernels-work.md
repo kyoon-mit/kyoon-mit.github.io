@@ -1,6 +1,7 @@
 ---
 title: "Chirp kernels work: close to matched-filter accuracy from SNR 10"
 date: 2026-10-08
+tags: [matched-filter, regression]
 math: true
 summary: >-
   A layer of 512 physical chirp kernels, followed by an energy, a maximum

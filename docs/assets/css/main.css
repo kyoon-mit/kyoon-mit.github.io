@@ -35,6 +35,17 @@
   --verdict:       #1f5596;
   --verdict-wash:  #edf3fb;
 
+  /* update tags (_data/tags.yml) */
+  --tag-regression:     #1f5596;
+  --tag-denoising:      #2d6a4f;
+  --tag-detection:      #a0153e;
+  --tag-classification: #6d3fb0;
+  --tag-s4d:            #0e7175;
+  --tag-cnn:            #9c2f7e;
+  --tag-matched-filter: #5f6f13;
+  --tag-project-8:      #5d6b80;
+  --tag-noise:          #0f1e33;
+
   /* the wash that covers artwork on hover */
   --wash: rgba(11, 30, 58, .9);
 
@@ -464,6 +475,23 @@ ul, ol { margin: 0; }
 .tree__link:hover .tree__title { color: var(--accent); }
 .tree__date { font-size: .7rem; text-transform: uppercase; letter-spacing: .1em; color: var(--ink-3); flex: none; }
 .tree__summary { font-size: .87rem; color: var(--ink-3); line-height: 1.6; margin: 0; }
+
+/* --- Update tags ---------------------------------------------------------- */
+.tags { display: flex; flex-wrap: wrap; gap: .3rem; }
+.tag.tag--topic {
+  margin-left: 0; color: var(--tag, var(--accent)); border-color: var(--tag, var(--accent));
+  background: color-mix(in srgb, var(--tag, var(--accent)) 8%, var(--paper));
+}
+.tag--regression     { --tag: var(--tag-regression); }
+.tag--denoising      { --tag: var(--tag-denoising); }
+.tag--detection      { --tag: var(--tag-detection); }
+.tag--classification { --tag: var(--tag-classification); }
+.tag--s4d            { --tag: var(--tag-s4d); }
+.tag--cnn            { --tag: var(--tag-cnn); }
+.tag--matched-filter { --tag: var(--tag-matched-filter); }
+.tag--project-8      { --tag: var(--tag-project-8); }
+.tag--noise          { --tag: var(--tag-noise); }
+.page__tags { margin-top: .9rem; }
 
 /* --- Results / timeline --------------------------------------------------- */
 .timeline { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink-3); }

@@ -1,6 +1,7 @@
 ---
 title: The joint model on a power-law SNR population, and Project 8 as a test bed
 date: 2026-09-29
+tags: [denoising, regression, project-8]
 summary: >-
   The joint denoiser and chirp-mass regressor puts 78 to 97% of events within
   2% above SNR 16 and stays close to the prior below SNR 8, where three

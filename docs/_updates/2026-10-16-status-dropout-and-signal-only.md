@@ -1,6 +1,7 @@
 ---
 title: "Status: dropout was the bug; every network reads clean chirps"
 date: 2026-10-16
+tags: [s4d, cnn, regression]
 summary: >-
   Our S4D regressors failed on clean signals because of dropout, not because
   of S4D or of averaging over time. With dropout off, S4D, aframe's ResNet, a

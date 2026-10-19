@@ -1,6 +1,7 @@
 ---
 title: "Slides: chirps, tones and learned filters"
 date: 2026-10-14
+tags: [s4d, cnn]
 math: true
 summary: >-
   A deck for physicists: what we tested so far; why S4D's filters, built from

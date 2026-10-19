@@ -1,6 +1,7 @@
 ---
 title: Why denoising does not detect, and where Project 8 loses its core
 date: 2026-10-07
+tags: [denoising, detection, project-8]
 summary: >-
   The joint model's sensitive volume, using its own uncertainty as the
   detection statistic, is 1 to 6% of the matched-filter searches. The denoiser

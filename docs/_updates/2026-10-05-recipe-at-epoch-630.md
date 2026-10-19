@@ -1,6 +1,7 @@
 ---
 title: The Project 8 recipe at epoch 630
 date: 2026-10-05
+tags: [denoising, regression]
 summary: >-
   Tested on the same power-law population as the baseline, the larger joint
   model is better between SNR 8 and 25 and unchanged below 8, where most

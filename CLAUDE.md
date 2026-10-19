@@ -72,6 +72,12 @@ tools/
 - **Update entry:** `docs/_updates/YYYY-MM-DD-short-slug.md` with front
   matter `title`, `date`, `summary`. Add a `talk:` block (`title`, `venue`,
   `about`) when the entry was presented as a talk; it gets a Talk tag.
+- **Tags:** every update entry lists `tags: [key, ...]` in its front matter,
+  keys from `docs/_data/tags.yml` (regression, denoising, detection,
+  classification, s4d, cnn, matched-filter, project-8, noise). They show as
+  colored chips on the updates list and on the entry. A new tag needs an
+  entry in `tags.yml`, a `--tag-<key>` color token at the top of `main.css`,
+  and a `.tag--<key>` rule next to the others.
 - **Figures:** go in `docs/assets/img/bns/YYYY-MM-DD/`. Use
   `{% include figure.html src=... alt=... caption=... %}`, inside
   `<div class="plot-pair">` for two side by side. Keep PNGs under about 300 KB.

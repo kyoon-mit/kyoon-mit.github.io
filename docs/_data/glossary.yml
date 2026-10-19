@@ -3285,3 +3285,114 @@
     in the detector frame are related to the rest-frame masses of the source by
     its redshift z as m^det = m(1 + z)." aframe's waveform code: its conversion
     of sampled masses.
+
+# --- How Gaussian the noise is (19 October) -------------------------------------
+
+- id: amplitude-spectral-density
+  term: amplitude spectral density
+  also: [ASD, amplitude spectral densities]
+  case: true
+  group: Detectors and data
+  short: >-
+    The square root of the power spectral density: the typical noise amplitude
+    at each frequency, in strain per square root of a hertz. A detector's
+    sensitivity curve is usually drawn this way.
+  source: >-
+    Abbott et al., "A guide to LIGO–Virgo detector noise and extraction of
+    transient gravitational-wave signals", Class. Quantum Grav. 37, 055002
+    (2020), [arXiv:1908.11170](https://arxiv.org/abs/1908.11170).
+
+- id: spectral-line
+  term: spectral line
+  also: [spectral lines]
+  group: Detectors and data
+  short: >-
+    Noise concentrated at one frequency, far narrower than the frequency
+    resolution of a few-second spectrum: a nearly steady sine wave in the data,
+    from the mains power, a control or calibration signal, or a mechanical
+    resonance.
+  source: >-
+    Buikema et al., "Sensitivity and performance of the Advanced LIGO detectors
+    in the third observing run", Phys. Rev. D 102, 062003 (2020),
+    [arXiv:2008.01301](https://arxiv.org/abs/2008.01301): "Narrow spectral
+    features are mostly understood and are either the electrical mains (60 Hz
+    and harmonics), single-frequency excitations for control signals or
+    calibration (e.g., 10–20 Hz, 410/435 Hz, and 1083 Hz), or suspension
+    violin-mode resonances (∼300 Hz and harmonics for beam splitter, ∼500 Hz
+    and harmonics for test masses)."
+
+- id: violin-mode
+  term: violin mode
+  also: [violin modes, violin-mode]
+  group: Detectors and data
+  short: >-
+    A sideways vibration of the thin fused-silica fibers that hang a mirror,
+    like a plucked string. In LIGO's O3 detectors the test-mass fibers ring
+    near 500 Hz and its harmonics, and the beam splitter's near 300 Hz.
+  source: >-
+    Buikema et al., Phys. Rev. D 102, 062003 (2020),
+    [arXiv:2008.01301](https://arxiv.org/abs/2008.01301): "suspension
+    violin-mode resonances (∼300 Hz and harmonics for beam splitter, ∼500 Hz
+    and harmonics for test masses)"; "the transverse (“violin”) modes of the
+    fused silica fibers supporting the test masses".
+
+- id: rayleigh-statistic
+  term: Rayleigh statistic
+  group: Statistics
+  short: >-
+    At each frequency, the standard deviation of the power divided by its
+    mean, over many short stretches of data. Stationary Gaussian noise gives 1.
+    A steady sine wave gives less than 1, since its power hardly changes; noise
+    whose level changes from stretch to stretch, or that has loud bursts, gives
+    more than 1.
+  source: >-
+    GWpy documentation (version 3.0.13), "Plotting a Rayleigh-statistic
+    Spectrum": "In LIGO the ‘Rayleigh’ statistic is a calculation of the
+    coefficient of variation of the power spectral density (PSD) of a given
+    set of data." Our values for Gaussian noise and for a line:
+    [derivations page](/projects/bns/derivations/#oct19-gaussian-references).
+
+- id: kurtosis
+  term: kurtosis
+  group: Statistics
+  short: >-
+    The average of the fourth power of the standardized values,
+    E[(x − mean)⁴]/spread⁴. It is 3 for a Gaussian. Above 3 means heavier
+    tails than a Gaussian, for example a few very loud samples; below 3 means
+    lighter tails, for example a sine wave, whose kurtosis is 3/2.
+  source: >-
+    NIST/SEMATECH e-Handbook of Statistical Methods, section 1.3.5.11,
+    "Measures of Skewness and Kurtosis": "Kurtosis is a measure of whether the
+    data are heavy-tailed or light-tailed relative to a normal distribution";
+    "The kurtosis for a standard normal distribution is three." The sine
+    value: [derivations page](/projects/bns/derivations/#oct19-gaussian-references).
+
+- id: correlation-coefficient
+  term: correlation coefficient
+  also: [Pearson correlation]
+  group: Statistics
+  short: >-
+    For two quantities measured on the same items, the average product of
+    their standardized values: +1 when one rises exactly as the other does,
+    0 when there is no linear relation, −1 when one falls as the other rises.
+    A few extreme items can dominate it; the rank correlation is the same
+    number computed on ranks and is not dominated by them.
+  source: >-
+    NumPy documentation of `numpy.corrcoef` (Pearson product-moment
+    correlation coefficients); Spearman, Am. J. Psychol. 15, 72 (1904), for
+    the rank version.
+
+- id: gaussian-copy
+  term: Gaussian copy
+  also: [Gaussian copies]
+  group: This project
+  short: >-
+    For one stretch of real detector data: Gaussian noise drawn with the
+    spectrum measured from the same 20 s that whitens the real window, then
+    whitened the same way. It keeps the real noise's spectrum at that moment
+    and nothing else, so any difference from the real window is something the
+    real noise has beyond its spectrum.
+  source: >-
+    Our noise-model code (`GaussianNoise` in the noise-model sources,
+    19 October 2026); construction in the
+    [19 October update](/projects/bns/updates/2026-10-19-how-gaussian-is-our-noise/).

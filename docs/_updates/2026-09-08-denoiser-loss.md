@@ -1,6 +1,7 @@
 ---
 title: The denoiser loss was measuring the wrong thing
 date: 2026-09-08
+tags: [denoising]
 summary: >-
   A month of denoiser training whose loss curves looked healthy turned out to
   produce an impulse at the window edge. What fixed it: separating shape from

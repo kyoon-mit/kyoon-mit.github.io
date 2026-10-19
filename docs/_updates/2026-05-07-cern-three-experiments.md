@@ -1,6 +1,7 @@
 ---
 title: Three experiments, presented at CERN
 date: 2026-05-07
+tags: [regression, s4d]
 summary: >-
   Merger chirp mass with uncertainty from a 70K-parameter S4D, pre-merger
   regression 7 seconds before coalescence, and a first two-detector sky ring.

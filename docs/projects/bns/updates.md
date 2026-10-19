@@ -60,6 +60,7 @@ redirect_from:
                     <span class="tree__title">{{ u.title }}{% if u.talk %} <span class="tag">Talk</span>{% endif %}</span>
                     <time class="tree__date" datetime="{{ u.date | date_to_xmlschema }}">{{ u.date | date: "%b %-d, %Y" }}</time>
                   </span>
+                  {%- include tags.html tags=u.tags -%}
                   {%- if u.summary %}<span class="tree__summary">{{ u.summary }}</span>{% endif -%}
                 </a>
               </li>

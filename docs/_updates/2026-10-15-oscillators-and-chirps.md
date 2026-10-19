@@ -1,6 +1,7 @@
 ---
 title: "Oscillators and chirps: why one S4D layer is a poor fit for a weak chirp"
 date: 2026-10-15
+tags: [s4d, cnn]
 math: true
 summary: >-
   A lecture for physicists outside machine learning, revised on 16 October.

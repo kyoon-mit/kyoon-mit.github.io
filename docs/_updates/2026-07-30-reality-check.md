@@ -1,6 +1,7 @@
 ---
 title: "The reality check: a power-law SNR population"
 date: 2026-07-30
+tags: [regression, detection, s4d]
 summary: >-
   In aframe, with a correct SNR and a power-law test population, the merger
   regressor that is nearly perfect on uniform SNR collapses toward the prior on

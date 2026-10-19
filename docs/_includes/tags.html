@@ -1,0 +1,11 @@
+{%- comment -%}
+  Colored tag chips. Param: tags, a list of keys from _data/tags.yml.
+{%- endcomment -%}
+{%- if include.tags and include.tags.size > 0 -%}
+<span class="tags">
+  {%- for key in include.tags -%}
+    {%- assign t = site.data.tags | where: "key", key | first -%}
+    <span class="tag tag--topic tag--{{ key }}">{% if t %}{{ t.label }}{% else %}{{ key }}{% endif %}</span>
+  {%- endfor -%}
+</span>
+{%- endif -%}

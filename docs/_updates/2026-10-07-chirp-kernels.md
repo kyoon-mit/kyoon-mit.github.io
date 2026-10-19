@@ -1,6 +1,7 @@
 ---
 title: "From damped tones to chirps: a state-space layer built for inspirals"
 date: 2026-10-07
+tags: [s4d, matched-filter]
 math: true
 summary: >-
   A step-by-step look at what an S4D layer actually computes, why that suits a

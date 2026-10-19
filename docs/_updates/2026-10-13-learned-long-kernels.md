@@ -1,6 +1,7 @@
 ---
 title: "Without templates: one layer of learned long kernels learns the chirps"
 date: 2026-10-13
+tags: [cnn, regression]
 math: true
 summary: >-
   The project's goal is a network that does not need a template bank. One

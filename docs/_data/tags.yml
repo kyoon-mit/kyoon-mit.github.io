@@ -1,0 +1,21 @@
+# Tags for update entries. An entry lists keys in its front matter, for example
+#   tags: [regression, s4d]
+# Each key's color is the token --tag-<key> at the top of assets/css/main.css.
+- key: regression
+  label: Regression
+- key: denoising
+  label: Denoising
+- key: detection
+  label: Detection
+- key: classification
+  label: Classification
+- key: s4d
+  label: S4D
+- key: cnn
+  label: CNN
+- key: matched-filter
+  label: Matched filter
+- key: project-8
+  label: Project 8
+- key: noise
+  label: Noise

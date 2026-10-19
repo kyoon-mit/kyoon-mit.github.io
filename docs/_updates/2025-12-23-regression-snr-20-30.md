@@ -1,6 +1,7 @@
 ---
 title: Chirp-mass regression trained on SNR 20–30, tested on 20–40
 date: 2025-12-23
+tags: [regression, s4d]
 summary: >-
   First end-to-end result: an S4D model trained on a narrow SNR band and
   evaluated on a wider one, to see how the estimate degrades outside its

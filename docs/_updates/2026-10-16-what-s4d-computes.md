@@ -1,6 +1,7 @@
 ---
 title: "What an S4D channel computes: resonators, delays, and a withdrawn explanation"
 date: 2026-10-16
+tags: [s4d]
 math: true
 summary: >-
   One S4D channel is a set of driven, damped resonators. To be the matched

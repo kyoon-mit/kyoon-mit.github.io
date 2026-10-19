@@ -1,6 +1,7 @@
 ---
 title: "Major finding: why S4D suits Project 8 and not binary neutron stars"
 date: 2026-10-14
+tags: [s4d, project-8]
 math: true
 summary: >-
   An S4D layer filters with a sum of tones at fixed frequencies. A Project 8

@@ -1,6 +1,7 @@
 ---
 title: The denoiser's shape and amplitude terms matter
 date: 2026-10-09
+tags: [denoising, regression]
 summary: >-
   Two otherwise identical joint denoiser and regressor runs, with and without
   the shape (overlap) and amplitude terms in the denoiser loss. With them, the

@@ -1,6 +1,7 @@
 ---
 title: A matched filter on the same windows the network sees
 date: 2026-10-07
+tags: [matched-filter, regression, detection]
 math: true
 summary: >-
   On identical 4 s test windows, a plain template bank puts 96 to 99% of
