@@ -4,7 +4,8 @@ title: Readings
 permalink: /projects/bns/readings/
 eyebrow: Background reading
 summary: >-
-  What to read to follow the October 2026 work: why chirp mass needs a
+  A starting order for readers new to learning the noise, then what to read
+  to follow the October 2026 work: why chirp mass needs a
   matched filter, why plain SNR fails on real noise, what an S4D layer can
   and cannot hold, what the free kernels are, and whether a Gaussian
   describes the uncertainty of a chirp-mass estimate and how to check it;
@@ -13,6 +14,54 @@ summary: >-
 ---
 
 {%- assign u = '/projects/bns/updates/' -%}
+
+## Start here: learning the noise
+
+The [20 October update]({{ u | append: '2026-10-20-slic-noise-score-on-bns/' | relative_url }})
+uses ideas from four fields at once: detector noise and matched filtering,
+Bayesian parameter estimation, samplers, and diffusion models. For a reader
+new to some of them, this is the order I would take, from the most basic.
+Each step names what it explains in that update.
+
+- **First: noise, whitening and the matched filter.** LIGO Scientific
+  Collaboration and Virgo Collaboration, "A guide to LIGO-Virgo detector
+  noise and extraction of transient gravitational-wave signals", Class.
+  Quantum Grav. 37, 055002 (2020),
+  [arXiv:1908.11170](https://arxiv.org/abs/1908.11170). Why a signal far
+  below the noise in every sample still stands out once the data are
+  correlated with its expected shape, and what whitening does.
+- **Second: what a likelihood and a posterior are.** E. Thrane and C.
+  Talbot, "An introduction to Bayesian inference in gravitational-wave
+  astronomy: parameter estimation, model selection, and hierarchical
+  models", Publ. Astron. Soc. Aust. 36, e010 (2019),
+  [arXiv:1809.02293](https://arxiv.org/abs/1809.02293). The Gaussian
+  likelihood that SLIC replaces, and how a posterior turns into error bars.
+- **Third: how a sampler draws a posterior.** D. W. Hogg and D.
+  Foreman-Mackey, "Data analysis recipes: using Markov chain Monte Carlo",
+  Astrophys. J. Suppl. 236, 11 (2018),
+  [arXiv:1710.06068](https://arxiv.org/abs/1710.06068). Walkers, steps,
+  burn-in, and how to judge whether a chain has run long enough.
+- **Fourth: what a diffusion model learns.** Y. Song, "Generative modeling
+  by estimating gradients of the data distribution", blog post, 5 May 2021,
+  [yang-song.net/blog/2021/score](https://yang-song.net/blog/2021/score/).
+  The score, and why removing added noise teaches it; then Vincent (2011)
+  under 22 below for the proof.
+- **Fifth: SLIC itself.** Legin et al. (2025) under 19 below.
+- **Sixth: predicting the next sample.** J. Makhoul, "Linear prediction: a
+  tutorial review", Proc. IEEE 63, 561 (1975),
+  [doi:10.1109/PROC.1975.9792](https://doi.org/10.1109/PROC.1975.9792),
+  for why the errors of the best linear predictor are whitened noise and
+  why a Gaussian with a spectrum is a linear predictor; then WaveNet under
+  23 below for the network version. This is the noise model the update
+  turns to.
+- **Seventh: when the matched filter can be beaten.** Allen et al. (2002)
+  under 17 below: in Gaussian noise the matched filter is the best detector
+  for a known waveform, and in noise with heavier tails it is not.
+
+If you read only three, read the first, the sixth and the seventh: they
+cover what the next test measures.
+
+## Filters, matched filtering and S4D layers
 
 The updates of [12 October]({{ u | append: '2026-10-12-template-bank-network/' | relative_url }})
 and [13 October]({{ u | append: '2026-10-13-learned-long-kernels/' | relative_url }})

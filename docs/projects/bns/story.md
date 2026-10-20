@@ -68,6 +68,13 @@ next_title: Background, the physics the model is trying to invert
       <p class="chapter-list__body">The matched filter as a network, one layer of learned kernels, and why S4D suits Project 8 and not BNS.</p>
     </div>
   </li>
+    <li>
+    <div class="chapter-list__text">
+      <p class="chapter-list__when">From 19 Oct 2026, running now</p>
+      <p class="chapter-list__title"><a href="#ix-learning-the-noise">Learning the noise</a></p>
+      <p class="chapter-list__body">What our noise has beyond a Gaussian, a learned noise model from the literature, and a next-sample model to test against the matched filter.</p>
+    </div>
+  </li>
 </ol>
 
 ## I. Early promise at high SNR
@@ -248,8 +255,31 @@ The reason is written up as a
 an S4D layer filters with tones at fixed frequencies, which suit Project 8's
 nearly constant tones and not a chirp.
 
+## IX. Learning the noise
+
+For a known waveform in stationary Gaussian noise, the matched filter is the
+best detector there is; in noise with heavier tails it is not (Allen et al.
+2002, [arXiv:gr-qc/0105100](https://arxiv.org/abs/gr-qc/0105100)). So a
+learned search can only beat it by knowing what real noise looks like. The
+[19 October update]({{ '/projects/bns/updates/2026-10-19-how-gaussian-is-our-noise/' | relative_url }})
+measured what our noise has beyond a Gaussian with its spectrum: narrow
+lines that whitening leaves at up to 2,081 times the white level, and 6.5 to
+11.9 loud windows per hour.
+
+The closest published method that learns the noise is SLIC. Trained on our
+windows
+([20 October]({{ '/projects/bns/updates/2026-10-20-slic-noise-score-on-bns/' | relative_url }})),
+its network beats a Gaussian with the typical spectrum in 84.5% of
+validation windows at the noise level its sampler uses, mostly through the
+loud windows; but its sampler would need 79.9 days for 400 test windows on
+our GPU. The next model predicts each sample from the earlier ones, which
+gives the likelihood directly, and is tested against the matched filter on
+detection.
+
 ### What comes next
 
+- **A next-sample noise model** on our noise windows, and a detection test
+  against the matched filter with the true template.
 - **Make the chirp look like a tone** before an S4D sees it: heterodyne
   with a grid of chirp masses, or bootstrap (estimate the chirp mass,
   heterodyne with it, re-estimate).

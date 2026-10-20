@@ -4363,3 +4363,97 @@ a sine and not for the Gaussian copy of the same spectrum. Both are linear
 filters of the same spectrum, so the difference must come from the line being
 narrower than the 0.5 Hz resolution of the spectrum estimate, but I have not
 derived it.
+
+## The best Gaussian answer to the denoising task {#oct20-gaussian-denoiser}
+
+**Claims** (20 October update). The noise network sees $x_t = x + \sigma z$,
+with $x$ a whitened noise window and $z$ unit Gaussian noise, and is trained
+to return $-z$; its loss is the sum of $(\text{out} + z)^2$ over the window.
+Take one real dimension of the window (a real or imaginary part of one
+frequency, in the orthonormal Fourier basis, where white unit noise has
+power 1) in which $x$ is Gaussian with power $P$:
+
+1. The output with the lowest expected loss is
+   $\text{out} = -\sigma x_t/(P + \sigma^2)$, and its expected loss is
+   $P/(P + \sigma^2)$.
+2. A model that assumes $P = 1$ (white) has expected loss
+   $(1 + \sigma^2 P)/(1 + \sigma^2)^2$ on noise of power $P$: equal to the
+   best when $P = 1$, and close to 1 instead of near 0 where $P \ll \sigma^2$.
+3. For each frequency, the median of the window powers divided by $\ln 2$
+   is the power of the typical window: for Gaussian noise it equals the mean
+   (claim 1 of the [reference values](#oct19-gaussian-references)), and,
+   unlike the mean, a few loud windows do not move it.
+
+**Derivation.** (1) $z$ and $x_t$ are jointly Gaussian with
+${\rm Cov}(z, x_t) = \sigma$ and ${\rm Var}(x_t) = P + \sigma^2$. The output
+that minimizes $E[(\text{out} + z)^2]$ is $-E[z \mid x_t] =
+-\sigma x_t/(P + \sigma^2)$, and the remaining loss is the conditional
+variance, $1 - \sigma^2/(P + \sigma^2) = P/(P + \sigma^2)$. (2) With
+$\text{out} = -\sigma x_t/(1 + \sigma^2)$,
+$\text{out} + z = (z - \sigma x)/(1 + \sigma^2)$, whose expected square is
+$(1 + \sigma^2 P)/(1 + \sigma^2)^2$.
+
+**Approximation.** A 4 s window is not periodic, so its Fourier components
+are only nearly independent, and the spectra were estimated from 1,024
+training windows (512 per detector). The two colored models of the update
+are therefore close to, not exactly, the best Gaussian answers for those
+spectra.
+
+**Check.** $2 \times 10^6$ simulated draws per case
+([check_formulas.py](https://github.com/kyoon-mit/aframe/blob/reg-dev-latest/dev/analysis/claude_tests/slic_checks/check_formulas.py)):
+
+| $P$ | $\sigma$ | Best: simulated | Best: claim 1 | White: simulated | White: claim 2 |
+|---|---|---|---|---|---|
+| 0.0001 | 0.1259 | 0.00627 | 0.00627 | 0.96680 | 0.96904 |
+| 0.01 | 0.1259 | 0.38705 | 0.38684 | 0.96846 | 0.96919 |
+| 1 | 0.631 | 0.71558 | 0.71523 | 0.71558 | 0.71523 |
+| 4 | 0.631 | 0.91037 | 0.90947 | 1.32657 | 1.32626 |
+
+**How the comparison was run**
+([color_vs_net.py](https://github.com/kyoon-mit/aframe/blob/reg-dev-latest/dev/analysis/claude_tests/slic_checks/color_vs_net.py)).
+The training configuration's dataloader, seed 43, on CPU. Spectra from 32
+batches of training windows; then 64 batches of validation windows (4,096
+single-detector windows), and for each fixed $t$ one draw of $z$ shared by
+the network (the epoch-147 checkpoint, averaged weights) and the three
+Gaussian models. A first run with the white model only
+([gauss_vs_net.py](https://github.com/kyoon-mit/aframe/blob/reg-dev-latest/dev/analysis/claude_tests/slic_checks/gauss_vs_net.py))
+gave the same network losses to every printed digit.
+
+## The cost of the SLIC sampler {#oct20-pe-cost}
+
+**Claims** (20 October update).
+
+1. With 32 walkers, the proposal and the midpoint of every move evaluated,
+   and $10{,}000 + 20{,}000$ steps, one window needs
+   $32 \times 2 \times 30{,}000 = 1{,}920{,}000$ waveform evaluations with
+   their gradients. The gradient at the start of a move is known from the
+   step before.
+2. Timing run: 46 s for 40 steps on 2 windows, so
+   $46/(40 \times 2) = 0.575$ s per window and step;
+   $0.575 \times 30{,}000 = 17{,}250$ s $= 4.79$ h per window; 400 windows
+   take $6.9 \times 10^6$ s $= 79.9$ days.
+3. Live run on 4 windows: 2.918 s per step over its first 2,000 steps, so
+   0.7295 s per window and step, 6.08 h per window, 101.3 days for 400.
+4. For 64 points of one window, the waveforms and their gradients took
+   0.460 s and the network 0.099 s.
+5. The paper's run script: $2 \times 20$ jobs, each of 10 injections with
+   16.5 h of one GPU, so at most $16.5/10 = 1.65$ h per injection.
+6. Training: $200 \times 1{,}564 \times 64 = 20{,}019{,}200$ examples; the
+   paper, $500 \times 40{,}000 = 20{,}000{,}000$, taking its "approximately
+   40,000" segments as 40,000.
+
+**How it was measured.** All on one GPU capped at 250 W. (2) `pe.py` with
+`--count 2 --warmup 20 --steps 20`, which reports the seconds from the
+first sampler step to the last. (3) The live run's own log line,
+"2000 evaluations, 5836 s (2.918 s each)", one evaluation per step. (4)
+[time_parts.py](https://github.com/kyoon-mit/aframe/blob/reg-dev-latest/dev/analysis/claude_tests/slic_checks/time_parts.py):
+mean of 5 calls after one warm-up call, with the GPU synchronized before
+each clock reading. (5)
+[inference_injection.sh](https://github.com/RonanLegin/slicgw/blob/main/scripts/inference_injection.sh)
+(`NUM_SIMS=200`, `NUM_JOBS=20`, `--time=0-016:30:00`, both detectors). (6)
+Our configuration
+([score.yaml](https://github.com/kyoon-mit/aframe/blob/reg-dev-latest/dev/local/train/claude_tests/slic/score.yaml));
+the paper's sections III and IV.
+
+**Check.** The arithmetic of claims 1 to 3 and 6 in
+[check_formulas.py](https://github.com/kyoon-mit/aframe/blob/reg-dev-latest/dev/analysis/claude_tests/slic_checks/check_formulas.py).

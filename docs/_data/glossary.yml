@@ -3396,3 +3396,182 @@
     Our noise-model code (`GaussianNoise` in the noise-model sources,
     19 October 2026); construction in the
     [19 October update](/projects/bns/updates/2026-10-19-how-gaussian-is-our-noise/).
+
+# --- A learned noise model and its sampler (20 October) -------------------------
+
+- id: slic
+  term: SLIC
+  also: [score-based likelihood characterization]
+  case: true
+  group: Statistics
+  short: >-
+    A method that learns the probability distribution of detector noise with
+    a diffusion model and uses it, in place of the Gaussian assumption, to
+    estimate a signal's parameters: a guess is good when data minus its
+    waveform looks like learned noise.
+  source: >-
+    Legin, Isi, Wong, Hezaveh and Perreault-Levasseur, Astrophys. J. Lett.
+    985, L46 (2025), [arXiv:2410.19956](https://arxiv.org/abs/2410.19956).
+
+- id: noise-score
+  term: noise score
+  also: [score of the noise distribution]
+  group: Statistics
+  short: >-
+    For a stretch of noise, the direction in which changing it makes it more
+    probable: the gradient of the logarithm of the noise's probability with
+    respect to the noise values.
+  source: >-
+    Legin et al. (2025), [arXiv:2410.19956](https://arxiv.org/abs/2410.19956),
+    section II.3; Song and Ermon (2019),
+    [arXiv:1907.05600](https://arxiv.org/abs/1907.05600).
+
+- id: denoising-score-matching
+  term: denoising score matching
+  group: Machine learning
+  short: >-
+    Training a network to recover the random noise that was added to real
+    samples. The network that does this best has learned the score of the
+    samples' distribution, at the strength of noise it was given.
+  source: >-
+    Vincent, Neural Computation 23, 1661 (2011),
+    [doi:10.1162/NECO_a_00142](https://doi.org/10.1162/NECO_a_00142).
+
+- id: ncsnpp
+  term: NCSNpp
+  also: [NCSN++]
+  case: true
+  group: Machine learning
+  short: >-
+    The U-shaped convolutional network that Song et al. built for
+    score-based diffusion models; SLIC uses a one-dimensional version.
+  source: >-
+    Song, Sohl-Dickstein, Kingma, Kumar, Ermon and Poole (2020),
+    [arXiv:2011.13456](https://arxiv.org/abs/2011.13456).
+
+- id: mala
+  term: MALA
+  also: [Metropolis-adjusted Langevin algorithm, Langevin sampler]
+  case: true
+  group: Statistics
+  short: >-
+    A sampler that moves each guess a step along the gradient of the log
+    posterior, adds a random kick, and keeps or rejects the move with a
+    probability chosen so that the kept guesses follow the posterior.
+  source: >-
+    Roberts and Tweedie, Bernoulli 2, 341 (1996),
+    [doi:10.2307/3318418](https://doi.org/10.2307/3318418).
+
+- id: walker
+  term: walker
+  also: [walkers]
+  group: Statistics
+  short: >-
+    One chain of guesses in a sampler. Several walkers run side by side on
+    the same problem, and the positions they visit, together, are the
+    samples of the posterior.
+  source: >-
+    Foreman-Mackey, Hogg, Lang and Goodman, Publ. Astron. Soc. Pac. 125, 306
+    (2013), [doi:10.1086/670067](https://doi.org/10.1086/670067).
+
+- id: burn-in
+  term: burn-in
+  also: [burn-in steps]
+  group: Statistics
+  short: >-
+    The first steps of a sampler, which are thrown away: the walkers travel
+    from where they started to the likely region. SLIC also tunes its move
+    size and shape during them.
+  source: >-
+    Hogg and Foreman-Mackey, Astrophys. J. Suppl. 236, 11 (2018),
+    [arXiv:1710.06068](https://arxiv.org/abs/1710.06068).
+
+- id: simpsons-rule
+  term: Simpson's rule
+  group: Signal processing
+  short: >-
+    An approximation of an integral over an interval from the integrand at
+    its two ends and its middle, weighted 1, 4 and 1 and divided by 6 times
+    the interval's length.
+  source: >-
+    Press, Teukolsky, Vetterling and Flannery, *Numerical Recipes*, 3rd ed.
+    (Cambridge, 2007), section 4.1.
+
+- id: linear-prediction
+  term: linear prediction
+  also: [linear predictor, best linear predictor]
+  group: Signal processing
+  short: >-
+    Predicting each sample as a weighted sum of earlier ones. For the best
+    such weights the prediction errors are white, so the predictor is a
+    whitening filter, and its weights describe the noise spectrum.
+  source: >-
+    Makhoul, "Linear prediction: a tutorial review", Proc. IEEE 63, 561
+    (1975), [doi:10.1109/PROC.1975.9792](https://doi.org/10.1109/PROC.1975.9792).
+
+- id: causal
+  term: causal
+  group: Signal processing
+  short: >-
+    A filter or network whose output at each time uses only the input up to
+    that time, never later samples.
+  source: >-
+    Oppenheim and Willsky, *Signals and Systems*, 2nd ed. (1997), section
+    2.3 (causality of linear time-invariant systems).
+
+- id: likelihood-ratio
+  term: likelihood ratio
+  group: Statistics
+  short: >-
+    The probability of the data if a given signal is present, divided by its
+    probability if there is only noise. Ranking by it finds the most signals
+    at any fixed false-alarm rate, for whatever the noise distribution is.
+  source: >-
+    Neyman and Pearson, Phil. Trans. R. Soc. A 231, 289 (1933),
+    [doi:10.1098/rsta.1933.0009](https://doi.org/10.1098/rsta.1933.0009).
+
+- id: imrphenomd
+  term: IMRPhenomD
+  case: true
+  group: Gravitational waves
+  short: >-
+    A frequency-domain waveform model of binary black holes with spins along
+    the orbital axis, covering inspiral, merger and ringdown, calibrated to
+    numerical relativity.
+  source: >-
+    Husa et al., Phys. Rev. D 93, 044006 (2016),
+    [doi:10.1103/PhysRevD.93.044006](https://doi.org/10.1103/PhysRevD.93.044006);
+    Khan et al., Phys. Rev. D 93, 044007 (2016),
+    [doi:10.1103/PhysRevD.93.044007](https://doi.org/10.1103/PhysRevD.93.044007).
+
+- id: precessing-spin
+  term: precessing spins
+  also: [precessing spin, precession]
+  group: Gravitational waves
+  short: >-
+    Spins tilted against the orbit make the orbital plane wobble around the
+    total angular momentum, which modulates the signal's amplitude and
+    phase.
+  source: >-
+    Apostolatos, Cutler, Sussman and Thorne, Phys. Rev. D 49, 6274 (1994),
+    [doi:10.1103/PhysRevD.49.6274](https://doi.org/10.1103/PhysRevD.49.6274).
+
+- id: polarization-angle
+  term: polarization angle
+  group: Gravitational waves
+  short: >-
+    The angle that sets how the wave's two polarizations are turned on the
+    sky relative to the detector's arms.
+  source: >-
+    Thrane and Talbot, Publ. Astron. Soc. Aust. 36, e010 (2019),
+    [arXiv:1809.02293](https://arxiv.org/abs/1809.02293).
+
+- id: inclination
+  term: inclination
+  group: Gravitational waves
+  short: >-
+    The angle between the binary's orbital angular momentum and the line of
+    sight; face-on is 0, edge-on is 90°.
+  source: >-
+    Thrane and Talbot, Publ. Astron. Soc. Aust. 36, e010 (2019),
+    [arXiv:1809.02293](https://arxiv.org/abs/1809.02293).
