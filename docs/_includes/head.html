@@ -46,5 +46,16 @@
   </script>
   <script defer src="{{ '/assets/js/glossary.js' | relative_url }}"></script>
   {%- endif %}
+  {%- if page.url contains '/projects/superconducting-magnets/' and site.data.magnet_glossary %}
+  <script>
+    window.BNS_GLOSSARY_URL = {{ '/projects/superconducting-magnets/definitions/' | relative_url | jsonify }};
+    window.BNS_GLOSSARY = [
+      {%- for t in site.data.magnet_glossary -%}
+      {"id": {{ t.id | jsonify }}, "n": {{ t.term | jsonify }}, "a": {{ t.also | jsonify }}, "c": {{ t.case | default: false | jsonify }}, "o": {{ t.only_also | default: false | jsonify }}, "s": {{ t.short | strip | jsonify }}}{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ];
+  </script>
+  <script defer src="{{ '/assets/js/glossary.js' | relative_url }}"></script>
+  {%- endif %}
   {%- feed_meta -%}
 </head>

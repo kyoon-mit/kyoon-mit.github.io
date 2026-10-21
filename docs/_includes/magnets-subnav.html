@@ -4,6 +4,7 @@
 {%- assign base = '/projects/superconducting-magnets/' -%}
 {%- assign u_overview = base -%}
 {%- assign u_background = base | append: 'background/' -%}
+{%- assign u_defs = base | append: 'definitions/' -%}
 {%- assign u_brain = base | append: 'brainstorm/' -%}
 {%- assign u_updates = base | append: 'updates/' -%}
 {%- assign u_results = base | append: 'results/' -%}
@@ -15,6 +16,7 @@
       <a href="{{ u_overview | relative_url }}" class="subnav__link {% if page.url == u_overview %}is-current{% endif %}">Overview</a>
       <ul class="subnav__sub">
         <li><a href="{{ u_background | relative_url }}" class="subnav__link {% if page.url == u_background %}is-current{% endif %}">Background</a></li>
+        <li><a href="{{ u_defs | relative_url }}" class="subnav__link {% if page.url == u_defs %}is-current{% endif %}">Definitions</a></li>
       </ul>
     </li>
     <li>

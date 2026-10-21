@@ -1,0 +1,564 @@
+# Definitions for the superconducting-magnet pages. Same fields as glossary.yml:
+#   id, term, also, case, group, short (shown on hover), def (optional), source
+
+# --- Superconductors ----------------------------------------------------------
+
+- id: superconductor
+  term: superconductor
+  also: [superconductors, superconducting]
+  group: Superconductors
+  short: >-
+    A material that carries electric current with no resistance when it is
+    cold enough and the current and magnetic field are low enough.
+  source: >-
+    Y. Iwasa, *Case Studies in Superconducting Magnets*, 2nd ed. (Springer,
+    2009), [doi:10.1007/b112047](https://doi.org/10.1007/b112047).
+
+- id: hts
+  term: high-temperature superconductor
+  also: [high-temperature superconductors, HTS]
+  group: Superconductors
+  short: >-
+    A superconductor that stays superconducting well above the boiling point
+    of liquid helium (4.2 K), some up to about 90 K. REBCO is one.
+  source: >-
+    Iwasa, *Case Studies in Superconducting Magnets* (2009),
+    [doi:10.1007/b112047](https://doi.org/10.1007/b112047).
+
+- id: rebco
+  term: REBCO
+  group: Superconductors
+  short: >-
+    Rare-earth barium copper oxide, a high-temperature superconductor made as
+    a thin film, a few micrometers thick, on a metal tape a few millimeters
+    wide.
+  source: >-
+    F. Huber et al., Supercond. Sci. Technol. **35**, 043003 (2022),
+    [doi:10.1088/1361-6668/ac5163](https://doi.org/10.1088/1361-6668/ac5163).
+
+- id: critical-current
+  term: critical current
+  also: [critical currents, Ic]
+  group: Superconductors
+  short: >-
+    The current at which a superconductor's voltage reaches an agreed
+    criterion, usually 1 µV per cm. It falls as the temperature or the
+    magnetic field rises.
+  source: >-
+    J. W. Ekin, *Experimental Techniques for Low-Temperature Measurements*
+    (Oxford, 2006),
+    [doi:10.1093/acprof:oso/9780198570547.001.0001](https://doi.org/10.1093/acprof:oso/9780198570547.001.0001).
+
+- id: critical-temperature
+  term: critical temperature
+  also: [Tc]
+  group: Superconductors
+  short: >-
+    The temperature above which a material is no longer superconducting,
+    even with no current. For the REBCO model here it is 85 K.
+  source: >-
+    Iwasa, *Case Studies in Superconducting Magnets* (2009),
+    [doi:10.1007/b112047](https://doi.org/10.1007/b112047).
+
+- id: criterion-voltage
+  term: criterion voltage
+  also: [voltage criterion]
+  group: Superconductors
+  short: >-
+    The voltage that defines the critical current: 1 µV per cm of conductor,
+    so 100 µV across a 1 m tape.
+  source: >-
+    Ekin, *Experimental Techniques for Low-Temperature Measurements* (2006),
+    [doi:10.1093/acprof:oso/9780198570547.001.0001](https://doi.org/10.1093/acprof:oso/9780198570547.001.0001).
+
+- id: n-value
+  term: power-law index
+  also: [n-value, power law]
+  group: Superconductors
+  short: >-
+    The exponent n in V ∝ (I/Ic)ⁿ, which says how sharply a superconductor
+    turns resistive near its critical current. REBCO tapes have n of 20 to
+    30 or more.
+  source: >-
+    Ekin, *Experimental Techniques for Low-Temperature Measurements* (2006),
+    [doi:10.1093/acprof:oso/9780198570547.001.0001](https://doi.org/10.1093/acprof:oso/9780198570547.001.0001).
+
+- id: stabilizer
+  term: stabilizer
+  also: [stabilizer layer]
+  group: Superconductors
+  short: >-
+    Normal metal, usually copper, alongside the superconductor. When the
+    superconductor turns resistive, current can flow through the stabilizer
+    instead.
+  source: >-
+    Iwasa, *Case Studies in Superconducting Magnets* (2009),
+    [doi:10.1007/b112047](https://doi.org/10.1007/b112047).
+
+- id: current-sharing
+  term: current sharing
+  group: Superconductors
+  short: >-
+    The division of the current between the superconductor and the
+    stabilizer, set by both carrying the same voltage.
+  source: >-
+    M. Marchevsky and S. Prestemon, Supercond. Sci. Technol. **37** (2024),
+    [doi:10.1088/1361-6668/ad20fe](https://doi.org/10.1088/1361-6668/ad20fe).
+
+# --- Runaway and protection ---------------------------------------------------
+
+- id: quench
+  term: quench
+  also: [quenches]
+  group: Runaway and protection
+  short: >-
+    An irreversible transition of part of a superconducting magnet to the
+    resistive state. The stored energy then heats the conductor and can
+    damage it unless the current is removed.
+  source: >-
+    Iwasa, *Case Studies in Superconducting Magnets* (2009),
+    [doi:10.1007/b112047](https://doi.org/10.1007/b112047).
+
+- id: joule-heating
+  term: Joule heating
+  also: [Joule heat]
+  group: Runaway and protection
+  short: >-
+    Heat produced by current flowing through a resistance; the power is the
+    current times the voltage.
+  source: >-
+    Iwasa, *Case Studies in Superconducting Magnets* (2009),
+    [doi:10.1007/b112047](https://doi.org/10.1007/b112047).
+
+- id: thermal-runaway
+  term: thermal runaway
+  also: [runaway]
+  group: Runaway and protection
+  short: >-
+    The state in which heating grows faster with temperature than cooling
+    can follow, so the temperature rises without limit.
+  source: >-
+    Marchevsky and Prestemon (2024),
+    [doi:10.1088/1361-6668/ad20fe](https://doi.org/10.1088/1361-6668/ad20fe).
+
+- id: runaway-current
+  term: runaway current
+  also: [I*]
+  group: Runaway and protection
+  short: >-
+    I*, the largest current at which heating can still be balanced by
+    cooling. It depends on the bath temperature and the cooling.
+  source: >-
+    Marchevsky and Prestemon (2024),
+    [doi:10.1088/1361-6668/ad20fe](https://doi.org/10.1088/1361-6668/ad20fe).
+
+- id: runaway-temperature
+  term: runaway temperature
+  also: [T*]
+  group: Runaway and protection
+  short: >-
+    T*, the tape temperature at the runaway current.
+  source: >-
+    Marchevsky and Prestemon (2024),
+    [doi:10.1088/1361-6668/ad20fe](https://doi.org/10.1088/1361-6668/ad20fe).
+
+- id: margin
+  term: margin
+  also: [remaining margin]
+  group: Runaway and protection
+  short: >-
+    The fraction of current headroom left before runaway, (I* − I)/I*. A
+    margin of 0.4 means the current could still rise by 40% of I*.
+  source: >-
+    Our definition, from the runaway current of Marchevsky and Prestemon
+    (2024), [doi:10.1088/1361-6668/ad20fe](https://doi.org/10.1088/1361-6668/ad20fe).
+
+- id: bath-temperature
+  term: bath temperature
+  also: [bath]
+  group: Runaway and protection
+  short: >-
+    T0, the temperature of the coolant or cold plate to which the tape
+    loses heat.
+  source: >-
+    Marchevsky and Prestemon (2024),
+    [doi:10.1088/1361-6668/ad20fe](https://doi.org/10.1088/1361-6668/ad20fe).
+
+- id: thermal-conductivity
+  term: thermal conductivity
+  also: [λ, cooling strength]
+  group: Runaway and protection
+  short: >-
+    λ, how well the material between tape and bath conducts heat. Larger λ
+    means stronger cooling and a higher runaway current.
+  source: >-
+    Ekin, *Experimental Techniques for Low-Temperature Measurements* (2006),
+    [doi:10.1093/acprof:oso/9780198570547.001.0001](https://doi.org/10.1093/acprof:oso/9780198570547.001.0001).
+
+- id: voltage-threshold
+  term: voltage threshold
+  also: [voltage thresholds, voltage alarm, voltage alarms]
+  group: Runaway and protection
+  short: >-
+    Conventional quench protection: remove the current once the voltage
+    across the conductor exceeds a set value.
+  source: >-
+    Iwasa, *Case Studies in Superconducting Magnets* (2009),
+    [doi:10.1007/b112047](https://doi.org/10.1007/b112047).
+
+- id: dump
+  term: dump
+  also: [dump threshold, dump line]
+  group: Runaway and protection
+  short: >-
+    Removing the current and the stored energy from a magnet to protect it.
+    On these pages a dump is called for when the estimated margin falls
+    below 5%.
+  source: >-
+    Iwasa, *Case Studies in Superconducting Magnets* (2009),
+    [doi:10.1007/b112047](https://doi.org/10.1007/b112047); the 5% level is
+    the setting of our simulation.
+
+- id: adiabatic-time
+  term: adiabatic time
+  group: Runaway and protection
+  short: >-
+    How long the conductor would take to heat from the runaway point to
+    300 K if all cooling stopped.
+  source: >-
+    Marchevsky and Prestemon (2024),
+    [doi:10.1088/1361-6668/ad20fe](https://doi.org/10.1088/1361-6668/ad20fe).
+
+# --- Coils --------------------------------------------------------------------
+
+- id: no-insulation-coil
+  term: no-insulation coil
+  also: [no-insulation coils, no insulation between turns]
+  group: Coils
+  short: >-
+    A coil wound without electrical insulation between turns, so that current
+    can cross from turn to turn when it changes.
+  source: >-
+    S. Hahn, D. K. Park, J. Bascuñán and Y. Iwasa, IEEE Trans. Appl.
+    Supercond. **21**, 1592 (2011),
+    [doi:10.1109/TASC.2010.2093492](https://doi.org/10.1109/TASC.2010.2093492).
+
+- id: turn-to-turn-resistance
+  term: turn-to-turn resistance
+  group: Coils
+  short: >-
+    Rc, the electrical resistance between adjacent turns of a no-insulation
+    coil. With the coil inductance L it sets the time constant L/Rc.
+  source: >-
+    X. Wang et al., Supercond. Sci. Technol. **26**, 035012 (2013),
+    [doi:10.1088/0953-2048/26/3/035012](https://doi.org/10.1088/0953-2048/26/3/035012).
+
+- id: ac-loss
+  term: AC loss
+  also: [AC losses]
+  group: Coils
+  short: >-
+    Heat produced in a superconductor when its current or the magnetic field
+    changes, even below the critical current.
+  source: >-
+    Huber et al., Supercond. Sci. Technol. **35**, 043003 (2022),
+    [doi:10.1088/1361-6668/ac5163](https://doi.org/10.1088/1361-6668/ac5163).
+
+# --- Simulation ---------------------------------------------------------------
+
+- id: heat-balance
+  term: heat balance
+  also: [heat-balance model]
+  group: Simulation
+  short: >-
+    The condition that Joule heating equals the heat removed to the bath. It
+    fixes the tape temperature at each current.
+  source: >-
+    Marchevsky and Prestemon (2024),
+    [doi:10.1088/1361-6668/ad20fe](https://doi.org/10.1088/1361-6668/ad20fe).
+
+- id: steady-state
+  term: steady state
+  group: Simulation
+  short: >-
+    A condition that no longer changes in time. The simulation records the
+    temperature the tape would settle at, not how it gets there.
+  source: >-
+    Our simulation; the model of Marchevsky and Prestemon (2024),
+    [doi:10.1088/1361-6668/ad20fe](https://doi.org/10.1088/1361-6668/ad20fe).
+
+- id: finite-element
+  term: finite-element
+  also: [finite element, finite-element simulations, finite-element runs]
+  group: Simulation
+  short: >-
+    A numerical method that splits an object into many small pieces and
+    solves the physics in each, here the currents, fields and temperatures in
+    a tape or coil.
+  source: >-
+    Huber et al., Supercond. Sci. Technol. **35**, 043003 (2022),
+    [doi:10.1088/1361-6668/ac5163](https://doi.org/10.1088/1361-6668/ac5163).
+
+- id: surrogate
+  term: surrogate
+  also: [surrogate model, surrogate models, surrogates]
+  group: Simulation
+  short: >-
+    A fast model trained to reproduce the outputs of a slow, detailed
+    simulation.
+  source: >-
+    A. Forrester, A. Sóbester and A. Keane, *Engineering Design via Surrogate
+    Modelling* (Wiley, 2008),
+    [doi:10.1002/9780470770801](https://doi.org/10.1002/9780470770801).
+
+- id: digital-twin
+  term: digital twin
+  group: Simulation
+  short: >-
+    A model of a specific physical system that is kept up to date with
+    measurements from it.
+  source: >-
+    W. Kritzinger et al., IFAC-PapersOnLine **51**, 1016 (2018),
+    [doi:10.1016/j.ifacol.2018.08.474](https://doi.org/10.1016/j.ifacol.2018.08.474).
+
+- id: inverse-calculation
+  term: inverse calculation
+  also: [inverse problem]
+  group: Simulation
+  short: >-
+    Working back from measured data to the parameters of the system that
+    produced them, the reverse of a simulation.
+  source: >-
+    A. Tarantola, *Inverse Problem Theory and Methods for Model Parameter
+    Estimation* (SIAM, 2005),
+    [doi:10.1137/1.9780898717921](https://doi.org/10.1137/1.9780898717921).
+
+# --- Machine learning ---------------------------------------------------------
+
+- id: rnn
+  term: recurrent neural network
+  also: [recurrent network, recurrent networks]
+  group: Machine learning
+  short: >-
+    A neural network that reads a sequence one element at a time and keeps an
+    internal state summarizing what it has read so far.
+  source: >-
+    I. Goodfellow, Y. Bengio and A. Courville, *Deep Learning* (MIT Press,
+    2016), [deeplearningbook.org](https://www.deeplearningbook.org/).
+
+- id: gru
+  term: GRU
+  also: [gated recurrent unit]
+  case: true
+  group: Machine learning
+  short: >-
+    Gated recurrent unit, a recurrent network whose gates decide at each step
+    how much of its internal state to keep and how much to update.
+  source: >-
+    K. Cho et al., [arXiv:1406.1078](https://arxiv.org/abs/1406.1078) (2014).
+
+- id: hidden-state
+  term: hidden state
+  also: [internal state]
+  group: Machine learning
+  short: >-
+    The vector a recurrent network carries from one step to the next; here
+    64 numbers per layer.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016),
+    [deeplearningbook.org](https://www.deeplearningbook.org/).
+
+- id: output-head
+  term: output head
+  also: [output heads, heads]
+  group: Machine learning
+  short: >-
+    A small final layer that turns the network's internal state into one
+    estimate, such as the margin or the runaway current.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016),
+    [deeplearningbook.org](https://www.deeplearningbook.org/).
+
+- id: loss
+  term: loss
+  also: [loss function]
+  group: Machine learning
+  short: >-
+    The number training tries to make small, measuring how far the
+    network's estimates are from the true values.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016),
+    [deeplearningbook.org](https://www.deeplearningbook.org/).
+
+- id: epoch
+  term: epoch
+  also: [epochs]
+  group: Machine learning
+  short: >-
+    One pass of training through the whole training set.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016),
+    [deeplearningbook.org](https://www.deeplearningbook.org/).
+
+- id: dropout
+  term: dropout
+  group: Machine learning
+  short: >-
+    A training method that randomly switches off a fraction of the network's
+    units at each step, so the network does not rely on any single one.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016),
+    [deeplearningbook.org](https://www.deeplearningbook.org/).
+
+- id: standardization
+  term: standardized
+  also: [standardization]
+  group: Machine learning
+  short: >-
+    Shifted and scaled to zero mean and unit variance over the training set.
+  source: >-
+    T. Hastie, R. Tibshirani and J. Friedman, *The Elements of Statistical
+    Learning*, 2nd ed. (Springer, 2009),
+    [doi:10.1007/978-0-387-84858-7](https://doi.org/10.1007/978-0-387-84858-7).
+
+- id: encoder
+  term: encoder
+  also: [encoders]
+  group: Machine learning
+  short: >-
+    The part of a model that turns raw input, here the sensor readings, into
+    a compact summary used by the rest of the model.
+  source: >-
+    Goodfellow, Bengio and Courville, *Deep Learning* (2016),
+    [deeplearningbook.org](https://www.deeplearningbook.org/).
+
+- id: state-space-model
+  term: state space model
+  also: [state-space model, SSM]
+  group: Machine learning
+  short: >-
+    A sequence model built from a linear system that updates an internal
+    state at each step; S4D is one form.
+  source: >-
+    A. Gu, A. Gupta, K. Goel and C. Ré,
+    [arXiv:2206.11893](https://arxiv.org/abs/2206.11893) (2022).
+
+- id: contrastive
+  term: contrastive embeddings
+  also: [contrastive learning]
+  group: Machine learning
+  short: >-
+    Compact summaries learned so that similar inputs end up close together
+    and different ones far apart.
+  source: >-
+    S. Tong, P. Harris and G. Grosso,
+    [arXiv:2609.35755](https://arxiv.org/abs/2609.35755) (2026).
+
+# --- Statistics ---------------------------------------------------------------
+
+- id: mean-absolute-error
+  term: mean absolute error
+  group: Statistics
+  short: >-
+    The average size of the errors, ignoring their sign.
+  source: >-
+    Hastie, Tibshirani and Friedman (2009),
+    [doi:10.1007/978-0-387-84858-7](https://doi.org/10.1007/978-0-387-84858-7).
+
+- id: confidence-interval
+  term: confidence interval
+  also: [95% interval, 95% intervals]
+  group: Statistics
+  short: >-
+    A range computed from the data that would contain the true value in 95%
+    of repeated experiments.
+  source: >-
+    C. J. Clopper and E. S. Pearson, Biometrika **26**, 404 (1934),
+    [doi:10.1093/biomet/26.4.404](https://doi.org/10.1093/biomet/26.4.404).
+
+- id: bootstrap
+  term: bootstrap
+  also: [bootstrap resamples]
+  group: Statistics
+  short: >-
+    Estimating the uncertainty of a statistic by recomputing it on many
+    random resamples, drawn with replacement, of the data.
+  source: >-
+    B. Efron, Ann. Statist. **7**, 1 (1979),
+    [doi:10.1214/aos/1176344552](https://doi.org/10.1214/aos/1176344552).
+
+- id: clopper-pearson
+  term: Clopper–Pearson
+  also: [Clopper-Pearson]
+  group: Statistics
+  short: >-
+    An exact confidence interval for a success fraction, such as 97 warnings
+    in 100 ramps.
+  source: >-
+    Clopper and Pearson, Biometrika **26**, 404 (1934),
+    [doi:10.1093/biomet/26.4.404](https://doi.org/10.1093/biomet/26.4.404).
+
+- id: r-squared
+  term: coefficient of determination
+  group: Statistics
+  short: >-
+    R², the fraction of the variation in a quantity explained by a fit. 1 is
+    a perfect fit; 0 or below means no better than the average.
+  source: >-
+    Hastie, Tibshirani and Friedman (2009),
+    [doi:10.1007/978-0-387-84858-7](https://doi.org/10.1007/978-0-387-84858-7).
+
+- id: gradient-boosted-trees
+  term: gradient-boosted regression trees
+  also: [gradient-boosted trees]
+  group: Statistics
+  short: >-
+    A fit built by adding many small decision trees, each correcting the
+    errors of those before it.
+  source: >-
+    J. H. Friedman, Ann. Statist. **29**, 1189 (2001),
+    [doi:10.1214/aos/1013203451](https://doi.org/10.1214/aos/1013203451).
+
+# --- This project -------------------------------------------------------------
+
+- id: ramp
+  term: ramp
+  also: [ramps, current ramp, current ramps]
+  group: This project
+  short: >-
+    One simulated experiment: a tape held at a bath temperature while its
+    current is raised step by step up to just below the runaway current.
+  source: >-
+    Our simulation; see the
+    [21 October report](/projects/superconducting-magnets/updates/2026-10-21-gru-learning-runaway/).
+
+- id: reading
+  term: reading
+  also: [readings]
+  group: This project
+  short: >-
+    One recorded set of the four signals (bath temperature, current, tape
+    voltage, surface temperature) at one current step of a ramp.
+  source: >-
+    Our simulation; see the
+    [21 October report](/projects/superconducting-magnets/updates/2026-10-21-gru-learning-runaway/).
+
+- id: surface-temperature
+  term: surface temperature
+  group: This project
+  short: >-
+    The tape temperature at which heating and cooling balance at the present
+    current, the quantity a thermometer on the tape would read.
+  source: >-
+    Our simulation, from the heat balance of Marchevsky and Prestemon (2024),
+    [doi:10.1088/1361-6668/ad20fe](https://doi.org/10.1088/1361-6668/ad20fe).
+
+- id: tape-voltage
+  term: tape voltage
+  group: This project
+  short: >-
+    The voltage between the two ends of the tape, the signal a conventional
+    protection system watches.
+  source: >-
+    Our simulation; voltage law from Ekin (2006),
+    [doi:10.1093/acprof:oso/9780198570547.001.0001](https://doi.org/10.1093/acprof:oso/9780198570547.001.0001).
