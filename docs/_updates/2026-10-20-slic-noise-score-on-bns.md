@@ -57,8 +57,10 @@ in each window.
 ## Training the noise network
 
 - **Data.** Whitened 4 s windows of O3a noise from our usual dataloader
-  configuration, with no signal added: 21 background files (0.673 days) for
-  training, 2 others (0.484 days) for validation. H1 and L1 are separate
+  configuration, with no signal added: 21 background files (100,011 s, 1.158
+  days; corrected on
+  [23 October]({{ u | append: '2026-10-23-next-sample-noise-model/' | relative_url }}#correction-to-the-20-october-update))
+  for training, 2 others (41,841 s, 0.484 days) for validation. H1 and L1 are separate
   examples, as in the paper.
 - **Network and loss.** The paper's one-dimensional network (NCSNpp, 803,641
   numbers) with its settings: noise level $\sigma = 10^{-3}\,(10^{7})^{t}$

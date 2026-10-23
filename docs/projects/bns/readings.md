@@ -59,7 +59,12 @@ Each step names what it explains in that update.
   for a known waveform, and in noise with heavier tails it is not.
 
 If you read only three, read the first, the sixth and the seventh: they
-cover what the next test measures.
+cover what the next test measures. The
+[23 October update]({{ u | append: '2026-10-23-next-sample-noise-model/' | relative_url }})
+reports that test. For it, the sixth explains the Gaussian it is compared
+with (Makhoul describes the Levinson-Durbin recursion it uses), and the
+seventh why the detection test compares likelihood ratios with the
+template.
 
 ## Filters, matched filtering and S4D layers
 

@@ -272,14 +272,24 @@ windows
 its network beats a Gaussian with the typical spectrum in 84.5% of
 validation windows at the noise level its sampler uses, mostly through the
 loud windows; but its sampler would need 79.9 days for 400 test windows on
-our GPU. The next model predicts each sample from the earlier ones, which
-gives the likelihood directly, and is tested against the matched filter on
-detection.
+our GPU.
+
+A next-sample model, a causal S4D that predicts each sample from the earlier
+ones, gives the likelihood directly
+([23 October]({{ '/projects/bns/updates/2026-10-23-next-sample-noise-model/' | relative_url }})).
+On held-out O3a noise it is a better model than any Gaussian with the
+training spectrum, in clean windows and far more in loud ones. As a detector
+with the true template, though, its likelihood ratio finds far fewer signals
+than the matched filter in clean windows: on pure noise it scatters 4.2 to
+5.1 times more than a Gaussian's. Its only win is in loud windows, where it
+raises no false alarm. A better average likelihood per sample did not make a
+better detector.
 
 ### What comes next
 
-- **A next-sample noise model** on our noise windows, and a detection test
-  against the matched filter with the true template.
+- **The next-sample model as a detector:** thresholds set for one template
+  at a time, training on data that includes O3b, or the model used only to
+  flag loud windows.
 - **Make the chirp look like a tone** before an S4D sees it: heterodyne
   with a grid of chirp masses, or bootstrap (estimate the chirp mass,
   heterodyne with it, re-estimate).

@@ -2355,7 +2355,7 @@
 
 - id: credible-interval
   term: credible interval
-  also: [credible intervals, credible level, credible region]
+  also: [credible intervals, credible level, credible region, central 90% interval]
   group: Statistics
   short: >-
     An interval that holds a stated probability, for example 90%, of the
@@ -3575,3 +3575,130 @@
   source: >-
     Thrane and Talbot, Publ. Astron. Soc. Aust. 36, e010 (2019),
     [arXiv:1809.02293](https://arxiv.org/abs/1809.02293).
+
+- id: nat
+  term: nat
+  also: [nats]
+  group: Statistics
+  short: >-
+    The unit of a log-probability taken with the natural logarithm. A
+    difference of one nat per sample means the model gives each sample e ≈
+    2.72 times the probability.
+  source: >-
+    T. M. Cover and J. A. Thomas, *Elements of Information Theory*, 2nd ed.
+    (Wiley, 2006), section 2.1 (entropy in nats when the logarithm is natural).
+
+- id: gaussian-scale-mixture
+  term: Gaussian scale mixture
+  also: [scale mixture, scale mixtures, Gaussian scale mixtures]
+  group: Statistics
+  short: >-
+    A mixture of Gaussians that all share one centre and differ only in
+    width. Narrow components describe ordinary values and wide ones the rare
+    large values, so it has heavier tails than one Gaussian.
+  source: >-
+    D. F. Andrews and C. L. Mallows, "Scale mixtures of normal
+    distributions", J. R. Stat. Soc. B 36, 99 (1974),
+    [doi:10.1111/j.2517-6161.1974.tb00989.x](https://doi.org/10.1111/j.2517-6161.1974.tb00989.x).
+
+- id: asinh
+  term: asinh
+  also: [inverse hyperbolic sine]
+  case: true
+  group: Signal processing
+  short: >-
+    The inverse hyperbolic sine, asinh(x) = ln(x + √(x² + 1)). It is close
+    to x for small values and grows like the logarithm of 2|x| for large
+    ones, so it squashes loud values while keeping their sign.
+  source: >-
+    NIST Digital Library of Mathematical Functions, section 4.37,
+    [dlmf.nist.gov/4.37](https://dlmf.nist.gov/4.37).
+
+- id: autocovariance
+  term: autocovariance
+  also: [autocovariances]
+  group: Signal processing
+  short: >-
+    For stationary noise, the average product of two samples a given number
+    of steps apart. It is the inverse Fourier transform of the power
+    spectrum, so it carries the same information.
+  source: >-
+    P. J. Brockwell and R. A. Davis, *Time Series: Theory and Methods*, 2nd
+    ed. (Springer, 1991), chapter 1.
+
+- id: levinson-durbin
+  term: Levinson-Durbin recursion
+  also: [Levinson-Durbin, Levinson–Durbin recursion, Levinson–Durbin]
+  case: true
+  group: Signal processing
+  short: >-
+    A fast way to find the best linear predictor of every order, one after
+    another, from the autocovariance of the noise; each order also gives its
+    prediction error.
+  source: >-
+    N. Levinson, J. Math. Phys. 25, 261 (1946),
+    [doi:10.1002/sapm1946251261](https://doi.org/10.1002/sapm1946251261);
+    J. Durbin, Rev. Int. Stat. Inst. 28, 233 (1960),
+    [doi:10.2307/1401322](https://doi.org/10.2307/1401322); Makhoul, Proc.
+    IEEE 63, 561 (1975),
+    [doi:10.1109/PROC.1975.9792](https://doi.org/10.1109/PROC.1975.9792).
+
+- id: cholesky
+  term: Cholesky factorization
+  also: [Cholesky]
+  case: true
+  group: Statistics
+  short: >-
+    Writing a covariance matrix as a lower-triangular matrix times its
+    transpose. It gives the determinant and solves the matrix's equations
+    without inverting it.
+  source: >-
+    G. H. Golub and C. F. Van Loan, *Matrix Computations*, 4th ed. (Johns
+    Hopkins University Press, 2013), section 4.2.
+
+- id: false-alarm-probability
+  term: false-alarm probability
+  also: [false-alarm probabilities, false alarm probability]
+  group: Searching for signals
+  short: >-
+    The chance that pure noise passes the detection threshold, here per
+    window. Setting it fixes the threshold; the fraction of signals above that
+    threshold is then the detection probability.
+  source: >-
+    Allen, Creighton, Flanagan and Romano, Phys. Rev. D 65, 122002 (2002),
+    [arXiv:gr-qc/0105100](https://arxiv.org/abs/gr-qc/0105100).
+
+- id: acceptance-rate
+  term: acceptance rate
+  also: [acceptance fraction]
+  group: Statistics
+  short: >-
+    The share of proposed moves that a sampler accepts. Near 0 the walkers
+    barely move; near 1 the moves are too timid to explore.
+  source: >-
+    D. W. Hogg and D. Foreman-Mackey, "Data analysis recipes: using Markov
+    chain Monte Carlo", Astrophys. J. Suppl. 236, 11 (2018),
+    [arXiv:1710.06068](https://arxiv.org/abs/1710.06068).
+
+- id: loud-window
+  term: loud window
+  also: [loud windows, clean window, clean windows]
+  group: This project
+  short: >-
+    A whitened 4 s window of one detector whose largest value exceeds 8, a
+    level that Gaussian noise with the same spectrum never reached in our
+    data. All other windows are clean.
+  source: >-
+    Our measurement; see the update of [19 October](/projects/bns/updates/2026-10-19-how-gaussian-is-our-noise/).
+
+- id: typical-spectrum
+  term: typical spectrum
+  also: [typical-spectrum]
+  group: This project
+  short: >-
+    At each frequency, the median of the window powers divided by ln 2. For
+    Gaussian noise it equals the mean power, and a few loud windows do not
+    move it.
+  source: >-
+    Our method; see the [derivation](/projects/bns/derivations/#oct20-gaussian-denoiser)
+    and the update of [20 October](/projects/bns/updates/2026-10-20-slic-noise-score-on-bns/).

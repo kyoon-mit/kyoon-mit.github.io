@@ -4457,3 +4457,99 @@ the paper's sections III and IV.
 
 **Check.** The arithmetic of claims 1 to 3 and 6 in
 [check_formulas.py](https://github.com/kyoon-mit/aframe/blob/reg-dev-latest/dev/analysis/claude_tests/slic_checks/check_formulas.py).
+
+## A Gaussian with a given spectrum as a chain of linear predictions {#oct23-gaussian-chain-rule}
+
+**Claims** (23 October update). Let $x_0, \dots, x_{N-1}$ be one whitened
+window ($N = 8{,}192$), modeled as zero-mean stationary Gaussian noise with
+autocovariance $r_k = E[x_t x_{t+k}]$, so that its covariance matrix is
+$R_{ij} = r_{|i-j|}$.
+
+1. $\log p(x) = \sum_t \log \mathcal N\big(x_t;\ \hat x_t,\ E_t\big)$, where
+   $\hat x_t = \sum_{j=1}^{t} a^{(t)}_j x_{t-j}$ is the best linear
+   prediction of $x_t$ from all earlier samples of the window and $E_t$ its
+   mean squared error. The Levinson-Durbin recursion gives $a^{(t)}$ and
+   $E_t$ for $t = 1, 2, \dots$ from $r$, and $\sum_t \log E_t = \log\det R$.
+2. Predicting from at most $p$ earlier samples ($a^{(\min(t,p))}$,
+   $E_{\min(t,p)}$) is the Gaussian model of order $p$; $p = N - 1$ is claim 1.
+3. With $X$ the FFT of a window zero-padded to $2N$ points, the inverse FFT
+   of $|X|^2/N$ at lag $k < N$ is $\frac1N \sum_{t} x_t x_{t+k}$. Averaging
+   over windows gives the autocovariance of the mean spectrum. Any
+   nonnegative spectrum on the $2N$ points gives a positive semidefinite $R$;
+   the recursion stops if some $E_t \le 0$, which did not happen for any of
+   the six spectra.
+4. Unit white Gaussian noise has $-\log p = \tfrac12 \ln 2\pi + \tfrac12 =
+   1.4189$ nats per sample on average.
+
+**Derivation.** (1) The chain rule writes $p(x) = \prod_t p(x_t \mid
+x_0, \dots, x_{t-1})$. For jointly Gaussian variables, each conditional is
+Gaussian, its mean is the least-squares linear prediction from the
+conditioning variables, and its variance is that prediction's mean squared
+error. The recursion of Levinson (J. Math. Phys. 25, 261 (1946),
+[doi:10.1002/sapm1946251261](https://doi.org/10.1002/sapm1946251261)) and
+Durbin (Rev. Int. Stat. Inst. 28, 233 (1960),
+[doi:10.2307/1401322](https://doi.org/10.2307/1401322)) solves the normal
+equations of order $m$ from those of order $m - 1$ (Makhoul, Proc. IEEE 63,
+561 (1975), [doi:10.1109/PROC.1975.9792](https://doi.org/10.1109/PROC.1975.9792)).
+The prediction errors $x_t - \hat x_t$ are $Lx$ for a lower-triangular $L$
+with ones on its diagonal, and they are independent with variances $E_t$.
+So $R = L^{-1} \mathrm{diag}(E) L^{-\top}$ and $\det R = \prod_t E_t$. (3)
+$|X_f|^2$ is the FFT of the circular autocorrelation of the padded window,
+and with $N$ zeros of padding no product wraps around. A spectrum $S \ge 0$
+on $2N$ points is the set of eigenvalues of a $2N \times 2N$ circulant
+matrix, which is therefore positive semidefinite, and $R$ is its leading
+$N \times N$ block. (4) $E[-\log \mathcal N(x; 0, 1)] = \tfrac12\ln 2\pi +
+\tfrac12 E[x^2]$.
+
+**Check.** In
+[test1_likelihood.py](https://github.com/kyoon-mit/aframe/blob/reg-dev-latest/dev/analysis/claude_tests/next_sample_checks/test1_likelihood.py)
+$\log\det R$ from a Cholesky factorization of the $8{,}192 \times 8{,}192$
+matrix equals $\sum_t \log E_t$ to the six printed decimals for all six
+spectra (mean and typical; pooled, H1 and L1), for example 8,653.057597
+(mean, pooled) and −446.431427 (typical, H1). On a 256-sample example with a
+line
+([check_formulas.py](https://github.com/kyoon-mit/aframe/blob/reg-dev-latest/dev/analysis/claude_tests/next_sample_checks/check_formulas.py),
+[output](https://github.com/kyoon-mit/aframe/blob/reg-dev-latest/dev/analysis/claude_tests/next_sample_checks/check_formulas.txt)),
+the chain rule matches SciPy's multivariate Gaussian log density to
+$6 \times 10^{-13}$, and claim 3 holds to $8 \times 10^{-17}$. Claim 4:
+1.41894.
+
+## Detection with a known template under a Gaussian model {#oct23-known-template}
+
+**Claims** (23 October update). Data $d$ are noise $n$, Gaussian with
+covariance $R$, possibly plus a known signal $h$. Let $q = h^\top R^{-1} h$.
+
+1. The likelihood ratio is $\Lambda(d) = \log p(d - h) - \log p(d) =
+   h^\top R^{-1} d - \tfrac12 q$.
+2. On noise, $\Lambda$ is Gaussian with mean $-q/2$ and variance $q$; with
+   the signal, its mean is $+q/2$ and its variance is again $q$. The
+   separation, the difference of the means divided by the noise spread, is
+   $\sqrt q$. For the same noise draw, adding $h$ raises $\Lambda$ by exactly
+   $q$.
+3. The matched-filter SNR with the true template, $\langle d, h\rangle/|h|$,
+   is $\Lambda$ for $R = I$ up to a shift and a scale that depend only on $h$.
+   On noise of covariance $R$ its spread is $\sqrt{h^\top R h}/|h|$, which
+   is 1 for white noise.
+
+**Derivation.** (1) $\log p(x) = -\tfrac12 x^\top R^{-1} x + \text{const}$,
+so $\Lambda = -\tfrac12 (d-h)^\top R^{-1} (d-h) + \tfrac12 d^\top R^{-1} d
+= h^\top R^{-1} d - \tfrac12 h^\top R^{-1} h$. (2) $h^\top R^{-1} n$ has
+mean 0 and variance $h^\top R^{-1} R R^{-1} h = q$. With $d = n + h$, the
+term $h^\top R^{-1} h = q$ is added. (3) For $R = I$,
+$\Lambda = |h|\,\langle d, h\rangle/|h| - \tfrac12|h|^2$, and
+${\rm Var}\,\langle n, h\rangle = h^\top R h$. So over draws with different $h$,
+$\Lambda$ and the SNR rank the draws differently, and one threshold per
+statistic over all draws, as in the update, is not the same test for the
+two.
+Neyman and Pearson (Phil. Trans. R. Soc. A 231, 289 (1933),
+[doi:10.1098/rsta.1933.0009](https://doi.org/10.1098/rsta.1933.0009)) showed
+that for one $h$, ranking by $\Lambda$ under the true noise distribution
+finds the most signals at every false-alarm probability.
+
+**Check.** In
+[check_formulas.py](https://github.com/kyoon-mit/aframe/blob/reg-dev-latest/dev/analysis/claude_tests/next_sample_checks/check_formulas.py)
+(200,000 draws of colored noise, a chirp-like $h$ with $q = 27.5958$), the
+noise mean is −13.7920 against $-q/2 = -13.7979$, the noise variance 27.3872,
+the signal mean 13.8038, and the separation 5.2731 against
+$\sqrt q = 5.2532$. The matched filter's spread is 0.3918 against
+$\sqrt{h^\top R h}/|h| = 0.3930$.
