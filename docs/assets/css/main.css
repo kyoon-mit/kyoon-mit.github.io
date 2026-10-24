@@ -627,13 +627,16 @@ ul, ol { margin: 0; }
 .site-footer__muted, .section__note { font-style: normal; }
 
 /* --- Glossary terms (BNS pages) -------------------------------------------- */
-.prose a.term {
+.prose a.term,
+.page__lede a.term {
   color: inherit;
   text-decoration: underline dotted var(--ink-3);
   text-underline-offset: 3px;
 }
 .prose a.term:hover,
-.prose a.term:focus-visible { color: var(--accent); text-decoration-color: var(--accent); }
+.prose a.term:focus-visible,
+.page__lede a.term:hover,
+.page__lede a.term:focus-visible { color: var(--accent); text-decoration-color: var(--accent); }
 .term-tip {
   position: absolute;
   z-index: 50;

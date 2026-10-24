@@ -1,6 +1,6 @@
 // Glossary links for BNS pages.
-// Links the first appearance of each glossary term in the page body to its
-// entry on the definitions page, and shows the short definition after 1 s of
+// Links the first appearance of each glossary term in the summary line and
+// page body to its entry on the definitions page, and shows the short definition after 1 s of
 // hover or keyboard focus. Terms come from window.BNS_GLOSSARY (built from
 // _data/glossary.yml in _includes/head.html).
 (function () {
@@ -18,7 +18,7 @@
     return false;
   }
 
-  function link(root, terms, base) {
+  function link(roots, terms, base) {
     var forms = [];
     terms.forEach(function (t) {
       (t.o ? [] : [t.n]).concat(t.a || []).forEach(function (form) {
@@ -28,11 +28,14 @@
     var byId = {};
     terms.forEach(function (t) { byId[t.id] = t; });
     var done = {};
-    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
     var nodes = [];
-    while (walker.nextNode()) nodes.push(walker.currentNode);
-    nodes.forEach(function (node) {
-      if (skipped(node, root)) return;
+    roots.forEach(function (root) {
+      var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+      while (walker.nextNode()) nodes.push({ node: walker.currentNode, root: root });
+    });
+    nodes.forEach(function (item) {
+      var node = item.node;
+      if (skipped(node, item.root)) return;
       var text = node.nodeValue;
       var pos = 0;
       while (pos < text.length) {
@@ -109,7 +112,8 @@
     var terms = window.BNS_GLOSSARY;
     var root = document.querySelector(".doc__body .prose");
     if (!terms || !root) return;
-    var byId = link(root, terms, window.BNS_GLOSSARY_URL);
+    var roots = [document.querySelector(".doc__body .page__lede"), root].filter(Boolean);
+    var byId = link(roots, terms, window.BNS_GLOSSARY_URL);
     tooltips(byId);
   }
 
