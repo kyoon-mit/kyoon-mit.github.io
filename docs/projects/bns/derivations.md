@@ -4553,3 +4553,181 @@ noise mean is −13.7920 against $-q/2 = -13.7979$, the noise variance 27.3872,
 the signal mean 13.8038, and the separation 5.2731 against
 $\sqrt q = 5.2532$. The matched filter's spread is 0.3918 against
 $\sqrt{h^\top R h}/|h| = 0.3930$.
+
+## A perfect model of independent noise, and what subtracting it leaves {#oct26-ideal-noise}
+
+**Claims** (26 October update). A window holds $N = 16{,}384$ samples
+(8,192 per detector). The data are $d = h + n$, with the whitened signal $h$
+and noise $n$ of independent unit Gaussian samples, so the SNR in the window
+is $\rho = |h|$. $\Phi$ is the unit Gaussian distribution function and
+$z_\alpha = \Phi^{-1}(1 - \alpha)$, which is 3.090 for $\alpha = 10^{-3}$.
+
+1. A perfect model of this noise predicts 0 for every sample, so the data
+   minus the predicted noise is $d$ itself.
+2. A prediction drawn at random from the same distribution, $m$,
+   independent of $n$, leaves $d - m = h + (n - m)$, whose noise has
+   variance 2 in every sample.
+3. The signal holds a share $\rho^2/(\rho^2 + N)$ of the expected power of
+   $d$, and $\rho^2/(\rho^2 + 2N)$ of that of $d - m$.
+4. With the true template, the matched filter $\langle d, h\rangle/|h|$
+   exceeds the threshold for a false-alarm probability $\alpha$ in a share
+   $\Phi(\rho - z_\alpha)$ of the windows. On $d - m$ the threshold is
+   $\sqrt2\,z_\alpha = 4.370$ and the share is
+   $\Phi\big((\rho - \sqrt2\,z_\alpha)/\sqrt2\big)$.
+5. The fitted amplitude $\langle d, h\rangle/|h|^2$ scatters about 1 with
+   spread $1/\rho$; on $d - m$ the spread is $\sqrt2/\rho$.
+6. Without the template, given only $\rho$, the best estimate of $h$ of the
+   form $a\,d$ recovers a share $\rho^2/(\rho^2 + N)$ of the signal's energy:
+   $9.8 \times 10^{-4}$ at $\rho = 4$. On $d - m$, $N$ becomes $2N$.
+
+**Derivation.** (1) The prediction with the least mean squared error is the
+conditional mean. For independent noise, the conditional mean of $n_t$
+given all earlier samples is its mean, 0. (2) $n - m$ is the difference of
+two independent unit Gaussians. (3) $E|d|^2 = |h|^2 + E|n|^2 = \rho^2 + N$.
+(4) $\langle n, h\rangle/|h|$ is a unit Gaussian, so on noise the statistic
+exceeds $z_\alpha$ with probability $\alpha$; with the signal it is $\rho$
+plus a unit Gaussian. On $d - m$ the noise term has variance 2. (5)
+$\langle d, h\rangle/|h|^2 = 1 + \langle n, h\rangle/|h|^2$, and the second
+term has spread $|h|/|h|^2 = 1/\rho$. (6) $E|a\,d - h|^2 = (1-a)^2\rho^2 +
+a^2 N$ is smallest at $a = \rho^2/(\rho^2 + N)$, where it equals
+$\rho^2 N/(\rho^2 + N)$; one minus its ratio to $\rho^2$ is
+$\rho^2/(\rho^2 + N)$.
+
+**Check.**
+[test3_white_noise.py](https://github.com/kyoon-mit/aframe/blob/reg-dev-latest/dev/analysis/claude_tests/next_sample_checks/test3_white_noise.py)
+drew the noise for 20,000 windows
+([output](https://github.com/kyoon-mit/aframe/blob/reg-dev-latest/dev/analysis/claude_tests/next_sample_checks/test3.txt)).
+The mean minus log-likelihood of the noise is 1.41896 nats per sample
+against 1.41894 ([above](#oct23-gaussian-chain-rule)). The thresholds
+measured on the noise draws are 3.111 and 4.415, against 3.090 and 4.370.
+In every SNR band the signal share, the amplitude spread and the recovered
+energy agree with the formulas evaluated window by window, for example
+$1.09 \times 10^{-3}$, 0.2382 and $1.08 \times 10^{-3}$ at SNR 4 to 4.5
+against $1.09 \times 10^{-3}$, 0.2365 and $1.09 \times 10^{-3}$. The found
+shares sit up to 1.5 points below the formula (0.8561 against 0.8711 at SNR
+4 to 4.5) because the measured thresholds came out 0.021 and 0.045 above
+$z_\alpha$ and $\sqrt2\,z_\alpha$, within their spreads of 0.066 and
+$\sqrt2 \times 0.066 = 0.094$ for 20,000 draws
+([below](#oct26-threshold-spread)).
+
+## Subtracting the predicted noise, then matched filtering, is the Gaussian likelihood ratio {#oct26-subtract-then-filter}
+
+**Claim** (26 October update). For Gaussian noise of covariance $R$, let
+$\hat d_t$ be the best linear prediction of the data sample $d_t$ from the
+earlier samples of the window and $E_t$ its mean squared error on noise, as
+in the [chain rule above](#oct23-gaussian-chain-rule), and let $\hat h_t$ be
+the same prediction applied to the template. The likelihood ratio with the
+known template ([above](#oct23-known-template)) is then
+
+$$
+\Lambda(d) = \sum_t \frac{(h_t - \hat h_t)(d_t - \hat d_t)}{E_t} - \frac{q}{2},
+\qquad q = \sum_t \frac{(h_t - \hat h_t)^2}{E_t} .
+$$
+
+So subtracting the predicted noise from the data, doing the same to the
+template, and matched filtering the two with each sample weighted by
+$1/E_t$ is the Gaussian detector of the 23 October Test 2. The prediction is
+made from the data, signal included, which is why the template goes through
+the same subtraction.
+
+**Derivation.** In the chain rule above, the prediction errors are $Lx$ for a
+lower-triangular $L$ with ones on its diagonal, and $R = L^{-1}\,
+\mathrm{diag}(E)\,L^{-\top}$. Hence $R^{-1} = L^\top \mathrm{diag}(E)^{-1}
+L$, so $h^\top R^{-1} d = (Lh)^\top \mathrm{diag}(E)^{-1} (Ld)$, with
+$(Ld)_t = d_t - \hat d_t$ and $(Lh)_t = h_t - \hat h_t$.
+
+**Check.** Item 1 of
+[oct26_checks.py](https://github.com/kyoon-mit/aframe/blob/reg-dev-latest/dev/analysis/claude_tests/gaussian_noise_checks/oct26_checks.py)
+([output](https://github.com/kyoon-mit/aframe/blob/reg-dev-latest/dev/analysis/claude_tests/gaussian_noise_checks/oct26_checks.txt)):
+on 256 samples with a damped-cosine covariance and a chirp-like template, the
+two sides agree to $2.8 \times 10^{-14}$.
+
+## How much of a series its own past predicts {#oct26-predictable-share}
+
+**Claims** (26 October update). For a zero-mean stationary series with
+autocovariance $r_k$, correlation $\rho_k = r_k/r_0$ with the sample $k$
+steps back, and spectrum $S(f)$ for $-\tfrac12 \le f \le \tfrac12$ cycles
+per sample ($\int S\,df = r_0$):
+
+1. The best linear prediction from the previous sample alone is
+   $\rho_1 x_{t-1}$. It leaves a mean squared error $r_0(1 - \rho_1^2)$, so a
+   share $\rho_1^2$ of the variance is predictable.
+2. From the previous $p$ samples the Levinson-Durbin recursion gives the
+   error $E_p$ ([above](#oct23-gaussian-chain-rule)), and the predictable
+   share is $1 - E_p/r_0$.
+3. From the infinite past the error is $\exp \int \ln S(f)\,df$, so the
+   share is $1 - \exp(\overline{\ln S})/\overline{S}$: one minus the ratio
+   of the geometric to the arithmetic mean of the spectrum. A flat spectrum
+   gives 0; a nearly empty band or strong lines give a large share.
+4. Subtracting a perfect prediction leaves the prediction error, so a
+   share of at least one minus the predictable share of the noise variance
+   remains.
+
+In the update, "20 Hz and above" means the ratio of claim 3 over the
+periodogram bins from 20 Hz up only.
+
+**Derivation.** (1) $E[(x_t - a\,x_{t-1})^2] = r_0 - 2a\,r_1 + a^2 r_0$ is
+smallest at $a = \rho_1$, where it is $r_0(1 - \rho_1^2)$. (2) This is what
+the recursion computes. (3) Kolmogorov's formula for the one-step prediction
+error from the infinite past (Brockwell and Davis, *Time Series: Theory and
+Methods*, 2nd ed., Springer 1991, section 5.8). On the bins of a
+periodogram the integral is the mean of $\ln S$ over the bins. (4) This is
+the definition of the prediction error; a predictor from a finite past can
+only do worse than the infinite past.
+
+**Check.** Item 2 of oct26_checks.py: for the series $x_t = 1.2\,x_{t-1} -
+0.5\,x_{t-2} + e_t$ with unit innovation variance, the order-1 error over
+$r_0$ is 0.360000 against $1 - \rho_1^2 = 0.360000$, and the order-2,048
+error is 1.000000 against 1.000000 from Kolmogorov's formula. On our
+whitened noise
+([correlations.py](https://github.com/kyoon-mit/aframe/blob/reg-dev-latest/dev/analysis/claude_tests/next_sample_checks/correlations.py),
+[output](https://github.com/kyoon-mit/aframe/blob/reg-dev-latest/dev/analysis/claude_tests/next_sample_checks/correlations.txt))
+the share from the 4 s past and the share from the infinite past agree to
+0.0003 (H1) and 0.0004 (L1).
+
+## The spread of a threshold set from noise draws {#oct26-threshold-spread}
+
+**Claim** (26 October update). A threshold set as the value that a fraction
+$\alpha$ of $n$ unit Gaussian noise draws exceed scatters about $z_\alpha$
+with spread $\sqrt{\alpha(1-\alpha)/n}\,/\,\phi(z_\alpha)$, where $\phi$ is
+the unit Gaussian density; for noise of spread $\sigma$ the threshold's
+spread is $\sigma$ times this: 0.066 for $\alpha = 10^{-3}$ and $n = 20{,}000$,
+0.067 for $n = 19{,}581$. For a signal at separation $\mu$ the share found,
+$\Phi(\mu - z)$, then scatters by $\phi(\mu - z_\alpha)$ times that spread:
+1.45 points at $\mu = 4.2$.
+
+**Derivation.** The sample quantile of $n$ draws from a density $p$ is
+asymptotically Gaussian about the true quantile, with variance
+$\alpha(1 - \alpha)/(n\,p^2)$ where $p$ is taken at the quantile (van der
+Vaart, *Asymptotic Statistics*, Cambridge University Press 1998, chapter
+21). The derivative of $\Phi(\mu - z)$ in $z$ is $-\phi(\mu - z)$.
+
+**Check.** Item 3 of oct26_checks.py, 4,000 sets of 19,581 draws: the
+threshold's spread is 0.0648 (formula 0.0671), and the spread of the share
+found at $\mu = 4.2$ is 0.0139 (formula 0.0145).
+
+## How often each training signal is seen {#oct26-repeat-count}
+
+**Claim** (26 October update). In a batch of 128 samples, each carrying a
+signal with probability 0.96, the number with a signal is $N \sim
+\mathrm{Binomial}(128, 0.96)$, and with $R$ copies of each signal there are
+$\lceil N/R \rceil$ distinct signals
+([supervised.py](https://github.com/kyoon-mit/aframe/blob/reg-dev-latest/projects/train/train/data/supervised/supervised.py),
+`inject`). On average this is 31.095 for $R = 4$ and 12.858 for $R = 10$:
+12,158 distinct signals per epoch of 391 batches, and 12,575 per epoch of
+978 batches. Each distinct signal is a training waveform with its own sky
+position, orientation and SNR; each copy gets its own noise and its own
+place in the window. Over $e$ epochs, each of the 200,000 training waveforms
+is drawn $12{,}158\,e/200{,}000$ times on average with $R = 4$.
+
+**Derivation.** $E\lceil N/R\rceil = \sum_k \lceil k/R\rceil \binom{128}{k}
+0.96^k\,0.04^{128-k}$. The waveforms come in chunks of 2,000 consecutive
+waveforms at a random start, and each batch takes distinct waveforms from
+the current chunk at random
+([loader.py](https://github.com/kyoon-mit/aframe/blob/reg-dev-latest/projects/train/train/data/waveforms/loader.py)),
+so the total number of draws divided by 200,000 is the mean number of draws
+per waveform. Waveforms near either end of the file fall in fewer chunks and
+are drawn less often.
+
+**Check.** Item 4 of oct26_checks.py: 200,000 simulated batches give 31.094
+and 12.857.

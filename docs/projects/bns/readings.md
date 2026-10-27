@@ -147,7 +147,10 @@ read them. If you read only two, read 3 and 6.
    and output weights change at every sample with the input. Papers:
    - A. Gu and T. Dao, "Mamba: Linear-Time Sequence Modeling with Selective
      State Spaces" (2023), [arXiv:2312.00752](https://arxiv.org/abs/2312.00752).
-     Mamba-1: the selective layer and its scan.
+     Mamba-1: the selective layer and its scan. Its appendix E.4.1 finds that
+     on long audio waveforms the selection mechanism hurts and a real state
+     does worse than a complex one, as our Mamba-2 den-reg did against S4D
+     ([26 October]({{ u | append: '2026-10-26-subtracting-noise-and-mamba-2/' | relative_url }})).
    - T. Dao and A. Gu, "Transformers are SSMs: Generalized Models and
      Efficient Algorithms Through Structured State Space Duality", ICML 2024,
      [arXiv:2405.21060](https://arxiv.org/abs/2405.21060). Mamba-2: one real

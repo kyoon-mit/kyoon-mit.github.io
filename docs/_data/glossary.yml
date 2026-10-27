@@ -3702,3 +3702,45 @@
   source: >-
     Our method; see the [derivation](/projects/bns/derivations/#oct20-gaussian-denoiser)
     and the update of [20 October](/projects/bns/updates/2026-10-20-slic-noise-score-on-bns/).
+
+# --- Subtracting the noise; S4D and Mamba-2 (26 October) -----------------------
+
+- id: mamba-2-head
+  term: Mamba-2 head
+  also: [Mamba-2 heads]
+  group: State-space models
+  short: >-
+    A group of channels in a Mamba-2 layer that share one decay rate and, at
+    each sample, one step size. A layer of inner width w and head size p has
+    w/p heads. In our layers all channels also share one B and one C, so the
+    heads are a layer's only distinct decay rates.
+  source: >-
+    Dao and Gu, ICML 2024, [arXiv:2405.21060](https://arxiv.org/abs/2405.21060);
+    see the update of [26 October](/projects/bns/updates/2026-10-26-subtracting-noise-and-mamba-2/).
+
+- id: kolmogorov-formula
+  term: Kolmogorov's formula
+  also: [Kolmogorov–Szegő formula, Kolmogorov-Szego formula]
+  group: Statistics
+  short: >-
+    The mean squared error of predicting a stationary series one step ahead
+    from its whole past: the exponential of the average of the log spectrum.
+    A flat spectrum cannot be predicted at all; an uneven one, with lines or
+    an empty band, partly can.
+  source: >-
+    Brockwell and Davis, *Time Series: Theory and Methods*, 2nd ed.
+    (Springer, 1991), section 5.8, "Kolmogorov's Formula"; see the
+    [derivation](/projects/bns/derivations/#oct26-predictable-share).
+
+- id: periodogram
+  term: periodogram
+  also: [periodograms]
+  group: Signal processing
+  short: >-
+    The squared magnitude of the Fourier transform of a stretch of data,
+    divided by its length: a raw estimate of the spectrum at each frequency
+    bin.
+  source: >-
+    Brockwell and Davis, *Time Series: Theory and Methods*, 2nd ed.
+    (Springer, 1991), chapter "Inference for the Spectrum of a Stationary
+    Process".

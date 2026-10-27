@@ -285,6 +285,17 @@ than the matched filter in clean windows: on pure noise it scatters 4.2 to
 raises no false alarm. A better average likelihood per sample did not make a
 better detector.
 
+Subtracting the noise that a model predicts cannot help in ideal noise,
+where a perfect model of independent samples predicts 0; in our whitened
+noise the past predicts 24.7% (H1) and 12.2% (L1) of a sample's variance,
+and subtracting that prediction before the matched filter is exactly the
+Gaussian detector
+([26 October]({{ '/projects/bns/updates/2026-10-26-subtracting-noise-and-mamba-2/' | relative_url }})).
+Trained on Gaussian copies of our noise, the S4D den-reg did no better than
+in real noise, and it did as well on validation waveforms as on its training
+ones. A Mamba-2 den-reg, whose filters change with the input and whose state
+only decays, did worse than S4D at every SNR.
+
 ### What comes next
 
 - **The next-sample model as a detector:** thresholds set for one template
@@ -296,6 +307,9 @@ better detector.
 - **Learned kernels that are chirps:** the free-kernel network at 2048 Hz and
   trained from SNR 4 (running), with a χ² test and a detection score.
 - **Layers whose frequency follows the input,** such as Mamba with a complex
-  state, or a learned warp of the time axis.
+  state, or a learned warp of the time axis. Mamba-2, with a real state and
+  2 heads per layer, did worse than S4D.
+- **Ten copies of each signal, training from SNR 6,** for S4D and Mamba-2 in
+  Gaussian noise (running).
 - **Sky localization** with three detectors, and before the merger, once the
   low-SNR question is settled.

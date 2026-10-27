@@ -9,7 +9,8 @@ reference-event figure into docs/assets/img/bns/live/.
 
     uv run --script tools/bns_live.py
 
-Add or retire runs in RUNS below.
+Add or retire runs in RUNS below. `run` is the run's name and folder; `id`
+is its Weights and Biases id when that differs from the name.
 """
 
 from datetime import datetime
@@ -37,6 +38,32 @@ P8_METRICS = [
 ]
 
 RUNS = [
+    dict(
+        key="gauss_s4d_rep10",
+        title="BNS: S4D den-reg in Gaussian noise, each signal ×10, training from SNR 6",
+        project="CLAUDE-TESTS",
+        run="den_reg_rep_10_s4d_gaussian_c_rho_5_lambda_amp_3_train_snr6_prob0.96",
+        id="m8pk2hb8",
+        figures="claude_tests/{run}/reference_events",
+        rows=(10, [0, 4]),
+        max_epochs=800,
+        metrics=BNS_METRICS,
+        update="/projects/bns/updates/2026-10-26-subtracting-noise-and-mamba-2/",
+        note="Validates on Gaussian copies with SNR density ∝ SNR⁻⁴ from 4, so overall numbers are not comparable with runs validated on ∝ SNR⁻³. The reference events shown are in real noise.",
+    ),
+    dict(
+        key="gauss_mamba2_rep10",
+        title="BNS: Mamba-2 den-reg in Gaussian noise, each signal ×10, training from SNR 6",
+        project="CLAUDE-TESTS",
+        run="den_reg_rep_10_mamba2_gaussian_c_rho_5_lambda_amp_3_train_snr6_prob0.96",
+        id="eugsf3vi",
+        figures="claude_tests/{run}/reference_events",
+        rows=(10, [0, 4]),
+        max_epochs=800,
+        metrics=BNS_METRICS,
+        update="/projects/bns/updates/2026-10-26-subtracting-noise-and-mamba-2/",
+        note="Same as the S4D run above with each S4D layer replaced by a Mamba-2 layer (2 heads per layer). The reference events shown are in real noise.",
+    ),
     dict(
         key="bns_recipe",
         title="BNS: Project 8 recipe, 128/6, chirp mass + mass ratio",
@@ -113,7 +140,7 @@ def main():
     entity = api.default_entity
     rows = []
     for spec in RUNS:
-        run = api.run(f"{entity}/{spec['project']}/{spec['run']}")
+        run = api.run(f"{entity}/{spec['project']}/{spec.get('id', spec['run'])}")
         summary = run.summary
         metrics = []
         for key, label, fmt in spec["metrics"]:

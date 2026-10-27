@@ -1,22 +1,58 @@
-updated: 5 October 2026, 10:19 EDT
+updated: 26 October 2026, 22:23 EDT
 runs:
-- key: bns_recipe
-  title: 'BNS: Project 8 recipe, 128/6, chirp mass + mass ratio'
+- key: gauss_s4d_rep10
+  title: 'BNS: S4D den-reg in Gaussian noise, each signal ×10, training from SNR 6'
   state: running
-  started: '2026-10-01'
-  epoch: 634
+  started: '2026-10-27'
+  epoch: 1
   max_epochs: 800
   metrics:
   - label: overlap rho
-    value: '0.311'
+    value: '0.008'
   - label: within 2%
-    value: 29.4%
+    value: 2.7%
   - label: within 5%
-    value: 46.8%
+    value: 6.5%
   - label: R² chirp mass
-    value: '0.452'
+    value: '-0.620'
   - label: R² mass ratio
-    value: '0.077'
+    value: '-0.037'
+  figure:
+    src: /assets/img/bns/live/gauss_s4d_rep10.png
+    epoch: 0
+  update: /projects/bns/updates/2026-10-26-subtracting-noise-and-mamba-2/
+  note: Validates on Gaussian copies with SNR density ∝ SNR⁻⁴ from 4, so overall numbers
+    are not comparable with runs validated on ∝ SNR⁻³. The reference events shown
+    are in real noise.
+- key: gauss_mamba2_rep10
+  title: 'BNS: Mamba-2 den-reg in Gaussian noise, each signal ×10, training from SNR
+    6'
+  state: running
+  started: '2026-10-27'
+  epoch: 0
+  max_epochs: 800
+  metrics: []
+  figure: null
+  update: /projects/bns/updates/2026-10-26-subtracting-noise-and-mamba-2/
+  note: Same as the S4D run above with each S4D layer replaced by a Mamba-2 layer
+    (2 heads per layer). The reference events shown are in real noise.
+- key: bns_recipe
+  title: 'BNS: Project 8 recipe, 128/6, chirp mass + mass ratio'
+  state: failed
+  started: '2026-10-01'
+  epoch: 635
+  max_epochs: 800
+  metrics:
+  - label: overlap rho
+    value: '0.353'
+  - label: within 2%
+    value: 37.2%
+  - label: within 5%
+    value: 49.4%
+  - label: R² chirp mass
+    value: '0.547'
+  - label: R² mass ratio
+    value: '0.047'
   figure:
     src: /assets/img/bns/live/bns_recipe.png
     epoch: 630
@@ -43,22 +79,22 @@ runs:
   note: Power-law SNR (index −3). The run the new recipe is compared against.
 - key: p8_size
   title: 'Project 8: model size, 128/6, stored cavity noise'
-  state: running
+  state: failed
   started: '2026-09-29'
-  epoch: 301
+  epoch: 312
   max_epochs: 1000
   metrics:
   - label: overlap rho
-    value: '0.718'
+    value: '0.710'
   - label: RMSE (eV)
-    value: '22.29'
+    value: '22.48'
   - label: R² energy
-    value: '0.408'
+    value: '0.398'
   - label: within 2 eV
-    value: 7.7%
+    value: 7.8%
   figure:
     src: /assets/img/bns/live/p8_size.png
-    epoch: 300
+    epoch: 310
   update: /projects/bns/updates/2026-09-29-den-reg-and-project-8/
   note: Regressor switched on at epoch 200, full weight at 400.
 - key: p8_noise
@@ -78,6 +114,6 @@ runs:
     value: 9.6%
   figure:
     src: /assets/img/bns/live/p8_noise.png
-    epoch: 198
+    epoch: 218
   update: /projects/bns/updates/2026-09-29-den-reg-and-project-8/
   note: Regressor ramped in over epochs 40 to 80.
