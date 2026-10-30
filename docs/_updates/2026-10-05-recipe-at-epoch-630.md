@@ -1,5 +1,5 @@
 ---
-title: The Project 8 recipe at epoch 630
+title: "Larger denoiser plus regressor: better at SNR 8 to 25 (53% vs 42% within 2% at SNR 12 to 16), no gain below SNR 8"
 date: 2026-10-05
 tags: [denoising, regression]
 summary: >-

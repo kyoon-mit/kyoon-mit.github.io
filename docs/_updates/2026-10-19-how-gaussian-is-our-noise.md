@@ -1,5 +1,5 @@
 ---
-title: "How Gaussian is the noise our networks see?"
+title: "Whitened O3 noise is not Gaussian: lines up to 2,081 times the white level, 6.5 to 11.9 windows per hour beyond 8"
 date: 2026-10-19
 tags: [noise, classification]
 math: true

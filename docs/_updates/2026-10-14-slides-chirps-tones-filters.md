@@ -1,5 +1,5 @@
 ---
-title: "Slides: chirps, tones and learned filters"
+title: "Slides: S4D's fixed tones suit Project 8, not neutron-star chirps (tone count, clean-signal gap later corrected)"
 date: 2026-10-14
 tags: [s4d, cnn]
 math: true

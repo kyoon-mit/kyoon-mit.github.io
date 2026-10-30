@@ -1,5 +1,5 @@
 ---
-title: "Chirp kernels work: close to matched-filter accuracy from SNR 10"
+title: "512 Newtonian chirps as a network's first layer: 96 to 100% within 2% from SNR 10, near the matched filter"
 date: 2026-10-08
 tags: [matched-filter, regression]
 math: true

@@ -1,5 +1,5 @@
 ---
-title: Denoiser scans, conditioning and heterodyning
+title: "S4D denoiser, uniform SNR 4 to 100: overlap 0.797 with the true waveform; true parameters as input add under 0.01"
 date: 2026-09-23
 tags: [denoising]
 summary: >-

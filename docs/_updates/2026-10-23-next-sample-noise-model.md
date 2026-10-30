@@ -1,5 +1,5 @@
 ---
-title: "A next-sample noise model: a better likelihood, a worse detector"
+title: "An S4D noise model beats a Gaussian on likelihood but finds 0.2% of signals (matched filter: 91.9%)"
 date: 2026-10-23
 tags: [noise, detection, s4d, matched-filter]
 math: true

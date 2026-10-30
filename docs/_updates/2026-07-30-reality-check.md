@@ -1,5 +1,5 @@
 ---
-title: "The reality check: a power-law SNR population"
+title: "On a power-law SNR population (75.5% below SNR 8), chirp-mass estimates fall toward the prior; detection AUC 0.959 to 0.665"
 date: 2026-07-30
 tags: [regression, detection, s4d]
 summary: >-

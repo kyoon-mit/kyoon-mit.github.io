@@ -1,5 +1,5 @@
 ---
-title: A matched filter on the same windows the network sees
+title: "Matched filter on the network's own test windows: 96 to 99% within 2% at SNR 8 to 12, network 16 to 29%"
 date: 2026-10-07
 tags: [matched-filter, regression, detection]
 math: true

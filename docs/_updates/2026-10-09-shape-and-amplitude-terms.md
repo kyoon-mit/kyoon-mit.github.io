@@ -1,5 +1,5 @@
 ---
-title: The denoiser's shape and amplitude terms matter
+title: "Shape and amplitude terms in the denoiser loss: overlap 0.06 to 0.19, same chirp-mass accuracy in under half the epochs"
 date: 2026-10-09
 tags: [denoising, regression]
 summary: >-

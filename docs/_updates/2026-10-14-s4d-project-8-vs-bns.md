@@ -1,5 +1,5 @@
 ---
-title: "Major finding: why S4D suits Project 8 and not binary neutron stars"
+title: "Why S4D's fixed-frequency tones suit Project 8 but not binary neutron star chirps (partly corrected 16 Oct)"
 date: 2026-10-14
 tags: [s4d, project-8]
 math: true

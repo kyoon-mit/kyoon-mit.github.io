@@ -1,5 +1,5 @@
 ---
-title: The joint model on a power-law SNR population, and Project 8 as a test bed
+title: "Denoiser plus regressor trained together: 78 to 97% within 2% of chirp mass above SNR 16, 5 to 8% below SNR 8"
 date: 2026-09-29
 tags: [denoising, regression, project-8]
 summary: >-

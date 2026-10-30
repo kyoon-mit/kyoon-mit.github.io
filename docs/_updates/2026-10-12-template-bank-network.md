@@ -1,5 +1,5 @@
 ---
-title: "The matched filter as a network: the reference, and why den-reg cannot reach it"
+title: "Template bank written as a network: 95 to 96% within 1% at SNR 8 to 12; denoiser plus regressor 17 to 28%"
 date: 2026-10-12
 tags: [matched-filter, regression]
 math: true

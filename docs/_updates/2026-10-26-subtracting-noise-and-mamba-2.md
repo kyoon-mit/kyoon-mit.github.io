@@ -1,5 +1,5 @@
 ---
-title: "Subtracting the noise in ideal noise, and S4D against Mamba-2 in Gaussian noise"
+title: "Gaussian noise does not help our S4D denoiser and regressor: 11.9% within 1%, 12.3% in real noise; Mamba-2 worse"
 date: 2026-10-26
 tags: [noise, denoising, regression, s4d, detection, matched-filter]
 math: true

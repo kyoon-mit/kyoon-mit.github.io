@@ -1,5 +1,5 @@
 ---
-title: "The den-reg run, finished: better at SNR 8 to 16, biased above 25"
+title: "Denoiser plus regressor trained together, 800 epochs: +7 to 12 points within 1% at SNR 8 to 16, biased above SNR 25"
 date: 2026-10-14
 tags: [denoising, regression]
 summary: >-

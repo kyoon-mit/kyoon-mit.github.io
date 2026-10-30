@@ -1,5 +1,5 @@
 ---
-title: Carrying the Project 8 recipe to BNS
+title: "Run started: larger denoiser plus regressor, each waveform in four noise backgrounds, as in Project 8 training"
 date: 2026-10-01
 tags: [denoising, regression]
 summary: >-

@@ -1,5 +1,5 @@
 ---
-title: "What an S4D channel computes: resonators, delays, and a withdrawn explanation"
+title: "To match a chirp, one S4D channel needs at least as many tones as 3/8 of its cycles; one explanation withdrawn"
 date: 2026-10-16
 tags: [s4d]
 math: true

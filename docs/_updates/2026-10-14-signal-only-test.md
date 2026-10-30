@@ -1,5 +1,5 @@
 ---
-title: "Without noise: free kernels learn chirp mass, plain S4D does not"
+title: "Clean signals, 14 Oct: S4D 33 to 54% within 1%, one-layer CNN 99.7% (S4D result withdrawn 16 Oct: dropout)"
 date: 2026-10-14
 tags: [regression, cnn, s4d]
 summary: >-

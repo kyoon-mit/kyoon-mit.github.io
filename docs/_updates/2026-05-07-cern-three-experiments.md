@@ -1,5 +1,5 @@
 ---
-title: Three experiments, presented at CERN
+title: "70K-parameter S4D: half of events within 5% of chirp mass at SNR 13 (CERN talk; SNR calculation later found wrong)"
 date: 2026-05-07
 tags: [regression, s4d]
 summary: >-

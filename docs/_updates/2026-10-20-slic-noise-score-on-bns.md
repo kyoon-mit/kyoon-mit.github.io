@@ -1,5 +1,5 @@
 ---
-title: "A learned noise model on our windows, and why its sampler is too slow"
+title: "A diffusion model of our noise beats a Gaussian in 84.5% of windows; sampling 400 windows would take 79.9 days"
 date: 2026-10-20
 tags: [noise]
 math: true

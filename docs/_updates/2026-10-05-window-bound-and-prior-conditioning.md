@@ -1,5 +1,5 @@
 ---
-title: How much the window holds, and how DINGO-BNS and AFRAME reach low SNR
+title: "Cramér–Rao bound: our 4 s window allows 0.39% chirp-mass error at SNR 4 to 6, so the window is not the limit"
 date: 2026-10-05
 tags: [regression]
 summary: >-

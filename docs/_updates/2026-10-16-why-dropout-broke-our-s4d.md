@@ -1,5 +1,5 @@
 ---
-title: "Why dropout broke our S4D chirp-mass regressor"
+title: "Why dropout broke our S4D on clean signals: 16.0 to 36.9% within 1% with it, 99.9% without"
 date: 2026-10-16
 tags: [s4d, regression]
 math: true

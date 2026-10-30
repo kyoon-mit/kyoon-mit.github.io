@@ -1,5 +1,5 @@
 ---
-title: The denoiser loss was measuring the wrong thing
+title: "Denoiser output a pulse at the window edge; a loss on shape and gain separately lifts overlap 0.007 to 0.34"
 date: 2026-09-08
 tags: [denoising]
 summary: >-

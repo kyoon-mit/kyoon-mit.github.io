@@ -1,14 +1,14 @@
 ---
-title: "Status: dropout was the bug; every network reads clean chirps"
+title: "Clean signals with dropout off: every network reaches about 100% within 1%"
 date: 2026-10-16
 tags: [s4d, cnn, regression]
 summary: >-
   Our S4D regressors failed on clean signals because of dropout, not because
   of S4D or of averaging over time. With dropout off, S4D, aframe's ResNet, a
   dilated CNN and free kernels all put 99.7 to 100% of clean validation events
-  within 1% of the true chirp mass. The time-warp table is being redone at
-  dropout 0, each run trained until it stops improving. Partial results, the
-  stopping rule, links to every run, and open questions from Claude.
+  within 1% of the true chirp mass. The time-warp table, redone at dropout 0:
+  every cell reaches 90.6% or more within 1% (final values added 30 October).
+  The stopping rule, links to every run, and open questions from Claude.
 ---
 
 {%- assign u = '/projects/bns/updates/' -%}
@@ -88,28 +88,30 @@ warped so the leading-order chirp becomes a steady oscillation
 our data allow, ending 25.0 to 25.5 s before the merger
 ([derivation]({{ d | relative_url }}#oct16-merger-position)), warped and
 sampled at 256 Hz. All twelve
-runs had dropout 0.2. Since dropout is the bug, the table is being redone with
-dropout 0 and nothing else changed. Best so far, within 1 / 2 / 5 / 10%, at
-the epoch with the best within 1%. "Done" means the stopping rule below ended
-the run; "paused at" gives the last epoch it reached:
+runs had dropout 0.2. Since dropout is the bug, the table was redone with
+dropout 0 and nothing else changed. Final values (updated 30 October from the
+training logs), within 1 / 2 / 5 / 10%, at the epoch with the best within 1%.
+"Done" means the stopping rule below ended the run; "crashed" means a crash
+ended it first; "epoch limit" means the run was given a fixed limit of 60 or
+160 epochs instead of the rule. Runs that crashed or hit a limit may not have
+reached their best:
 
 <div markdown="1">
 
 | ending | merger | merger, warped | 25.0 to 25.5 s before merger, warped |
 |---|---|---|---|
-| real, mean over time | 99.9 / 100 / 100 / 100, epoch 151, paused at 244 [log](https://wandb.ai/kyoon-mit-massachusetts-institute-of-technology/CLAUDE-TESTS/runs/sig_only_reg_s4d_dropout0_64x32x4) | 94.2 / 99.3 / 100 / 100, epoch 108, paused at 110 [log](https://wandb.ai/kyoon-mit-massachusetts-institute-of-technology/CLAUDE-TESTS/runs/sig_only_reg_s4d_dropout0_64x32x4_warp_merger) | 100 / 100 / 100 / 100, epoch 99, done [log](https://wandb.ai/kyoon-mit-massachusetts-institute-of-technology/CLAUDE-TESTS/runs/sig_only_reg_s4d_dropout0_64x32x4_warp_premerger) |
-| real, maximum over time | 99.9 / 99.9 / 100 / 100, epoch 198, done [log](https://wandb.ai/kyoon-mit-massachusetts-institute-of-technology/CLAUDE-TESTS/runs/sig_only_reg_s4d_max_dropout0_64x32x4) | 62.8 / 90.3 / 99.1 / 100, epoch 24, paused at 24 [log](https://wandb.ai/kyoon-mit-massachusetts-institute-of-technology/CLAUDE-TESTS/runs/sig_only_reg_s4d_max_dropout0_64x32x4_warp_merger) | 100 / 100 / 100 / 100, epoch 207, paused at 273 [log](https://wandb.ai/kyoon-mit-massachusetts-institute-of-technology/CLAUDE-TESTS/runs/sig_only_reg_s4d_max_dropout0_64x32x4_warp_premerger) |
-| complex, mean over time | 63.0 / 90.0 / 98.8 / 99.8, epoch 5, paused at 5 [log](https://wandb.ai/kyoon-mit-massachusetts-institute-of-technology/CLAUDE-TESTS/runs/sig_only_reg_s4d_complex_mean_dropout0_64x32x4) | 18.6 / 37.1 / 79.6 / 98.1, epoch 3, paused at 4 [log](https://wandb.ai/kyoon-mit-massachusetts-institute-of-technology/CLAUDE-TESTS/runs/sig_only_reg_s4d_complex_mean_dropout0_64x32x4_warp_merger) | 93.3 / 98.6 / 99.8 / 99.9, epoch 5, paused at 5 [log](https://wandb.ai/kyoon-mit-massachusetts-institute-of-technology/CLAUDE-TESTS/runs/sig_only_reg_s4d_complex_mean_dropout0_64x32x4_warp_premerger) |
-| complex, energy and maximum | 31.1 / 54.2 / 89.3 / 98.0, epoch 2, paused at 2 [log](https://wandb.ai/kyoon-mit-massachusetts-institute-of-technology/CLAUDE-TESTS/runs/sig_only_reg_s4d_complex_energy_max_dropout0_64x32x4) | 18.7 / 33.9 / 68.5 / 93.5, epoch 2, paused at 2 [log](https://wandb.ai/kyoon-mit-massachusetts-institute-of-technology/CLAUDE-TESTS/runs/sig_only_reg_s4d_complex_energy_max_dropout0_64x32x4_warp_merger) | 40.0 / 66.9 / 90.2 / 97.1, epoch 1, paused at 1 [log](https://wandb.ai/kyoon-mit-massachusetts-institute-of-technology/CLAUDE-TESTS/runs/sig_only_reg_s4d_complex_energy_max_dropout0_64x32x4_warp_premerger) |
+| real, mean over time | 99.9 / 100 / 100 / 100, best at epoch 235, ran to 244, crashed [log](https://wandb.ai/kyoon-mit-massachusetts-institute-of-technology/CLAUDE-TESTS/runs/sig_only_reg_s4d_dropout0_64x32x4) | 94.2 / 99.3 / 100 / 100, best at epoch 108, ran to 110, crashed [log](https://wandb.ai/kyoon-mit-massachusetts-institute-of-technology/CLAUDE-TESTS/runs/sig_only_reg_s4d_dropout0_64x32x4_warp_merger) | 100 / 100 / 100 / 100, best at epoch 99, ran to 179, done [log](https://wandb.ai/kyoon-mit-massachusetts-institute-of-technology/CLAUDE-TESTS/runs/sig_only_reg_s4d_dropout0_64x32x4_warp_premerger) |
+| real, maximum over time | 99.9 / 100 / 100 / 100, best at epoch 285, ran to 289, done [log](https://wandb.ai/kyoon-mit-massachusetts-institute-of-technology/CLAUDE-TESTS/runs/sig_only_reg_s4d_max_dropout0_64x32x4) | 98.0 / 99.4 / 100 / 100, best at epoch 121, ran to 149, crashed [log](https://wandb.ai/kyoon-mit-massachusetts-institute-of-technology/CLAUDE-TESTS/runs/sig_only_reg_s4d_max_dropout0_64x32x4_warp_merger) | 100 / 100 / 100 / 100, best at epoch 261, ran to 274, crashed [log](https://wandb.ai/kyoon-mit-massachusetts-institute-of-technology/CLAUDE-TESTS/runs/sig_only_reg_s4d_max_dropout0_64x32x4_warp_premerger) |
+| complex, mean over time | 98.6 / 100 / 100 / 100, best at epoch 57, ran to 59, epoch limit [log](https://wandb.ai/kyoon-mit-massachusetts-institute-of-technology/CLAUDE-TESTS/runs/sig_only_reg_s4d_complex_mean_dropout0_64x32x4) | 90.6 / 98.5 / 99.8 / 100, best at epoch 159, ran to 159, epoch limit [log](https://wandb.ai/kyoon-mit-massachusetts-institute-of-technology/CLAUDE-TESTS/runs/sig_only_reg_s4d_complex_mean_dropout0_64x32x4_warp_merger) | 100 / 100 / 100 / 100, best at epoch 42, ran to 59, epoch limit [log](https://wandb.ai/kyoon-mit-massachusetts-institute-of-technology/CLAUDE-TESTS/runs/sig_only_reg_s4d_complex_mean_dropout0_64x32x4_warp_premerger) |
+| complex, energy and maximum | 97.8 / 99.9 / 100 / 100, best at epoch 46, ran to 59, epoch limit [log](https://wandb.ai/kyoon-mit-massachusetts-institute-of-technology/CLAUDE-TESTS/runs/sig_only_reg_s4d_complex_energy_max_dropout0_64x32x4) | 95.4 / 99.1 / 99.9 / 100, best at epoch 117, ran to 148, crashed [log](https://wandb.ai/kyoon-mit-massachusetts-institute-of-technology/CLAUDE-TESTS/runs/sig_only_reg_s4d_complex_energy_max_dropout0_64x32x4_warp_merger) | 99.7 / 99.9 / 100 / 100, best at epoch 36, ran to 59, epoch limit [log](https://wandb.ai/kyoon-mit-massachusetts-institute-of-technology/CLAUDE-TESTS/runs/sig_only_reg_s4d_complex_energy_max_dropout0_64x32x4_warp_premerger) |
 
 </div>
 
-Training is paused. Values were read from the training logs when it stopped,
-on 16 October at 12:05. The complex rows had trained only 1 to 5 epochs, so
-they say nothing yet. So far the warped merger window is the only input that
-slows the network down; the unwarped merger window and the warped early window
-both reach 100% or 99.9%. With dropout 0.2 the complex endings had reached
-97.5% (energy and maximum) and 80.2% (mean) on the merger window.
+Every cell reaches 90.6% or more within 1%. In every row the warped merger
+window is the lowest (90.6 to 98.0%), against 97.8 to 99.9% for the merger
+window as it is and 99.7 to 100% for the warped early window. With dropout 0.2
+the complex endings had reached 97.5% (energy and maximum) and 80.2% (mean) on
+the merger window.
 
 ## Trained until it stops improving
 
@@ -124,7 +126,7 @@ rescoring each best checkpoint on fresh windows would remove that bias
 
 ## Next
 
-The remaining cells of the table, once training resumes. Our den-reg, the main
+The table is complete (30 October). Our den-reg, the main
 S4D model in noise, also used dropout 0.2, so its noisy results are suspect
 too (question 2 below).
 

@@ -1,5 +1,5 @@
 ---
-title: "From damped tones to chirps: a state-space layer built for inspirals"
+title: "Proposal: filters shaped as Newtonian chirps with learned chirp mass, then the matched filter's energy and maximum"
 date: 2026-10-07
 tags: [s4d, matched-filter]
 math: true

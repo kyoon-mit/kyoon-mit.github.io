@@ -1,5 +1,5 @@
 ---
-title: Why denoising does not detect, and where Project 8 loses its core
+title: "Denoiser plus regressor trained together, as a detector: 1 to 6% of matched-filter searches' sensitive volume"
 date: 2026-10-07
 tags: [denoising, detection, project-8]
 summary: >-

@@ -1,5 +1,5 @@
 ---
-title: "Without templates: one layer of learned long kernels learns the chirps"
+title: "One-layer CNN with 4 s kernels: 71 to 77% within 1% at SNR 8 to 12, equal to the template bank above SNR 16"
 date: 2026-10-13
 tags: [cnn, regression]
 math: true

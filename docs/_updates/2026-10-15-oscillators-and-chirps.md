@@ -1,5 +1,5 @@
 ---
-title: "Oscillators and chirps: why one S4D layer is a poor fit for a weak chirp"
+title: "Why one S4D channel needs at least 115 tones to follow a 4 s chirp"
 date: 2026-10-15
 tags: [s4d, cnn]
 math: true
