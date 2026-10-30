@@ -69,7 +69,10 @@ cooling may depend on temperature, and rewrote the training loop so that each
 ramp carries equal weight and the $I^{\ast}$ loss is applied at every reading. For
 constant cooling, the reimplemented solver reproduced the original $I^{\ast}$
 exactly on 20 random tape conditions. The network architecture and optimizer
-settings are those of the original.
+settings are those of the original. Our code is in
+[`results/randomized_ramps`](https://github.com/kyoon-mit/quench_detector/tree/3876c75/results/randomized_ramps)
+of a private fork of that code base (commit `3876c75`), whose `FORK.md` lists
+what is original and what is ours.
 
 ### Simulated tape
 
