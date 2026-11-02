@@ -1,0 +1,95 @@
+---
+layout: default
+title: Blog
+permalink: /blog/
+math: true
+summary: >-
+  Self-study notes: summaries of papers, and of concepts in physics,
+  engineering, programming, machine learning and computer science.
+---
+{%- assign posts = site.posts -%}
+<div class="wrap page blog">
+  <header class="page__head">
+    <h1 class="page__title">{{ page.title }}</h1>
+    <p class="page__lede">{{ page.summary }}</p>
+  </header>
+
+  {%- if posts.size > 0 -%}
+  {%- comment -%}
+    A filter row is shown only when one of its buttons would narrow the list,
+    and a button only when at least one post has that kind or field.
+    `fields` may be written as a list or as one word.
+  {%- endcomment -%}
+  {%- assign kind_row = false -%}
+  {%- for k in site.data.blog.kinds -%}
+    {%- assign n = posts | where: "kind", k.key | size -%}
+    {%- if n > 0 and n < posts.size -%}{%- assign kind_row = true -%}{%- endif -%}
+  {%- endfor -%}
+  {%- assign field_row = false -%}
+  {%- for f in site.data.blog.fields -%}
+    {%- assign n = 0 -%}
+    {%- for p in posts -%}
+      {%- assign pf = p.fields | join: ' ' | split: ' ' -%}
+      {%- if pf contains f.key -%}{%- assign n = n | plus: 1 -%}{%- endif -%}
+    {%- endfor -%}
+    {%- if n > 0 and n < posts.size -%}{%- assign field_row = true -%}{%- endif -%}
+  {%- endfor -%}
+
+  {%- if kind_row or field_row %}
+  <div class="blog-filters" data-blog-filters hidden>
+    {%- if kind_row %}
+    <div class="blog-filters__row" role="group" aria-labelledby="blog-filter-kind">
+      <span class="blog-filters__label" id="blog-filter-kind">Kind</span>
+      <div class="blog-filters__buttons">
+        <button type="button" class="blog-filter" data-group="kind" data-value="" aria-pressed="true">All</button>
+        {%- for k in site.data.blog.kinds -%}
+          {%- assign n = posts | where: "kind", k.key | size -%}
+          {%- if n > 0 %}
+        <button type="button" class="blog-filter" data-group="kind" data-value="{{ k.key }}" aria-pressed="false">{{ k.plural | default: k.label }} <span class="blog-filter__n">{{ n }}</span></button>
+          {%- endif -%}
+        {%- endfor %}
+      </div>
+    </div>
+    {%- endif -%}
+    {%- if field_row %}
+    <div class="blog-filters__row" role="group" aria-labelledby="blog-filter-field">
+      <span class="blog-filters__label" id="blog-filter-field">Field</span>
+      <div class="blog-filters__buttons">
+        <button type="button" class="blog-filter" data-group="field" data-value="" aria-pressed="true">All</button>
+        {%- for f in site.data.blog.fields -%}
+          {%- assign n = 0 -%}
+          {%- for p in posts -%}
+            {%- assign pf = p.fields | join: ' ' | split: ' ' -%}
+            {%- if pf contains f.key -%}{%- assign n = n | plus: 1 -%}{%- endif -%}
+          {%- endfor -%}
+          {%- if n > 0 %}
+        <button type="button" class="blog-filter" data-group="field" data-value="{{ f.key }}" aria-pressed="false">{{ f.label }} <span class="blog-filter__n">{{ n }}</span></button>
+          {%- endif -%}
+        {%- endfor %}
+      </div>
+    </div>
+    {%- endif %}
+  </div>
+  {%- endif %}
+
+  <ol class="blog-list">
+    {%- for p in posts -%}
+      {%- if p.kind -%}{%- assign k = site.data.blog.kinds | where: "key", p.kind | first -%}{%- else -%}{%- assign k = nil -%}{%- endif -%}
+      {%- assign lede = p.description | default: p.summary %}
+    <li class="blog-list__item" data-kind="{{ p.kind }}" data-fields="{{ p.fields | join: ' ' }}">
+      <a class="blog-list__link" href="{{ p.url | relative_url }}">
+        <span class="blog-list__meta"><time datetime="{{ p.date | date_to_xmlschema }}">{{ p.date | date: "%b %-d, %Y" }}</time>{% if k %} · {{ k.label }}{% endif %}</span>
+        <span class="blog-list__title">{{ p.title | escape }}</span>
+        {%- include blog-fields.html fields=p.fields -%}
+        {%- if lede %}<span class="blog-list__summary">{{ lede | replace: '<', '&lt;' | replace: '|', '&#124;' | markdownify | remove: '<p>' | remove: '</p>' | strip }}</span>{% endif %}
+      </a>
+    </li>
+    {%- endfor %}
+  </ol>
+  <p class="blog-empty" data-blog-none role="status"></p>
+  <p class="blog-feed"><a href="{{ '/feed.xml' | relative_url }}">Feed</a></p>
+  <script defer src="{{ '/assets/js/blog.js' | relative_url }}"></script>
+  {%- else %}
+  <p class="blog-empty">No posts yet.</p>
+  {%- endif %}
+</div>

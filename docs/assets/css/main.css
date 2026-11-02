@@ -46,6 +46,17 @@
   --tag-project-8:      #5d6b80;
   --tag-noise:          #0f1e33;
 
+  /* blog pens (_layouts/post.html): text colors for posts, reusing the colors
+     above; highlighters and boxes mix them with --paper */
+  --pen-blue:    var(--verdict);
+  --pen-red:     var(--warn);
+  --pen-green:   var(--rebuttal);
+  --pen-purple:  var(--tag-classification);
+  --pen-teal:    var(--tag-s4d);
+  --pen-magenta: var(--tag-cnn);
+  --pen-navy:    var(--accent);   /* theorem box and code keywords, not a pen */
+  --pen-pencil:  var(--ink-3);
+
   /* the wash that covers artwork on hover */
   --wash: rgba(11, 30, 58, .9);
 
@@ -135,6 +146,8 @@ ul, ol { margin: 0; }
 .site-nav__link.is-current { color: var(--ink); border-bottom-color: var(--ink); }
 .site-nav__icon { color: var(--ink-3); transition: color .15s ease; display: grid; place-items: center; }
 .site-nav__icon:hover { color: var(--accent); }
+@media (max-width: 359.98px) { .site-nav { gap: 1rem; } }
+@media (max-width: 319.98px) { .site-nav { gap: .65rem; } }
 
 /* --- Hero ----------------------------------------------------------------- */
 .hero { padding-block: clamp(3.25rem, 10vw, 6rem) clamp(2.5rem, 6vw, 4rem); }
@@ -713,3 +726,309 @@ ul, ol { margin: 0; }
 .debate-toggle--verdict[aria-pressed="false"]   { border-color: var(--verdict); }
 .prose > .debate-toggles + .debate-legend { margin-top: .55rem; }
 .prose .debate-legend { font-size: .84rem; color: var(--ink-3); line-height: 1.55; margin-bottom: 1.6rem; }
+
+/* --- Blog: index (blog/index.html) ----------------------------------------- */
+.wrap.page.blog { max-width: var(--wrap); }
+.page.blog > * { max-width: 40rem; }
+.blog-filters { display: grid; gap: .6rem; margin-bottom: 1.6rem; }
+.blog-filters[hidden] { display: none; }
+.blog-filters__row { display: grid; grid-template-columns: 3.8rem minmax(0, 1fr); align-items: start; }
+.blog-filters__label {
+  display: flex; align-items: center; min-height: 2rem;
+  font-size: .62rem; text-transform: uppercase; letter-spacing: .13em; font-weight: 600; color: var(--ink-3);
+}
+.blog-filters__buttons { display: flex; flex-wrap: wrap; gap: .4rem; }
+.blog-filter {
+  font-family: var(--font-text); font-size: .78rem; font-weight: 500; line-height: 1.2;
+  min-height: 2rem; padding: .35rem .7rem;
+  color: var(--ink-2); background: var(--paper);
+  border: 1px solid var(--rule-2); border-radius: var(--r); cursor: pointer;
+  transition: color .15s ease, border-color .15s ease, background-color .15s ease;
+}
+.blog-filter:hover { color: var(--accent); border-color: var(--accent); }
+.blog-filter[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); background: var(--accent-wash); }
+.blog-filter__n { color: var(--ink-3); font-variant-numeric: tabular-nums; }
+@media (forced-colors: active) {
+  .blog-filter[aria-pressed="true"] {
+    forced-color-adjust: none; background: Highlight; color: HighlightText; border-color: Highlight;
+  }
+  .blog-filter[aria-pressed="true"] .blog-filter__n { color: inherit; }
+}
+
+.blog-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink-3); overflow-wrap: break-word; }
+.blog-list__item { border-bottom: 1px solid var(--rule); }
+.blog-list__item[hidden] { display: none; }
+.blog-list__link { display: grid; gap: .35rem; padding: 1.05rem 0 1.15rem; text-decoration: none; }
+.blog-list__meta {
+  font-size: .66rem; text-transform: uppercase; letter-spacing: .1em; font-weight: 500; color: var(--ink-3);
+}
+.blog-list__title {
+  font-family: var(--font-display); font-size: 1.08rem; font-weight: 600; line-height: 1.35;
+  color: var(--ink); transition: color .15s ease;
+}
+.blog-list__link:hover .blog-list__title { color: var(--accent); }
+.blog-list__summary { font-size: .9rem; line-height: 1.6; color: var(--ink-3); }
+.blog-list__title, .blog-list__summary { overflow-wrap: anywhere; }
+.blog-empty { color: var(--ink-3); font-size: .95rem; padding: 1rem 0; }
+.blog-empty:empty { padding: 0; }
+.blog-feed { margin-top: 2rem; font-size: .85rem; color: var(--ink-3); }
+
+/* --- Blog: post (_layouts/post.html) ---------------------------------------- */
+.post { padding-block: 1.5rem clamp(3rem, 8vw, 5rem); overflow-wrap: break-word; }
+.post__head, .post__body, .post__foot { max-width: 40rem; }
+.post .page__lede { max-width: 40rem; }
+.post__fields { margin-top: .9rem; }
+.post__body::after { content: ""; display: block; clear: both; }
+.post .pager__title { overflow-wrap: anywhere; }
+
+/* the paper a summary is about */
+.post .paper-ref {
+  margin-top: 1.5rem; padding: .9rem 0 1rem;
+  border-top: 1px solid var(--accent); border-bottom: 1px solid var(--rule);
+}
+.post .paper-ref .paper-ref__kind {
+  font-size: .62rem; text-transform: uppercase; letter-spacing: .13em; font-weight: 600; color: var(--accent);
+}
+.post .paper-ref .paper-ref__title {
+  margin-top: .4rem; font-family: var(--font-display); font-size: 1.02rem; font-weight: 600;
+  line-height: 1.4; color: var(--ink);
+}
+.post .paper-ref .paper-ref__title a { color: inherit; }
+.post .paper-ref .paper-ref__title a:hover { color: var(--accent); }
+.post .paper-ref .paper-ref__meta { margin-top: .35rem; font-size: .88rem; line-height: 1.55; color: var(--ink-3); }
+.post .paper-ref .paper-ref__links { margin-top: .4rem; display: flex; flex-wrap: wrap; gap: .3rem 1.1rem; font-size: .85rem; }
+.post .prose .paper-ref { margin-block: 1.5rem; }
+
+/* headings: four levels below the title */
+.post .prose h2 {
+  font-size: 1.36rem; margin-top: 3rem; padding-bottom: .5rem; border-bottom: 1px solid var(--rule);
+}
+.post .prose h3 { font-size: 1.14rem; margin-top: 2.25rem; }
+.post .prose h4 {
+  font-family: var(--font-display); font-size: 1rem; font-weight: 600; margin-top: 1.9rem;
+  text-transform: none; letter-spacing: 0; color: var(--ink);
+}
+.post .prose h5 {
+  font-family: var(--font-text); font-size: .7rem; margin-top: 1.6rem;
+  text-transform: uppercase; letter-spacing: .13em; font-weight: 600; color: var(--ink-3);
+}
+.post .prose h6 { font-family: var(--font-text); font-size: .9rem; margin-top: 1.4rem; font-weight: 600; color: var(--ink-2); }
+.post .prose :is(h2, h3, h4, h5, h6) { scroll-margin-top: 1rem; }
+.post .prose :is(h5, h6) { margin-bottom: 0; }
+.post .prose > pre, .post .prose > .highlighter-rouge pre { margin: 0; }
+.post .prose > span > .katex-display { margin-bottom: 0; }
+.post .prose :is(h2, h3, h4, h5, h6) + * { margin-top: .9rem; }
+
+/* pens: a pen class sets --pen, so underlines, boxes and list markers drawn
+   with it take the same color. Text in a pen, and everything inside it that
+   has no pen of its own, is drawn in that pen; add .ink to keep text in ink. */
+.post .blue    { --pen: var(--pen-blue); }
+.post .red     { --pen: var(--pen-red); }
+.post .green   { --pen: var(--pen-green); }
+.post .purple  { --pen: var(--pen-purple); }
+.post .teal    { --pen: var(--pen-teal); }
+.post .magenta { --pen: var(--pen-magenta); }
+.post .pencil  { --pen: var(--pen-pencil); }
+.post .prose :is(.blue, .red, .green, .purple, .teal, .magenta, .pencil):not(.ink) { color: var(--pen); }
+.post .prose :is(.blue, .red, .green, .purple, .teal, .magenta, .pencil) :not(:is(.blue, .red, .green, .purple, .teal, .magenta, .pencil, .ink, div.highlighter-rouge, div.highlighter-rouge *)) { color: inherit; }
+.post .prose :is(.blue, .red, .green, .purple, .teal, .magenta, .pencil) .ink { color: var(--ink-2); }
+.post .prose :is(.blue, .red, .green, .purple, .teal, .magenta, .pencil) div.highlighter-rouge { color: var(--ink-2); }
+/* a link inside a pen takes the pen; a thicker line on hover marks it */
+.post .prose :is(.blue, .red, .green, .purple, .teal, .magenta, .pencil) a:not(:is(.blue, .red, .green, .purple, .teal, .magenta, .pencil)):hover { text-decoration-thickness: 2px; }
+
+/* underline, wavy underline, box, circle: drawn in the pen's color */
+.post .ul {
+  text-decoration: underline 1.5px var(--pen, currentColor);
+  text-underline-offset: .22em; text-decoration-skip-ink: none;
+}
+.post .wavy {
+  text-decoration: underline wavy 1.2px var(--pen, currentColor);
+  text-underline-offset: .26em; text-decoration-skip-ink: none;
+}
+.post .boxed, .post .circled {
+  border: 1.5px solid var(--pen, currentColor); padding: 0 .28em;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+.post .boxed { border-radius: 3px; }
+.post .circled { border-radius: 999px; padding: 0 .45em; }
+
+/* highlighters: <mark> alone is blue; mark.hl-green, hl-purple and hl-red */
+.post :is(mark, .hl-blue, .hl-green, .hl-purple, .hl-red) {
+  color: inherit; padding: .02em .16em; border-radius: 2px;
+  background: color-mix(in srgb, var(--hl, var(--pen-blue)) 17%, var(--paper));
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+.post .hl-blue   { --hl: var(--pen-blue); }
+.post .hl-green  { --hl: var(--pen-green); }
+.post .hl-purple { --hl: var(--pen-purple); }
+.post .hl-red    { --hl: var(--pen-red); }
+@supports not (color: color-mix(in srgb, red 50%, blue)) {
+  .post :is(mark, .hl-blue, .hl-green, .hl-purple, .hl-red) { background: var(--accent-wash); }
+}
+
+/* struck text: faded, with a red line; in a pen, the pen's color and line */
+.post .prose del {
+  color: var(--ink-3);
+  text-decoration: line-through 1.5px var(--pen, var(--pen-red));
+}
+.post .prose :is(mark, .hl-blue, .hl-green, .hl-purple, .hl-red) del:not(:is(.blue, .red, .green, .purple, .teal, .magenta, .pencil)),
+.post .prose del:not(:is(.blue, .red, .green, .purple, .teal, .magenta, .pencil)) :is(mark, .hl-blue, .hl-green, .hl-purple, .hl-red) { color: var(--ink-2); }
+
+/* lists: bullets disc, circle, square, dash; numbers 1, a, i, then 1 again */
+.post .prose ul { padding-left: 1.3rem; list-style-type: disc; }
+.post .prose ul ul { list-style-type: circle; }
+.post .prose ul ul ul { list-style-type: square; }
+.post .prose ul ul ul ul { list-style-type: "–  "; }
+.post .prose ol { padding-left: 1.65rem; list-style-type: decimal; }
+.post .prose ol ol { list-style-type: lower-alpha; }
+.post .prose ol ol ol { list-style-type: lower-roman; }
+.post .prose ol ol ol ol { list-style-type: decimal; }
+.post .prose :is(ul, ol) :is(ul, ol) { margin-top: .45rem; }
+.post .prose li + li { margin-top: .4rem; }
+.post .prose li > p + p { margin-top: .6rem; }
+.post .prose li::marker { color: var(--pen, var(--ink-3)); font-variant-numeric: tabular-nums; }
+/* a class on the list, as {:.roman} under it, overrides the style of that list */
+.post .prose :is(ul, ol).decimal     { list-style-type: decimal; }
+.post .prose :is(ul, ol).alpha       { list-style-type: lower-alpha; }
+.post .prose :is(ul, ol).upper-alpha { list-style-type: upper-alpha; }
+.post .prose :is(ul, ol).roman       { list-style-type: lower-roman; }
+.post .prose :is(ul, ol).upper-roman { list-style-type: upper-roman; }
+.post .prose :is(ul, ol).disc        { list-style-type: disc; }
+.post .prose :is(ul, ol).circle      { list-style-type: circle; }
+.post .prose :is(ul, ol).square      { list-style-type: square; }
+.post .prose :is(ul, ol).dash        { list-style-type: "–  "; }
+.post .prose :is(ul, ol).none        { list-style-type: none; padding-left: 0; }
+.post .prose ol:is(.roman, .upper-roman) { padding-left: 2.5rem; }
+
+/* task lists: - [ ] and - [x] */
+.post .prose .task-list-item { list-style-type: none; }
+.post .prose .task-list-item-checkbox {
+  -webkit-appearance: none; appearance: none;
+  width: .9em; height: .9em; margin: 0 .55em 0 -1.3em; vertical-align: -.08em;
+  border: 1.5px solid var(--ink-3); border-radius: 2px; background: var(--paper);
+}
+.post .prose .task-list-item-checkbox:checked {
+  background: var(--accent); border-color: var(--accent); box-shadow: inset 0 0 0 2px var(--paper);
+}
+@media (forced-colors: active) {
+  .post .prose .task-list-item-checkbox { -webkit-appearance: auto; appearance: auto; }
+}
+
+/* definition lists: Term, then a line starting with ": " */
+.post .prose dl { margin-bottom: 0; }
+.post .prose dt { font-weight: 600; color: var(--ink); }
+.post .prose dd { margin: .2rem 0 0 1.2rem; color: var(--ink-2); }
+.post .prose dd + dt { margin-top: .85rem; }
+
+/* boxes: a blockquote with a class, as {:.definition} under it */
+.post .prose blockquote:is(.idea, .definition, .theorem, .proof, .example, .question, .caveat, .summary) {
+  font-style: normal; color: var(--ink-2);
+  padding: .8rem 1.05rem .9rem;
+  border-left: 3px solid var(--box); border-radius: 0 var(--r) var(--r) 0;
+  background: color-mix(in srgb, var(--box) 6%, var(--paper));
+}
+.post .prose blockquote.idea       { --box: var(--pen-blue); }
+.post .prose blockquote.definition { --box: var(--pen-purple); }
+.post .prose blockquote.theorem    { --box: var(--pen-navy); }
+.post .prose blockquote.proof      { --box: var(--pen-pencil); }
+.post .prose blockquote.example    { --box: var(--pen-green); }
+.post .prose blockquote.question   { --box: var(--pen-teal); }
+.post .prose blockquote.caveat     { --box: var(--pen-red); }
+.post .prose blockquote.summary    { --box: var(--pen-magenta); }
+/* a pen on a box, as {:.caveat .blue}, redraws its frame and text in that pen */
+.post .prose blockquote:is(.idea, .definition, .theorem, .proof, .example, .question, .caveat, .summary):is(.blue, .red, .green, .purple, .teal, .magenta, .pencil) { --box: var(--pen); }
+.post .prose blockquote:is(.idea, .definition, .theorem, .proof, .example, .question, .caveat, .summary)::before {
+  display: block; margin-bottom: .35rem;
+  font-size: .62rem; text-transform: uppercase; letter-spacing: .13em; font-weight: 600; color: var(--box);
+}
+.post .prose blockquote.idea::before       { content: "Key idea"; }
+.post .prose blockquote.definition::before { content: "Definition"; }
+.post .prose blockquote.theorem::before    { content: "Theorem"; }
+.post .prose blockquote.proof::before      { content: "Proof"; }
+.post .prose blockquote.example::before    { content: "Example"; }
+.post .prose blockquote.question::before   { content: "Question"; }
+.post .prose blockquote.caveat::before     { content: "Caveat"; }
+.post .prose blockquote.summary::before    { content: "Summary"; }
+.post .prose blockquote[data-label]::before { content: attr(data-label); }
+.post .prose > * + blockquote { margin-top: 1.3rem; }
+.post .prose > blockquote + blockquote { margin-top: .85rem; }
+.post .prose blockquote > * + * { margin-top: .6rem; }
+.post .prose blockquote.proof > p:last-child::after { content: "\00a0\220E"; color: var(--ink-3); }
+.post .prose blockquote.proof:not(:has(> p:last-child))::after {
+  content: "\220E"; display: block; text-align: right; color: var(--ink-3);
+}
+.post .prose blockquote .katex-display { margin: .6rem 0; }
+
+/* margin notes: a paragraph with {:.margin} under it sits in the right
+   margin on wide screens, beside the paragraph that follows it, and inline
+   as a small note on narrow ones */
+.post .prose .margin { font-size: .82rem; line-height: 1.5; color: var(--ink-3); }
+@media (min-width: 1100px) {
+  .post .prose .margin {
+    float: right; clear: right; width: 14rem; margin: 1.65rem -16.5rem 0 0;
+  }
+  /* first in a post, the next paragraph's top margin collapses through the body */
+  .post .prose > .margin:first-child { margin-top: .35rem; }
+}
+@media (max-width: 1099.98px) {
+  .post .prose .margin { padding-left: .8rem; border-left: 2px solid var(--pen, var(--rule-2)); }
+}
+
+/* tables scroll inside their own box (the layout wraps them in .table-scroll) */
+.post .prose .table-scroll { max-width: 100%; }
+
+/* footnotes */
+.post .prose sup a.footnote { text-decoration: none; font-weight: 600; padding-inline: .08em; }
+.post .prose .footnotes {
+  margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--rule);
+  font-size: .86rem;
+}
+.post .prose .footnotes :is(li, p) { color: var(--ink-3); }
+
+/* contents list: "* TOC" with {:toc} under it */
+.post .prose #markdown-toc {
+  list-style: none; padding: .85rem 1rem .9rem; border: 1px solid var(--rule);
+  background: var(--paper-2); font-size: .9rem;
+}
+.post .prose #markdown-toc::before {
+  content: "Contents"; display: block; margin-bottom: .45rem;
+  font-size: .62rem; text-transform: uppercase; letter-spacing: .13em; font-weight: 600; color: var(--ink-3);
+}
+.post .prose #markdown-toc ul { list-style: none; padding-left: 1rem; margin-top: .2rem; }
+.post .prose #markdown-toc li + li { margin-top: .2rem; }
+.post .prose #markdown-toc a { text-decoration: none; }
+.post .prose #markdown-toc a:hover { text-decoration: underline; }
+
+/* keys, code */
+.post .prose code.nowrap { white-space: nowrap; }
+.post .prose kbd {
+  font-family: var(--font-mono); font-size: .8em; padding: .05em .4em;
+  border: 1px solid var(--rule-2); border-bottom-width: 2px; border-radius: 3px; background: var(--paper);
+}
+.post .prose .highlighter-rouge pre { font-size: .86rem; line-height: 1.6; }
+.post .prose pre code { font-size: 1em; }
+.post .highlight .c, .post .highlight .c1, .post .highlight .cm, .post .highlight .cs,
+.post .highlight .ch, .post .highlight .cpf { color: var(--ink-3); }
+.post .highlight .cp { color: var(--pen-magenta); }
+.post .highlight .k, .post .highlight .kc, .post .highlight .kd, .post .highlight .kn,
+.post .highlight .kp, .post .highlight .kr, .post .highlight .kv { color: var(--pen-navy); font-weight: 600; }
+.post .highlight .kt { color: var(--pen-teal); }
+.post .highlight .s, .post .highlight .s1, .post .highlight .s2, .post .highlight .sa,
+.post .highlight .sb, .post .highlight .sc, .post .highlight .sd, .post .highlight .se,
+.post .highlight .sh, .post .highlight .si, .post .highlight .sx, .post .highlight .sr,
+.post .highlight .ss, .post .highlight .dl { color: var(--pen-green); }
+.post .highlight .m, .post .highlight .mi, .post .highlight .mf, .post .highlight .mh,
+.post .highlight .mo, .post .highlight .mb, .post .highlight .il { color: var(--pen-purple); }
+.post .highlight .nf, .post .highlight .fm { color: var(--pen-blue); }
+.post .highlight .nc, .post .highlight .nn, .post .highlight .nb, .post .highlight .bp { color: var(--pen-teal); }
+.post .highlight .nd, .post .highlight .na { color: var(--pen-magenta); }
+.post .highlight .ow { color: var(--pen-navy); font-weight: 600; }
+.post .highlight .err, .post .highlight .gd { color: var(--pen-red); }
+.post .highlight .gi { color: var(--pen-green); }
+.post .highlight .ge { font-style: italic; }
+.post .highlight .gs { font-weight: 600; }
+
+.post .prose img { max-width: 100%; height: auto; }
+
+/* previous and next post */
+.post__foot .pager { margin-top: 3.5rem; }

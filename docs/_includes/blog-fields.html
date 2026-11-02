@@ -1,0 +1,12 @@
+{%- comment -%}
+  Colored field chips for blog posts. Param: fields, a list of keys from
+  _data/blog.yml.
+{%- endcomment -%}
+{%- if include.fields and include.fields.size > 0 -%}
+<span class="tags">
+  {%- for key in include.fields -%}
+    {%- assign f = site.data.blog.fields | where: "key", key | first -%}
+    <span class="tag tag--topic"{% if f.pen %} style="--tag: var(--pen-{{ f.pen }})"{% endif %}>{% if f %}{{ f.label }}{% else %}{{ key }}{% endif %}</span>
+  {%- endfor -%}
+</span>
+{%- endif -%}

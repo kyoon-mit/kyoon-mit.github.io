@@ -1,0 +1,67 @@
+---
+layout: default
+---
+{%- if page.kind -%}{%- assign kind = site.data.blog.kinds | where: "key", page.kind | first -%}{%- else -%}{%- assign kind = nil -%}{%- endif -%}
+<div class="wrap post">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="{{ '/' | relative_url }}">Home</a>
+    <span aria-hidden="true">/</span>
+    <a href="{{ '/blog/' | relative_url }}">Blog</a>
+    <span aria-hidden="true">/</span>
+    <span aria-current="page">{% if page.collection == 'posts' %}{{ page.date | date: "%b %-d, %Y" }}{% else %}{{ page.title | escape }}{% endif %}</span>
+  </nav>
+
+  <article>
+    <header class="page__head post__head">
+      {%- if page.collection == 'posts' or kind %}
+      <p class="page__eyebrow">
+        {%- if page.collection == 'posts' -%}<time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %-d, %Y" }}</time>{%- endif -%}
+        {%- if page.collection == 'posts' and kind %} · {% endif -%}
+        {%- if kind -%}{{ kind.label }}{%- endif -%}
+      </p>
+      {%- endif %}
+      <h1 class="page__title">{{ page.title | escape }}</h1>
+      {%- if page.fields and page.fields.size > 0 %}<p class="post__fields">{% include blog-fields.html fields=page.fields %}</p>{% endif -%}
+      {%- assign lede = page.description | default: page.summary -%}
+      {%- if lede %}<p class="page__lede">{{ lede | replace: '<', '&lt;' | replace: '|', '&#124;' | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>{% endif -%}
+      {%- if page.paper and page.paper.title %}
+      {% include paper-ref.html title=page.paper.title authors=page.paper.authors venue=page.paper.venue link=page.paper.link links=page.paper.links %}
+      {%- endif %}
+    </header>
+
+    {%- comment -%}
+      Tables scroll inside their own box; code blocks can take keyboard focus
+      so a long line can be scrolled; checklist boxes get a name.
+    {%- endcomment %}
+    <div class="prose post__body">
+      {{ content
+         | replace: '<table', '<div class="table-scroll"><table' | replace: '</table>', '</table></div>'
+         | replace: '<pre class="highlight">', '<pre class="highlight" tabindex="0">'
+         | replace: 'disabled="disabled" checked="checked" />', 'disabled="disabled" checked="checked" aria-label="Done" />'
+         | replace: 'disabled="disabled" />', 'disabled="disabled" aria-label="Not done" />' }}
+    </div>
+
+    {%- if page.collection == 'posts' %}
+    <footer class="post__foot">
+      {%- if page.previous or page.next %}
+      <nav class="pager pager--split" aria-label="More posts">
+        {%- if page.previous -%}
+          <a class="pager__prev" href="{{ page.previous.url | relative_url }}">
+            <span class="pager__label">Previous post</span>
+            <span class="pager__title">{{ page.previous.title | escape }}</span>
+          </a>
+        {%- else -%}
+          <span></span>
+        {%- endif -%}
+        {%- if page.next -%}
+          <a class="pager__next" href="{{ page.next.url | relative_url }}">
+            <span class="pager__label">Next post</span>
+            <span class="pager__title">{{ page.next.title | escape }}</span>
+          </a>
+        {%- endif -%}
+      </nav>
+      {%- endif %}
+    </footer>
+    {%- endif %}
+  </article>
+</div>

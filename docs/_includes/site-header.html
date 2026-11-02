@@ -8,6 +8,8 @@
     <nav class="site-nav" aria-label="Main">
       <a href="{{ '/projects/bns/' | relative_url }}"
          class="site-nav__link {% if page.url contains '/projects/' %}is-current{% endif %}">Research</a>
+      <a href="{{ '/blog/' | relative_url }}"
+         class="site-nav__link {% if page.url contains '/blog/' %}is-current{% endif %}">Blog</a>
       <a href="{{ '/about/' | relative_url }}"
          class="site-nav__link {% if page.url == '/about/' %}is-current{% endif %}">About</a>
       <a href="{{ site.links.cv | relative_url }}" class="site-nav__link">CV</a>

@@ -1,0 +1,15 @@
+{%- comment -%}
+  The paper a summary is about. Params: title (required), authors, venue,
+  link (where the title points), links (a list of {label, url}).
+  The post layout fills these from the post's `paper:` front matter.
+{%- endcomment -%}
+<aside class="paper-ref" aria-label="Paper">
+  <p class="paper-ref__kind">Paper</p>
+  <p class="paper-ref__title">{% if include.link %}<a href="{{ include.link }}">{{ include.title | escape }}</a>{% else %}{{ include.title | escape }}{% endif %}</p>
+  {%- if include.authors or include.venue %}
+  <p class="paper-ref__meta">{{ include.authors | escape }}{% if include.authors and include.venue %} · {% endif %}{{ include.venue | escape }}</p>
+  {%- endif -%}
+  {%- if include.links and include.links.size > 0 %}
+  <p class="paper-ref__links">{% for l in include.links %}<a href="{{ l.url }}">{{ l.label | escape }}</a>{% endfor %}</p>
+  {%- endif %}
+</aside>

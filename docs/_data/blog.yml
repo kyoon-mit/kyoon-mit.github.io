@@ -1,0 +1,30 @@
+# Blog post kinds and fields. A post names one kind and any number of fields
+# in its front matter, for example
+#   kind: paper
+#   fields: [ml, physics]
+# To add a field, add an entry here; pen is one of blue, red, green, purple,
+# teal, magenta, pencil and sets the chip's color.
+kinds:
+  - key: paper
+    label: Paper summary
+    plural: Paper summaries
+  - key: concept
+    label: Concept
+    plural: Concepts
+
+fields:
+  - key: physics
+    label: Physics
+    pen: blue
+  - key: engineering
+    label: Engineering
+    pen: teal
+  - key: programming
+    label: Programming
+    pen: magenta
+  - key: ml
+    label: Machine learning
+    pen: purple
+  - key: cs
+    label: Computer science
+    pen: green

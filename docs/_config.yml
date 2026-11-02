@@ -3,6 +3,7 @@ title: Kyungseop Yoon
 tagline: MIT
 affiliation: Massachusetts Institute of Technology
 email: kyoon@mit.edu
+author: Kyungseop Yoon        # the feed's author
 description: >-
   Kyungseop Yoon, MIT. Machine learning for physics: LIGO binary neutron star
   time series, an agent for LIGO, and superconducting magnet control.
@@ -53,13 +54,26 @@ defaults:
     values:
       layout: update
       project: ligo
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+      permalink: /blog/:title/
+      math: true
 
 # --- Build settings ----------------------------------------------------------
+# GitHub Pages builds future-dated posts; local builds match it.
+future: true
+# Dates are shown in this zone (GitHub Pages builds in UTC, which would move
+# a post written in the evening to the next day).
+timezone: America/New_York
 plugins:
   - jekyll-feed
   - jekyll-redirect-from
 
-# There is no blog, so the feed covers the research log instead of posts.
+# Blog posts (docs/_posts/) get the default feed at /feed.xml; the BNS research
+# log has its own.
 feed:
   collections:
     updates:
