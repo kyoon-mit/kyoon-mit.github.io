@@ -14,8 +14,9 @@ from pathlib import Path
 
 DOCS = Path(__file__).resolve().parent.parent / "docs"
 POSTS = DOCS / "_posts"
-RESERVED = {"/blog/": "the blog index", "/blog/style/": "the formatting reference"}
-POST_NAME = re.compile(r"(\d{4})-(\d{2})-(\d{2})-(.+)\.(md|markdown|html)")
+RESERVED = {"/blog/": "the blog index", "/blog/style/": "the formatting reference", "/blog/edit/": "the editor"}
+# a post's file name as Jekyll 3.10 reads it (DATE_FILENAME_MATCHER)
+POST_NAME = re.compile(r"(\d{2,4})-(\d{1,2})-(\d{1,2})-(.+)\.([^.]+)")
 DEFAULT_PERMALINK = "/blog/:title/"
 
 try:
@@ -150,19 +151,21 @@ def new_slug(text: str) -> str:
 
 
 def post_files() -> list[Path]:
-    """Every post Jekyll reads: files named like posts in any _posts folder
-    under docs/, skipping folders and files that start with _ or . (other
-    than the _posts folder itself) or end with ~."""
+    """Every post Jekyll 3.10 reads: files named like posts in any _posts
+    folder under docs/ that is not inside a folder starting with _ . # or ~.
+    Inside _posts, Jekyll skips a path whose first folder or file name
+    starts with one of those, or that ends with ~."""
     out = []
+    special = ("_", ".", "#", "~")
     for d in DOCS.rglob("_posts"):
         if not d.is_dir():
             continue
         parts = d.relative_to(DOCS).parts[:-1]
-        if any(p.startswith(("_", ".")) for p in parts):
+        if any(p.startswith(special) for p in parts):
             continue
         for p in d.rglob("*"):
             inner = p.relative_to(d).parts
-            if not p.is_file() or any(s.startswith(("_", ".")) or s.endswith("~") for s in inner):
+            if not p.is_file() or inner[0].startswith(special) or p.name.startswith(special) or p.name.endswith("~"):
                 continue
             if POST_NAME.fullmatch(p.name):
                 out.append(p)
@@ -173,6 +176,7 @@ def post_address(path: Path, fm: dict):
     """The URL Jekyll gives the post, or None when a permalink holds a
     placeholder this tool does not know."""
     y, mo, d, name_slug, _ = POST_NAME.fullmatch(path.name).groups()
+    mo, d = f"{int(mo):02d}", f"{int(d):02d}"
     when = fm.get("date")
     if isinstance(when, (datetime.date, datetime.datetime)):
         y, mo, d = f"{when.year:04d}", f"{when.month:02d}", f"{when.day:02d}"

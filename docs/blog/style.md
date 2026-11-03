@@ -6,7 +6,8 @@ noindex: true
 math: true
 summary: >-
   Every formatting option for blog posts, each shown as it renders and then as
-  the Markdown that produces it.
+  the Markdown that produces it in a post written by hand. In the editor
+  (/blog/edit/) each one is a toolbar button.
 paper_example:
   title: "The Loudest Gravitational Wave Events"
   authors: "H.-Y. Chen and D. E. Holz"

@@ -772,6 +772,8 @@ ul, ol { margin: 0; }
 .blog-empty { color: var(--ink-3); font-size: .95rem; padding: 1rem 0; }
 .blog-empty:empty { padding: 0; }
 .blog-feed { margin-top: 2rem; font-size: .85rem; color: var(--ink-3); }
+.blog-owner { margin: -1rem 0 1.6rem; font-size: .85rem; }
+.blog-owner[hidden] { display: none; }
 
 /* --- Blog: post (_layouts/post.html) ---------------------------------------- */
 .post { padding-block: 1.5rem clamp(3rem, 8vw, 5rem); overflow-wrap: break-word; }
@@ -1032,3 +1034,5 @@ ul, ol { margin: 0; }
 
 /* previous and next post */
 .post__foot .pager { margin-top: 3.5rem; }
+.post__edit { margin-top: 3rem; font-size: .85rem; }
+.post__edit[hidden] { display: none; }

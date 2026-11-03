@@ -13,6 +13,8 @@ summary: >-
     <h1 class="page__title">{{ page.title }}</h1>
     <p class="page__lede">{{ page.summary }}</p>
   </header>
+  <p class="blog-owner" data-owner hidden><a href="{{ '/blog/edit/' | relative_url }}">Write or edit posts</a></p>
+  <script defer src="{{ '/assets/js/blog-owner.js' | relative_url }}"></script>
 
   {%- if posts.size > 0 -%}
   {%- comment -%}
@@ -81,7 +83,7 @@ summary: >-
         <span class="blog-list__meta"><time datetime="{{ p.date | date_to_xmlschema }}">{{ p.date | date: "%b %-d, %Y" }}</time>{% if k %} · {{ k.label }}{% endif %}</span>
         <span class="blog-list__title">{{ p.title | escape }}</span>
         {%- include blog-fields.html fields=p.fields -%}
-        {%- if lede %}<span class="blog-list__summary">{{ lede | replace: '<', '&lt;' | replace: '|', '&#124;' | markdownify | remove: '<p>' | remove: '</p>' | strip }}</span>{% endif %}
+        {%- if lede %}<span class="blog-list__summary">{{ lede | replace: '<', '&lt;' | replace: '|', '&#124;' | prepend: '&#8203;' | markdownify | remove: '<p>' | remove: '</p>' | strip }}</span>{% endif %}
       </a>
     </li>
     {%- endfor %}

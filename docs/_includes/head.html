@@ -1,10 +1,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  {%- if page.csp %}
+  <meta http-equiv="Content-Security-Policy" content="{{ page.csp | strip | escape }}">
+  {%- endif %}
 
   {%- assign page_title = page.title | default: site.title -%}
   {%- if page.title and page.title != site.title -%}
-    <title>{{ page_title }} · {{ site.title }}</title>
+    <title>{{ page_title | escape }} · {{ site.title }}</title>
   {%- else -%}
     <title>{{ site.title }} · {{ site.tagline }}</title>
   {%- endif -%}
@@ -33,9 +36,9 @@
   <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
   <link rel="icon" href="{{ '/assets/img/favicon.svg' | relative_url }}" type="image/svg+xml">
   {%- if page.math %}
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
     onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '\\(', right: '\\)', display: false}{% unless page.url contains '/blog/' %}, {left: '$', right: '$', display: false}{% endunless %}]{% if page.url contains '/blog/' %}, macros: {'\\blue': '\\htmlClass{blue}{#1}', '\\red': '\\htmlClass{red}{#1}', '\\green': '\\htmlClass{green}{#1}', '\\purple': '\\htmlClass{purple}{#1}', '\\teal': '\\htmlClass{teal}{#1}', '\\magenta': '\\htmlClass{magenta}{#1}', '\\pencil': '\\htmlClass{pencil}{#1}'}, trust: function (c) { return c.command === '\\htmlClass'; }, strict: function (c) { return c === 'htmlExtension' ? 'ignore' : 'warn'; }{% endif %}});"></script>
   {%- endif %}
   {%- if page.url contains '/projects/bns/' and site.data.glossary %}

@@ -19,7 +19,8 @@ Warnings:
     title or `<word>` in the description (the feed drops it), a link in the
     description, text left from the template, TeX-like $x$ (plain text on the
     blog; math needs $$x$$), and `|` where it would start or split a table (in
-    math, write \\vert, \\Vert or \\mid; in text, \\|).
+    math, write \\vert, \\Vert or \\mid; in text, \\|). The last two are
+    Markdown checks, skipped for .html posts, which the editor writes.
 """
 
 import re
@@ -238,7 +239,8 @@ def main(argv):
         bad, meant = liquid(body, offset)
         errors += [f"{name}: {m}" for m in bad]
         warnings += [f"{name}: {m}" for m in meant]
-        warnings += [f"{name}: {m}" for m in text_checks(body, offset)]
+        if path.suffix != ".html":  # .html posts come from the editor: no Markdown to check
+            warnings += [f"{name}: {m}" for m in text_checks(body, offset)]
     for w in warnings:
         print("warning:", w)
     for e in errors:

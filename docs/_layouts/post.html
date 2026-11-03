@@ -2,6 +2,8 @@
 layout: default
 ---
 {%- if page.kind -%}{%- assign kind = site.data.blog.kinds | where: "key", page.kind | first -%}{%- else -%}{%- assign kind = nil -%}{%- endif -%}
+{%- comment -%} Posts from the editor (/blog/edit/) are .html files. {%- endcomment -%}
+{%- assign from_editor = false -%}{%- assign ext = page.path | split: '.' | last -%}{%- if ext == 'html' -%}{%- assign from_editor = true -%}{%- endif -%}
 <div class="wrap post">
   <nav class="breadcrumb" aria-label="Breadcrumb">
     <a href="{{ '/' | relative_url }}">Home</a>
@@ -23,7 +25,8 @@ layout: default
       <h1 class="page__title">{{ page.title | escape }}</h1>
       {%- if page.fields and page.fields.size > 0 %}<p class="post__fields">{% include blog-fields.html fields=page.fields %}</p>{% endif -%}
       {%- assign lede = page.description | default: page.summary -%}
-      {%- if lede %}<p class="page__lede">{{ lede | replace: '<', '&lt;' | replace: '|', '&#124;' | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>{% endif -%}
+      {%- comment -%} the zero-width space keeps a leading "- ", "1. " or "> " from making a list or quote {%- endcomment -%}
+      {%- if lede %}<p class="page__lede">{{ lede | replace: '<', '&lt;' | replace: '|', '&#124;' | prepend: '&#8203;' | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>{% endif -%}
       {%- if page.paper and page.paper.title %}
       {% include paper-ref.html title=page.paper.title authors=page.paper.authors venue=page.paper.venue link=page.paper.link links=page.paper.links %}
       {%- endif %}
@@ -43,6 +46,11 @@ layout: default
 
     {%- if page.collection == 'posts' %}
     <footer class="post__foot">
+      {%- if from_editor %}
+      <p class="post__edit" data-owner hidden><a href="{{ '/blog/edit/' | relative_url }}?post={{ 'docs/' | append: page.path | uri_escape }}">Edit this post</a></p>
+      {%- else %}
+      <p class="post__edit" data-owner hidden><a href="https://github.com/{{ site.github_username }}/{{ site.github_username }}.github.io/edit/main/docs/{{ page.path | uri_escape }}">Edit this post on GitHub</a></p>
+      {%- endif %}
       {%- if page.previous or page.next %}
       <nav class="pager pager--split" aria-label="More posts">
         {%- if page.previous -%}
@@ -62,6 +70,7 @@ layout: default
       </nav>
       {%- endif %}
     </footer>
+    <script defer src="{{ '/assets/js/blog-owner.js' | relative_url }}"></script>
     {%- endif %}
   </article>
 </div>

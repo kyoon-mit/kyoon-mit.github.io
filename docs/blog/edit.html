@@ -1,0 +1,122 @@
+---
+layout: default
+title: Blog editor
+permalink: /blog/edit/
+noindex: true
+# where Publish commits posts (docs/_posts/) and images (docs/assets/img/blog/)
+repo: kyoon-mit/kyoon-mit.github.io
+branch: main
+# This page holds the owner's GitHub token: it runs only the site's own
+# scripts and the pinned KaTeX, and talks only to the GitHub API.
+csp: >-
+  default-src 'self';
+  script-src 'self' https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js;
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/;
+  font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/fonts/;
+  img-src 'self' data: blob: https:;
+  connect-src 'self' https://api.github.com;
+  object-src 'none'; base-uri 'self'; form-action 'none'
+summary: >-
+  Write and publish blog posts in the browser.
+---
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<link rel="stylesheet" href="{{ '/assets/css/editor.css' | relative_url }}">
+<div class="wrap ed" id="ed" data-repo="{{ page.repo }}" data-branch="{{ page.branch }}" data-base="{{ '/' | relative_url }}">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="{{ '/' | relative_url }}">Home</a>
+    <span aria-hidden="true">/</span>
+    <a href="{{ '/blog/' | relative_url }}">Blog</a>
+    <span aria-hidden="true">/</span>
+    <span aria-current="page">Editor</span>
+  </nav>
+  <noscript><p>The editor needs JavaScript.</p></noscript>
+
+  <section data-view="list" hidden>
+    <header class="page__head">
+      <h1 class="page__title">Blog editor</h1>
+      <p class="page__lede">Write a post here, in the site's own look; Publish puts it on the blog.</p>
+    </header>
+    <p class="ed-notice" data-notice role="status" hidden></p>
+    <div class="ed-account" data-account></div>
+    <div class="ed-new">
+      {%- for k in site.data.blog.kinds %}
+      <button type="button" class="ed-btn ed-btn--primary" data-new="{{ k.key }}">New {{ k.label | downcase }}</button>
+      {%- endfor %}
+    </div>
+    <section data-drafts hidden>
+      <h2 class="ed-h">Unpublished changes in this browser</h2>
+      <ol class="blog-list ed-list" data-draft-list></ol>
+    </section>
+    <section>
+      <h2 class="ed-h">Posts on the site</h2>
+      <p class="ed-muted" data-posts-status></p>
+      <ol class="blog-list ed-list" data-post-list></ol>
+    </section>
+  </section>
+
+  <section data-view="edit" hidden>
+    <div class="ed-sticky">
+      <div class="ed-top">
+        <button type="button" class="ed-link" data-back>&larr; Posts</button>
+        <span class="ed-status" data-status role="status" aria-live="polite"></span>
+        <a class="ed-link" data-live target="_blank" rel="noopener" hidden>View on the site</a>
+        <button type="button" class="ed-link" data-discard hidden>Discard changes</button>
+        <button type="button" class="ed-link ed-link--warn" data-delete hidden>Delete post</button>
+        <button type="button" class="ed-btn ed-btn--primary" data-publish>Publish</button>
+      </div>
+      <div class="ed-toolbar" role="toolbar" aria-label="Formatting" data-toolbar></div>
+    </div>
+    <div class="ed-settings">
+      <label class="ed-setting">Address <span class="ed-addr">/blog/<input class="ed-input ed-input--slug" data-slug spellcheck="false" autocomplete="off" aria-label="Address of the post">/</span></label>
+      <label class="ed-setting">Date <input class="ed-input ed-input--date" type="date" data-date aria-label="Date of the post"></label>
+      <label class="ed-setting ed-check"><input type="checkbox" data-toc> Contents list at the top</label>
+      <label class="ed-setting ed-check"><input type="checkbox" data-draft> Draft, kept off the site</label>
+    </div>
+    <article class="post ed-post">
+      <header class="page__head post__head ed-head">
+        <p class="page__eyebrow ed-eyebrow"><span data-date-label></span><span aria-hidden="true">&middot;</span><span class="ed-kinds" role="group" aria-label="What the post is">
+          {%- for k in site.data.blog.kinds -%}
+          <button type="button" class="ed-kind" data-kind="{{ k.key }}" aria-pressed="false">{{ k.label }}</button>
+          {%- endfor -%}
+        </span></p>
+        <textarea class="ed-title" data-title rows="1" placeholder="Title" aria-label="Title"></textarea>
+        <p class="post__fields ed-fields"><span class="tags" role="group" aria-label="Fields">
+          {%- for f in site.data.blog.fields -%}
+          <button type="button" class="tag tag--topic ed-field" data-field="{{ f.key }}" style="--tag: var(--pen-{{ f.pen }})" aria-pressed="false">{{ f.label }}</button>
+          {%- endfor -%}
+        </span></p>
+        <textarea class="ed-lede" data-description rows="1" placeholder="Description: one or two sentences (optional; **bold**, *italic* and $$math$$ work)" aria-label="Description"></textarea>
+        <aside class="paper-ref ed-paper" data-paper aria-label="Paper" hidden>
+          <p class="paper-ref__kind">Paper</p>
+          <input class="ed-in ed-in--title" data-paper-key="title" placeholder="Title of the paper" aria-label="Title of the paper">
+          <input class="ed-in ed-in--meta" data-paper-key="authors" placeholder="Authors" aria-label="Authors">
+          <input class="ed-in ed-in--meta" data-paper-key="venue" placeholder="Journal or arXiv number, and year" aria-label="Journal or arXiv number, and year">
+          <input class="ed-in ed-in--meta" data-paper-key="link" placeholder="Link to the paper (https://&hellip;)" aria-label="Link to the paper">
+          <div class="ed-links" data-paper-links></div>
+          <button type="button" class="ed-link ed-add" data-add-link>Add a link (PDF, code, data)</button>
+        </aside>
+      </header>
+      <div data-body></div>
+    </article>
+  </section>
+
+  <template data-signin-template>
+    <form class="ed-signin" data-signin>
+      <p><strong>Sign in to publish.</strong> The editor saves to GitHub with a token that stays in this browser. You can write without one; drafts are kept in this browser.</p>
+      <ol>
+        <li>On GitHub, open <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Settings, Developer settings, Fine-grained tokens, Generate new token</a>.</li>
+        <li>Repository access: <em>Only select repositories</em>, then <code>{{ page.repo }}</code>.</li>
+        <li>Repository permissions: <em>Contents</em>, Read and write. Nothing else.</li>
+        <li>Generate the token, and paste it here.</li>
+      </ol>
+      <label class="ed-pop__label" for="ed-token">Token</label>
+      <input class="ed-input" id="ed-token" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_&hellip;" data-token>
+      <label class="ed-check"><input type="checkbox" data-remember checked> Keep me signed in on this browser</label>
+      <button type="submit" class="ed-btn ed-btn--primary">Sign in</button>
+      <p class="ed-signin__msg" data-signin-msg role="status"></p>
+    </form>
+  </template>
+</div>
+<script type="application/json" id="ed-blog-data">{{ site.data.blog | jsonify }}</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+<script type="module" src="{{ '/assets/js/editor/app.js' | relative_url }}"></script>

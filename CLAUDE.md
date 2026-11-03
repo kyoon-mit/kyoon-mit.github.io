@@ -45,9 +45,13 @@ docs/
   projects/bns/          the BNS section: overview, story, background,
                          related-work, live, brainstorm, updates, report, results
   _updates/              dated research-log entries (currently BNS only)
-  _posts/                blog posts (see Blog below); blog/ holds the index and style page
+  _posts/                blog posts (see Blog below); blog/ holds the index,
+                         the style page and the editor (edit.html)
   _templates/            starting points for new blog posts
   assets/css/main.css    all styles; colors are tokens at the top
+  assets/css/editor.css  the blog editor's own styles (that page only)
+  assets/js/editor/      the blog editor (ES modules, no build step)
+  assets/vendor/         its libraries: ProseMirror, js-yaml, highlight.js
   assets/img/<project>/  figures, one folder per project, dated subfolders
 tools/
   bns_live.py            refreshes the BNS live-runs page from wandb
@@ -55,6 +59,7 @@ tools/
   new_post.py            starts a blog post from a template
   check_posts.py         checks blog posts before a push
   blogtools.py           shared by the two: front matter, post addresses
+  vendor_editor.py       refreshes docs/assets/vendor/ from npm
 ```
 
 ## Adding a new project
@@ -104,20 +109,76 @@ engineering, programming, machine learning and computer science. Listed at
 - **Posts are the owner's writing.** Do not write or reword post prose unless
   asked. When asked to check a post, change wording only for a logical or
   factual error, and say what the error is.
-- **A post** is `docs/_posts/YYYY-MM-DD-slug.md`. Start one with
+- **The editor.** The owner writes posts in the browser at `/blog/edit/`
+  (`docs/blog/edit.html`): a visual editor with the site's own styles, so a
+  post looks as it will on the site, with a toolbar for pens, highlighters,
+  lines, lists, boxes, margin notes, math, code, footnotes, tables and images.
+  Drafts are kept in that browser (IndexedDB) as the owner types. Publish
+  commits the post, `docs/_posts/YYYY-MM-DD-slug.html`, and its new images,
+  `docs/assets/img/blog/<slug>/`, to `main` in one commit through the GitHub
+  API, with a fine-grained token the owner pasted into the page (Contents read
+  and write on this repository only; kept in that browser only). "Draft, kept
+  off the site" commits with `published: false`; a changed address renames the
+  file and adds the old address to `redirect_from`; publishing with nothing
+  changed makes no commit. While a publish or delete runs, the post is locked
+  (nothing in it can change, and Back is undone). A post is edited in one tab
+  at a time (Web Locks); another tab shows it read-only. Edits are saved within
+  two seconds while typing, and copied to localStorage as the page closes,
+  since a save started then may never finish. Delete removes the post's images
+  only when no other post shows them, and every post, drafts included, needs
+  its own address (its images live in a folder named after it). Post pages show
+  "Edit this post", and the blog index "Write or edit posts", only in a browser
+  where the editor signed in.
+- **Posts from the editor are HTML, and only the editor should change them**
+  (it rewrites the whole body on each publish). The front matter is as below,
+  plus `toc: true` for the contents list. The body is HTML in kramdown's shape,
+  so `main.css` styles it like a Markdown post: pens as span classes, a line in
+  its own pen as `<span class="wavy" style="--pen: var(--pen-red)">`, boxes as
+  blockquotes with the box class (a box pen adds `ink`), code blocks with Rouge
+  classes (highlight.js maps onto them at publish time), and kramdown's
+  footnotes and contents list. Math is `\(...\)` or `\[...\]` inside a
+  `.math-tex` element, which the blog's KaTeX renders; `$$`, `\(` and `\[` in
+  plain text are split by an empty span so KaTeX leaves them as text; and every
+  `{` is written `&#123;`, so Liquid never runs on a post's text.
+- **Editor code:** `assets/js/editor/`: `app.js` (the two views, drafts,
+  publish, delete), `schema.js` (the document model and how HTML is read
+  back), `format.js` (post file to document and back), `commands.js` (editing
+  commands, typing shortcuts, keys), `toolbar.js`, `views.js` (math, code,
+  figures, footnotes while editing), `github.js`, `store.js`, `code.js`,
+  `math.js` (KaTeX with the pen macros), `ui.js` (floating panels). The
+  libraries in `assets/vendor/` are unmodified npm builds with their imports
+  made relative (versions and licenses in `LICENSES.txt`); refresh them with
+  `python3 tools/vendor_editor.py`, never by hand. The editor page loads
+  nothing from a CDN except KaTeX, pinned with an integrity hash, and sets a
+  Content-Security-Policy (its `csp:` front matter, written out by
+  `_includes/head.html`) that allows only the site's scripts, that KaTeX and
+  the GitHub API: keep it, and add no inline script to that page. The token
+  shares its origin with every page of the site, so nothing on the site may
+  run script it did not ship: the editor writes only links and image sources
+  that cannot run script (and checks them again when writing), refuses SVG and
+  non-image uploads, will not run inside a frame, and `head.html` pins KaTeX
+  with integrity hashes on every math page.
+- **Known limits of the editor.** Math copied from a lede, the `/blog/` list
+  or a post written by hand pastes as wrong TeX (the browser's copy leaves the
+  TeX out), so retype it. `$$` in a title renders as math, as in a post
+  written by hand. The address check ignores `:categories` in a permalink.
+- **A post written by hand** is `docs/_posts/YYYY-MM-DD-slug.md`. Start one with
   `python3 tools/new_post.py paper "Title" --fields ml physics` (or `concept`),
   which copies `docs/_templates/<kind>.md`, stamps the date and time, and
-  refuses a slug already used on any date or reserved (`style`). Front matter:
+  refuses a slug already used on any date or reserved (`style`, `edit`). The
+  editor lists such posts but does not open them. Front matter:
   `title`, `kind` (`paper` or `concept`), `fields` (a list of keys in
   `docs/_data/blog.yml`), `description` (one or two sentences of plain text for
   the list, the lede and the feed, with no links since each list entry is a
-  link; `summary` also works but the feed ignores it), and
+  link; `summary` also works but the feed ignores it; the layouts put a
+  zero-width space before it, so a leading `- `, `1. ` or `> ` stays text), and
   for a paper summary a `paper:` block (`title`, `authors`, `venue`, `link`,
   optional `links:` list of `label`/`url`). `published: false` keeps a post off
   the site. Layout, permalink and `math: true` come from the defaults in
   `_config.yml`; `future: true` there matches GitHub Pages, and `timezone:`
   keeps an evening post on its own date (Pages builds in UTC).
-- **Check before pushing:** `uv run --no-project --with pyyaml python
+- **Check before pushing** (posts written by hand; for `.html` posts it checks
+  the front matter and addresses only): `uv run --no-project --with pyyaml python
   tools/check_posts.py` (plain `python3` works with a simpler YAML reader). It
   catches what the build does not report: `{{` or a stray `{%` outside
   `{% raw %}` (Jekyll runs it as template code, even in code blocks and math,
@@ -130,7 +191,7 @@ engineering, programming, machine learning and computer science. Listed at
   feed drops it), a link in the description, and template text left in.
 - **Kinds and fields** live in `docs/_data/blog.yml`. A field's `pen` names its
   chip color, so a new field needs no CSS.
-- **Formatting:** every option is on `/blog/style/` (`docs/blog/style.md`),
+- **Formatting by hand:** every option is on `/blog/style/` (`docs/blog/style.md`),
   shown rendered and as source. In short: pens `blue red green purple teal
   magenta pencil` as `<span class="red">…</span>`, `**bold**{:.red}`, or
   `{:.red}` on the line directly under a paragraph, heading or list (no blank
@@ -146,14 +207,17 @@ engineering, programming, machine learning and computer science. Listed at
   scoped to `.post` or `.blog-*`, so other pages are unaffected; the site-wide
   changes are the Blog link in the header, a smaller nav gap below 360px so
   the header stays on one row, the 600/700 italic faces in the font link,
-  `timezone:` (datetime attributes now carry -04:00/-05:00) and `author:` (the
-  research-log feed now names an author).
+  `timezone:` (datetime attributes now carry -04:00/-05:00), `author:` (the
+  research-log feed now names an author), escaped page titles and KaTeX
+  integrity hashes in `head.html`, and a page's own Content-Security-Policy
+  from a `csp:` front-matter key (used by the editor only).
   The layout is `_layouts/post.html` (it wraps tables so they scroll, makes
   code blocks focusable and names checklist boxes, by text replacement, so an
   inline script in a post must not hold the string `<table` in double quotes)
   with `_includes/blog-fields.html` and `_includes/paper-ref.html`; the
-  index is `docs/blog/index.html` with `assets/js/blog.js` for its filters.
-  `/blog/style/` sets `noindex: true` and is not in the list.
+  index is `docs/blog/index.html` with `assets/js/blog.js` for its filters;
+  `assets/js/blog-owner.js` shows the owner's editor links.
+  `/blog/style/` and `/blog/edit/` set `noindex: true` and are not in the list.
 - The BNS rules on claims and jargon below apply to BNS pages only.
 
 ## Rules for every BNS page: claims and jargon
