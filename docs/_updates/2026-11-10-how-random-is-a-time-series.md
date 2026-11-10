@@ -195,13 +195,15 @@ Each item is the standard source for one section above. The times are my
 estimates.
 
 1. **Entropy and bits** (15 min). MacKay, *Information Theory, Inference, and
-   Learning Algorithms* (Cambridge University Press, 2003), sections 2.4 to
-   2.6, pages 32 to 35
+   Learning Algorithms* (Cambridge University Press, 2003), chapter 2,
+   sections 2.4 to 2.6, printed pages 32 to 34
    ([free PDF from the author](https://www.inference.org.uk/itprnn/book.pdf),
-   pages 44 to 47 of the file). Section 2.6 is Gibbs' inequality, used in
-   section 5 here.
-2. **Conditional entropy and mutual information** (10 min). MacKay, section
-   8.1, pages 138 to 140 (150 to 152 of the file).
+   pages 44 to 46 of the file, which has 12 pages before printed page 1).
+   The book's contents list names chapters only; the section headings are
+   inside the chapter. Section 2.6 is Gibbs' inequality, used in section 5
+   here.
+2. **Conditional entropy and mutual information** (10 min). MacKay, chapter
+   8, section 8.1, printed pages 138 to 140 (150 to 152 of the file).
 3. **Why this formula, and a source with memory** (15 min). Shannon, "A
    Mathematical Theory of Communication", Bell Syst. Tech. J. 27, 379 and
    623 (1948), sections 6 and 7, pages 10 to 14 of the
