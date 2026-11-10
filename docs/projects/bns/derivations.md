@@ -4731,3 +4731,78 @@ are drawn less often.
 
 **Check.** Item 4 of oct26_checks.py: 200,000 simulated batches give 31.094
 and 12.857.
+
+## Entropy, mutual information and the limit on prediction {#nov10-entropy}
+
+**Claims** (10 November update). Logarithms are natural, so entropies are in
+nats.
+
+1. $H = -\sum_i p_i \ln p_i$ is 0.6931 for a fair coin, 0.3251 for a coin
+   with probabilities 0.9 and 0.1, and 1.7918 for a fair die. Dividing by
+   $\ln 2$ gives bits.
+2. At unit variance the entropy $-\int p \ln p\,dx$ is
+   $\tfrac12\ln 2\pi e = 1.4189$ for a Gaussian, $1 + \ln\sqrt2 = 1.3466$
+   for a Laplace density and $\ln\sqrt{12} = 1.2425$ for a uniform one, so
+   the negentropies are 0, 0.0724 and 0.1765.
+3. The average of $-\ln q(x)$ over draws of $x$ from $p$ is at least the
+   entropy of $p$, with equality only for $q = p$. Unit Gaussian draws
+   scored by a Gaussian of width $s$ give $\ln s + \tfrac12\ln 2\pi +
+   1/(2s^2)$, which is 1.5466 for $s = 1.5$.
+4. For any predictor $\hat x_t$ made from the past of a series with entropy
+   rate $h$, $E[(x_t - \hat x_t)^2] \ge e^{2h}/(2\pi e)$.
+5. For a stationary Gaussian series with variance $r_0$ and prediction error
+   $E_\infty$ from the infinite past, $h = \tfrac12\ln(2\pi e E_\infty)$,
+   the bound of claim 4 is reached, and the mutual information between a
+   sample and its past is $I = \tfrac12\ln(r_0/E_\infty) =
+   -\tfrac12\ln(\text{flatness})$, where the flatness is
+   $\exp(\overline{\ln S})/\overline{S}$.
+6. For $x_t = a\,x_{t-1} + e_t$ with independent Gaussian $e_t$ of unit
+   variance, $r_0 = 1/(1 - a^2)$, $E_\infty = 1$, the flatness is $1 - a^2$,
+   and $I = -\tfrac12\ln(1 - a^2)$: 0.1438, 0.8304 and 1.9585 nats for
+   $a = 0.5$, 0.9 and 0.99.
+7. A share $s$ of the variance predicted from the past corresponds, for a
+   Gaussian series, to $-\tfrac12\ln(1 - s)$ nats per sample: 0.1420 and
+   0.0655 for the shares 24.73% and 12.28% of the 26 October update, and
+   3.48 and 3.66 for the squared correlations $0.99953^2$ and $0.99967^2$
+   of raw strain with its previous sample. The latter two use one past
+   sample only, and the whole past gives at least as much.
+
+**Derivation.** (1, 2) Direct evaluation; the definitions and the Gaussian
+value are in Shannon, Bell Syst. Tech. J. 27, 379 and 623 (1948), sections 6
+and 20 ([reprint](https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf)).
+A Laplace density $e^{-|x|/b}/2b$ has variance $2b^2$ and entropy
+$1 + \ln 2b$; a uniform density of width $w$ has variance $w^2/12$ and
+entropy $\ln w$. (3) The average of $-\ln q$ minus the entropy of $p$ is
+$\int p \ln(p/q)$, the relative entropy, which Gibbs' inequality makes
+nonnegative and zero only for $q = p$ (MacKay, *Information Theory,
+Inference, and Learning Algorithms*, Cambridge University Press 2003,
+section 2.6). Applied to each conditional density of a model in turn, it
+gives the statement for the entropy rate. (4) Let $e = x_t - \hat x_t$.
+Given the past, $\hat x_t$ is a fixed number, and a shift does not change
+the entropy of a density, so $h = H(x_t \mid \text{past}) = H(e \mid
+\text{past})$. Conditioning does not raise entropy, so this is at most
+$H(e)$, and a Gaussian has the largest entropy at a given variance, so
+$H(e) \le \tfrac12\ln(2\pi e\,{\rm Var}\,e) \le \tfrac12\ln(2\pi e\,E[e^2])$
+(both in Shannon, section 20, items 4 and 5). (5) For a Gaussian series the
+density of $x_t$ given its past is Gaussian with the variance of the best
+linear prediction error ([above](#oct23-gaussian-chain-rule)), which gives
+$h$, and $H(x_t) = \tfrac12\ln(2\pi e\,r_0)$. Kolmogorov's formula gives
+$E_\infty = \exp(\overline{\ln S})$ ([above](#oct26-predictable-share)), and
+$r_0 = \overline{S}$. (6) $r_0 = a^2 r_0 + 1$. Given $x_{t-1}$, earlier
+samples add nothing, so the error is the variance of $e_t$. (7) The share is
+$1 - E/r_0$, so $\tfrac12\ln(r_0/E) = -\tfrac12\ln(1 - s)$; with one past
+sample $s = \rho_1^2$. Conditioning on more of the past does not raise the
+remaining entropy.
+
+**Check.**
+[nov10_checks.py](https://github.com/kyoon-mit/aframe/blob/reg-dev-latest/dev/analysis/claude_tests/entropy_checks/nov10_checks.py)
+([output](https://github.com/kyoon-mit/aframe/blob/reg-dev-latest/dev/analysis/claude_tests/entropy_checks/nov10_checks.txt)).
+Claims 1 and 7 are evaluated directly. Claim 2: the average of $-\ln p$ over
+4,000,000 draws is 1.4189 (Gaussian) and 1.3473 (Laplace, whose sample
+variance was 1.0019). Claim 3: 1.5466 from the same number of draws. Claim
+6: on a grid of $2^{20}$ frequencies, $\exp(\overline{\ln S})$ is 1.000000
+and the flatness 0.7500, 0.1900 and 0.0199; the error from the previous 50
+samples, a ratio of determinants of the covariance matrix, is 1.000000; and
+on simulated series of 2,000,000 samples a least-squares predictor from 5
+past samples leaves $\tfrac12\ln(\text{variance}/\text{error})$ = 0.1442,
+0.8314 and 1.9532 nats.

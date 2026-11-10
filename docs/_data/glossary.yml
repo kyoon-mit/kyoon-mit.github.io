@@ -3744,3 +3744,91 @@
     Brockwell and Davis, *Time Series: Theory and Methods*, 2nd ed.
     (Springer, 1991), chapter "Inference for the Spectrum of a Stationary
     Process".
+
+# --- Measuring randomness (10 November) -----------------------------------------
+
+- id: entropy
+  term: entropy
+  also: [entropies]
+  group: Statistics
+  short: >-
+    The average surprise of a random outcome: minus the sum, over outcomes,
+    of the probability times its logarithm. It is 0 for a certain outcome and
+    largest when all outcomes are equally likely. For a density the sum is an
+    integral, and only differences of entropies are meaningful.
+  source: >-
+    Shannon, "A Mathematical Theory of Communication", Bell Syst. Tech. J.
+    27, 379 and 623 (1948), sections 6 and 20; see the
+    [derivation](/projects/bns/derivations/#nov10-entropy).
+
+- id: bit
+  term: bit
+  also: [bits]
+  group: Statistics
+  short: >-
+    The unit of entropy and of log-probability when the logarithm is to base
+    2. A fair coin has an entropy of one bit. One bit is ln 2 = 0.6931 nats.
+  source: >-
+    MacKay, *Information Theory, Inference, and Learning Algorithms*
+    (Cambridge University Press, 2003), section 2.4.
+
+- id: conditional-entropy
+  term: conditional entropy
+  group: Statistics
+  short: >-
+    The entropy that one variable still has, on average, once another is
+    known. It is never larger than the entropy without that knowledge.
+  source: >-
+    MacKay, *Information Theory, Inference, and Learning Algorithms*
+    (Cambridge University Press, 2003), section 8.1.
+
+- id: mutual-information
+  term: mutual information
+  group: Statistics
+  short: >-
+    How much knowing one variable lowers the entropy of another: the entropy
+    minus the conditional entropy. It is 0 exactly when the two are
+    independent, whatever the form of the dependence.
+  source: >-
+    MacKay, *Information Theory, Inference, and Learning Algorithms*
+    (Cambridge University Press, 2003), section 8.1.
+
+- id: entropy-rate
+  term: entropy rate
+  group: Statistics
+  short: >-
+    For a time series, the entropy of the next sample given all earlier
+    ones: the randomness each new sample brings that no model of the past can
+    remove.
+  source: >-
+    Shannon, Bell Syst. Tech. J. 27, 379 (1948), section 7, where the
+    conditional entropy of the next symbol given the preceding ones tends to
+    the entropy of the source; see the
+    [derivation](/projects/bns/derivations/#nov10-entropy).
+
+- id: negentropy
+  term: negentropy
+  also: [negentropies]
+  group: Statistics
+  short: >-
+    The entropy of a Gaussian minus the entropy of a distribution with the
+    same variance. It is never negative, and it is 0 only for a Gaussian, so
+    it measures how far from Gaussian a distribution is.
+  source: >-
+    Hyvärinen and Oja, Neural Networks 13, 411 (2000),
+    [doi:10.1016/S0893-6080(00)00026-5](https://doi.org/10.1016/S0893-6080(00)00026-5),
+    section 4.2.2.
+
+- id: spectral-flatness
+  term: spectral flatness
+  also: [flatness of the spectrum]
+  group: Signal processing
+  short: >-
+    The geometric mean of a spectrum over frequency divided by its
+    arithmetic mean, between 0 and 1. It is 1 for a flat spectrum, and by
+    Kolmogorov's formula it is the share of the variance that the past
+    cannot predict.
+  source: >-
+    Gray and Markel, IEEE Trans. Acoust. Speech Signal Process. 22, 207
+    (1974), [doi:10.1109/TASSP.1974.1162572](https://doi.org/10.1109/TASSP.1974.1162572);
+    see the [derivation](/projects/bns/derivations/#nov10-entropy).
