@@ -3832,3 +3832,83 @@
     Gray and Markel, IEEE Trans. Acoust. Speech Signal Process. 22, 207
     (1974), [doi:10.1109/TASSP.1974.1162572](https://doi.org/10.1109/TASSP.1974.1162572);
     see the [derivation](/projects/bns/derivations/#nov10-entropy).
+
+- id: mnet-shallow
+  term: MNet-Shallow
+  case: true
+  group: Machine learning
+  short: >-
+    A network with one layer whose weights are templates, followed by the
+    largest of their outputs. With the weights set to whitened, normalized
+    templates it is a matched filter over a template bank at one fixed time;
+    the weights can then be trained.
+  source: >-
+    Yan et al., Phys. Rev. D 105, 043006 (2022),
+    [arXiv:2104.03961](https://arxiv.org/abs/2104.03961), Section IV.B: "When
+    these are chosen as in (27)-(28), MNet-Shallow implements the matched
+    filtering decision rule."
+
+- id: logistic-loss
+  term: logistic loss
+  group: Machine learning
+  short: >-
+    The loss for a yes-or-no label y (1 or 0) and a network output s:
+    −y ln σ(s) − (1 − y) ln(1 − σ(s)), where σ(s) = 1/(1 + e^(−s)) is the
+    predicted probability of yes. It is the cross-entropy with two classes.
+  source: >-
+    PyTorch documentation of `BCEWithLogitsLoss` (version 2.10): "This loss
+    combines a `Sigmoid` layer and the `BCELoss` in one single class", with
+    l_n = −w_n [y_n log σ(x_n) + (1 − y_n) log(1 − σ(x_n))].
+
+- id: one-cycle
+  term: one-cycle schedule
+  also: [one-cycle]
+  group: Machine learning
+  short: >-
+    A learning-rate schedule that rises from a small value to its peak over
+    the first part of training, then falls to a value far below the start.
+  source: >-
+    PyTorch documentation of `OneCycleLR` (version 2.10): "The 1cycle policy
+    anneals the learning rate from an initial learning rate to some maximum
+    learning rate and then from that maximum learning rate to some minimum
+    learning rate much lower than the initial learning rate."
+
+- id: plus-polarization
+  term: plus polarization
+  also: [cross polarization]
+  group: Gravitational waves
+  short: >-
+    A gravitational wave has two independent polarizations, plus (h₊) and
+    cross (h×). A detector records F₊h₊ + F×h×, with weights F₊ and F× set by
+    the source's sky position and polarization angle.
+  source: >-
+    Thrane and Talbot, Publ. Astron. Soc. Aust. 36, e010 (2019),
+    [arXiv:1809.02293](https://arxiv.org/abs/1809.02293), Appendix B, Eq. 40:
+    "The template μ(θ) is related to the metric perturbation h₊,×(θ) via
+    antenna response factors F₊,×."
+
+- id: coalescence-phase
+  term: coalescence phase
+  group: Gravitational waves
+  short: >-
+    The phase of the wave at the moment of merger. It is unknown for a real
+    signal, which is why searches filter with two quadratures.
+  source: >-
+    Allen et al., FINDCHIRP, Phys. Rev. D 85, 122006 (2012),
+    [arXiv:gr-qc/0509116](https://arxiv.org/abs/gr-qc/0509116), Section III:
+    "the time and phase of the binary coalescence when the waveform is
+    terminated, known as the coalescence time and coalescence phase".
+
+- id: minimal-match
+  term: minimal match
+  group: Searching for signals
+  short: >-
+    The smallest match between any signal in the searched range and its
+    nearest template. A bank is built to keep it above a chosen value, such
+    as 0.97.
+  source: >-
+    Owen, Phys. Rev. D 53, 6749 (1996),
+    [arXiv:gr-qc/9511032](https://arxiv.org/abs/gr-qc/9511032), Section II:
+    "We define the minimal match MM to be the match between the signal and
+    the nearest templates in this worst possible case"; the paper's fiducial
+    value is 0.97 (Section III).

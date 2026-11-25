@@ -4806,3 +4806,47 @@ samples, a ratio of determinants of the covariance matrix, is 1.000000; and
 on simulated series of 2,000,000 samples a least-squares predictor from 5
 past samples leaves $\tfrac12\ln(\text{variance}/\text{error})$ = 0.1442,
 0.8314 and 1.9532 nats.
+
+## The logistic loss of a constant answer {#nov25-logistic-chance}
+
+**Claim** (25 November update). If each sample carries a signal with
+probability one half, a network that gives every sample the same probability
+$p$ of a signal has mean logistic loss
+$L(p) = -\tfrac12\ln p - \tfrac12\ln(1-p)$. This is smallest at $p = \tfrac12$,
+where it is $\ln 2 = 0.693147$. A training loss above $\ln 2$ is worse than
+this constant answer.
+
+**Derivation.** The logistic loss of one sample is $-\ln p$ if it carries a
+signal and $-\ln(1-p)$ if not; each happens with probability one half, which
+gives $L(p)$. $L'(p) = -\tfrac{1}{2p} + \tfrac{1}{2(1-p)}$ is zero only at
+$p = \tfrac12$, and $L$ grows without bound at both ends, so that is the
+minimum: $L(\tfrac12) = \ln 2$.
+
+**Check.** Item 1 of
+[nov25_checks.py](https://github.com/kyoon-mit/aframe/blob/58a7643d/dev/analysis/claude_tests/mf_like_checks/nov25_checks.py)
+([output](https://github.com/kyoon-mit/aframe/blob/58a7643d/dev/analysis/claude_tests/mf_like_checks/nov25_checks.txt)):
+on a grid of 999,999 values of $p$ the smallest loss is 0.693147, at
+$p = 0.500000$.
+
+## A template at the wrong phase {#nov25-phase}
+
+**Claim** (25 November update). Let $\langle a, b\rangle$ be the
+noise-weighted product of two waveforms, and let $h_\phi$ be the waveform $h$
+with its phase shifted by $\phi$ at every frequency. Then
+$\langle h_\phi, h\rangle = \cos\phi\,\langle h, h\rangle$: the product with
+a one-quadrature template falls as the signal's phase moves away from the
+template's, is zero at 90° and negative beyond.
+
+**Derivation.** $\langle a, b\rangle = 4\,\mathrm{Re}\int_0^\infty
+\tilde a(f)\,\tilde b^*(f)/S(f)\,df$, with $S$ the noise spectrum; for a
+template with itself this is FINDCHIRP's $\sigma^2$ (Allen et al., Phys. Rev.
+D 85, 122006 (2012), [arXiv:gr-qc/0509116](https://arxiv.org/abs/gr-qc/0509116),
+Eq. 4.3).
+With $\tilde h_\phi = e^{i\phi}\tilde h$, the integrand is
+$e^{i\phi}|\tilde h|^2/S$, and the integral of $|\tilde h|^2/S$ is real, so
+the real part is $\cos\phi$ times $\langle h, h\rangle$.
+
+**Check.** Item 2 of the same script: a 4 s chirp from 30 to 300 Hz
+with a Hann taper, in white noise ($S = 1$), shifted by 0°, 30°, 60°, 90°, 120° and 180°, gives products of
++1.000000, +0.866025, +0.500000, +0.000000, −0.500000 and −1.000000 times
+$\langle h, h\rangle$, equal to $\cos\phi$ to six places.
