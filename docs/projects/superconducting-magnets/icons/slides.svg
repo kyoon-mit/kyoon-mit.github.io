@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" role="img" aria-label="Line plate of a projected slide with a chart"><defs><pattern id="h" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><line x1="0" y1="0" x2="0" y2="14" stroke="#4a5a70" stroke-width="2.4"/></pattern></defs>
+<line x1="600" y1="110" x2="600" y2="160" stroke="#1b2a41" stroke-width="6"/>
+<rect x="250" y="160" width="700" height="460" fill="#ffffff" stroke="#1b2a41" stroke-width="6"/>
+<line x1="600" y1="620" x2="600" y2="760" stroke="#1b2a41" stroke-width="6"/>
+<line x1="600" y1="760" x2="480" y2="820" stroke="#1b2a41" stroke-width="6"/><line x1="600" y1="760" x2="720" y2="820" stroke="#1b2a41" stroke-width="6"/>
+<rect x="300" y="205" width="260" height="36" fill="url(#h)" stroke="#1b2a41" stroke-width="4"/>
+<g stroke="#4a5a70" stroke-width="5"><line x1="320" y1="560" x2="890" y2="560"/><line x1="320" y1="560" x2="320" y2="290"/></g>
+<g fill="#ffffff" stroke="#1b2a41" stroke-width="5">
+<rect x="360" y="470" width="60" height="90"/><rect x="450" y="420" width="60" height="140" fill="url(#h)"/><rect x="540" y="380" width="60" height="180"/></g>
+<path d="M640 520 C700 500 730 330 790 330 S860 470 890 480" fill="none" stroke="#1b2a41" stroke-width="6"/>
+<circle cx="790" cy="330" r="10" fill="#1f5aa6"/></svg>

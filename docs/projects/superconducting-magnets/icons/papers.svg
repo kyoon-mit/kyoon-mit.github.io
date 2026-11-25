@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" role="img" aria-label="Line plate of a two-column journal page"><defs><pattern id="h" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><line x1="0" y1="0" x2="0" y2="14" stroke="#4a5a70" stroke-width="2.4"/></pattern></defs>
+<rect x="330" y="110" width="540" height="690" fill="#ffffff" stroke="#1b2a41" stroke-width="6"/>
+<g stroke="#1b2a41" stroke-width="8" stroke-linecap="round"><line x1="390" y1="180" x2="810" y2="180"/></g>
+<g stroke="#4a5a70" stroke-width="5" stroke-linecap="round"><line x1="450" y1="225" x2="750" y2="225"/></g>
+<rect x="390" y="270" width="190" height="150" fill="url(#h)" stroke="#1b2a41" stroke-width="4"/>
+<path d="M405 395 C450 300 500 380 565 290" fill="none" stroke="#1b2a41" stroke-width="5"/>
+<g stroke="#4a5a70" stroke-width="6" stroke-linecap="round">
+<line x1="390" y1="460" x2="580" y2="460"/><line x1="390" y1="500" x2="580" y2="500"/><line x1="390" y1="540" x2="580" y2="540"/><line x1="390" y1="580" x2="580" y2="580"/><line x1="390" y1="620" x2="580" y2="620"/><line x1="390" y1="660" x2="580" y2="660"/><line x1="390" y1="700" x2="520" y2="700"/>
+<line x1="620" y1="280" x2="810" y2="280"/><line x1="620" y1="320" x2="810" y2="320"/><line x1="620" y1="360" x2="810" y2="360"/><line x1="620" y1="400" x2="810" y2="400"/><line x1="620" y1="440" x2="810" y2="440"/><line x1="620" y1="480" x2="810" y2="480"/><line x1="620" y1="520" x2="810" y2="520"/><line x1="620" y1="560" x2="810" y2="560"/><line x1="620" y1="600" x2="810" y2="600"/><line x1="620" y1="640" x2="760" y2="640"/></g>
+<circle cx="810" cy="740" r="9" fill="#1f5aa6"/></svg>

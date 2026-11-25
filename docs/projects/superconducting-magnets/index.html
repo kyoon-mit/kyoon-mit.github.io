@@ -1,0 +1,58 @@
+---
+layout: default
+title: Superconducting magnet control
+permalink: /projects/superconducting-magnets/
+noindex: true
+sitemap: false
+summary: >-
+  Password protected.
+# Everything in this section is encrypted in vault/ (tools/magnets_encrypt.py).
+# This page runs only the site's own scripts and the pinned KaTeX.
+csp: >-
+  default-src 'self';
+  script-src 'self' https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js;
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/;
+  font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/fonts/;
+  img-src 'self' data: blob:;
+  connect-src 'self';
+  object-src 'none'; base-uri 'self'; form-action 'none'
+---
+<link rel="stylesheet" href="{{ '/projects/superconducting-magnets/magnets.css' | relative_url }}">
+{%- capture katex -%}
+{"css": ["https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css", "sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+"],
+ "js": ["https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js", "sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg"],
+ "auto": ["https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js", "sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk"],
+ "opts": {"delimiters": [{"left": "$$", "right": "$$", "display": true}, {"left": "\\[", "right": "\\]", "display": true},
+                         {"left": "\\(", "right": "\\)", "display": false}, {"left": "$", "right": "$", "display": false}]}}
+{%- endcapture -%}
+<div class="wrap doc mg" id="mg"
+     data-vault="{{ '/projects/superconducting-magnets/vault/' | relative_url }}"
+     data-icons="{{ '/projects/superconducting-magnets/icons/' | relative_url }}"
+     data-glossary="{{ '/assets/js/glossary.js' | relative_url }}"
+     data-home="{{ '/' | relative_url }}"
+     data-site-title="{{ site.title | escape }}"
+     data-katex="{{ katex | strip_newlines | escape }}">
+  <nav class="breadcrumb" aria-label="Breadcrumb" id="mg-crumbs">
+    <a href="{{ '/' | relative_url }}">Home</a>
+    <span aria-hidden="true">/</span>
+    <span aria-current="page">Superconducting magnet control</span>
+  </nav>
+
+  <section class="mg-gate" id="mg-gate" hidden>
+    <header class="page__head">
+      <h1 class="page__title">Superconducting magnet control</h1>
+      <p class="page__lede">This section is password protected.</p>
+    </header>
+    <form class="mg-gate__form" id="mg-form" autocomplete="off">
+      <label for="mg-pw">Password</label>
+      <input id="mg-pw" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" required>
+      <label class="mg-gate__keep"><input type="checkbox" id="mg-keep"> Keep me signed in on this device</label>
+      <button type="submit" class="mg-btn" id="mg-open">Open</button>
+      <p class="mg-gate__msg" id="mg-msg" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+  <noscript><p class="page__lede">This section is password protected and needs JavaScript.</p></noscript>
+
+  <div id="mg-app" hidden></div>
+</div>
+<script src="{{ '/projects/superconducting-magnets/magnets.js' | relative_url }}"></script>

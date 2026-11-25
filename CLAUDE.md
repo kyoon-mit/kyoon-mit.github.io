@@ -282,6 +282,35 @@ thesis notes. The path west leads to a tree that asks for the password.
 - Sprites and the pixel font come from `tools/thesis_art/` (run `art.py`, see
   its docstring); do not hand-edit `docs/thesis/sprites.js`.
 
+## Superconducting magnet section (password protected)
+
+`/projects/superconducting-magnets/` is a single page that asks for a password
+and then shows the whole section from encrypted data: Documentation (Slides,
+Proposals, Papers, Additional readings), Updates, Models, Data, and the older
+pages (Overview, Background, Definitions, Brainstorm, Results). Routes are in
+the URL fragment (`#/documentation/slides`, `#/updates/<slug>`, ...).
+
+- Nothing about this section is committed in plain text. The plaintext lives
+  outside the repository, in `../magnets-private/` (`meetings.yml` for the
+  slide calendar and notes, `slides/`, `pages/`, `updates/`, `img/`,
+  `glossary.yml`, `data.yml`; see its README). Never add magnet pages,
+  updates, figures or glossary entries under `docs/`.
+- Encrypted output: `docs/projects/superconducting-magnets/vault/site.json`
+  and `vault/f/*.bin` (PBKDF2-SHA256, 1,000,000 iterations, AES-256-GCM; IVs
+  and file names are HMACs of the content, so unchanged files stay
+  byte-identical). Build it with
+  `uv run --no-project --with cryptography --with markdown --with pyyaml python tools/magnets_encrypt.py`
+  and commit the `vault/` folder.
+- The page code is `index.html`, `magnets.js`, `magnets.css`, `icons/` in that
+  folder; `redirects/` keeps the old public addresses working.
+- The owner's password is read from `~/.config/kyoon-site/magnets.pass` (mode
+  600, outside the repository). Never print it, commit it or copy it.
+- Slides: PDF only, unless the PowerPoint carries something a PDF loses
+  (videos, speaker notes); then both. Data files go on Google Drive and are
+  linked from `data.yml`, never stored in the vault.
+- Behind the password, meeting notes and presenter names are allowed (owner's
+  decision, 2026-11-25); notes stay factual and never criticize anyone.
+
 ## Publishing
 
 - Commit with a plain-English subject line; push only when the owner asks.

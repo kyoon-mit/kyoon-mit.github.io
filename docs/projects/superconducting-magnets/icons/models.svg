@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" role="img" aria-label="Line plate of a graph network"><defs><pattern id="h" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><line x1="0" y1="0" x2="0" y2="14" stroke="#4a5a70" stroke-width="2.4"/></pattern></defs>
+<g stroke="#4a5a70" stroke-width="5" stroke-opacity=".8">
+<line x1="300" y1="300" x2="520" y2="220"/><line x1="300" y1="300" x2="470" y2="470"/><line x1="520" y1="220" x2="740" y2="300"/>
+<line x1="470" y1="470" x2="740" y2="300"/><line x1="470" y1="470" x2="690" y2="600"/><line x1="740" y1="300" x2="900" y2="470"/>
+<line x1="690" y1="600" x2="900" y2="470"/><line x1="300" y1="300" x2="300" y2="560"/><line x1="300" y1="560" x2="470" y2="470"/>
+<line x1="300" y1="560" x2="690" y2="600"/><line x1="520" y1="220" x2="470" y2="470"/></g>
+<g stroke="#1b2a41" stroke-width="6" fill="#ffffff">
+<circle cx="300" cy="300" r="34"/><circle cx="520" cy="220" r="34"/><circle cx="740" cy="300" r="40" fill="url(#h)"/>
+<circle cx="470" cy="470" r="44" fill="url(#h)"/><circle cx="690" cy="600" r="34"/><circle cx="900" cy="470" r="34"/><circle cx="300" cy="560" r="34"/></g>
+<circle cx="470" cy="470" r="11" fill="#1f5aa6"/>
+<path d="M250 760 C330 700 410 820 490 760 S650 700 730 760 S890 820 950 760" fill="none" stroke="#1b2a41" stroke-width="5" stroke-opacity=".6"/></svg>

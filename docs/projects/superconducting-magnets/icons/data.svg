@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" role="img" aria-label="Line plate of stacked data stores"><defs><pattern id="h" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><line x1="0" y1="0" x2="0" y2="14" stroke="#4a5a70" stroke-width="2.4"/></pattern></defs>
+<g stroke="#1b2a41" stroke-width="6" fill="#ffffff">
+<path d="M320 560 V680 A170 50 0 0 0 660 680 V560"/><ellipse cx="490" cy="560" rx="170" ry="50"/>
+<path d="M320 400 V520 A170 50 0 0 0 660 520 V400"/><ellipse cx="490" cy="400" rx="170" ry="50"/>
+<path d="M320 240 V360 A170 50 0 0 0 660 360 V240"/><ellipse cx="490" cy="240" rx="170" ry="50" fill="url(#h)"/></g>
+<circle cx="490" cy="240" r="10" fill="#1f5aa6"/>
+<g fill="#ffffff" stroke="#1b2a41" stroke-width="5">
+<rect x="760" y="560" width="50" height="170"/><rect x="830" y="470" width="50" height="260" fill="url(#h)"/>
+<rect x="900" y="380" width="50" height="350"/><rect x="970" y="520" width="50" height="210"/></g>
+<line x1="730" y1="730" x2="1050" y2="730" stroke="#4a5a70" stroke-width="5"/></svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" role="img" aria-label="Line plate of a proposal with a checklist and pen"><defs><pattern id="h" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><line x1="0" y1="0" x2="0" y2="14" stroke="#4a5a70" stroke-width="2.4"/></pattern></defs>
+<path d="M340 130 H760 L840 210 V780 H340 Z" fill="#ffffff" stroke="#1b2a41" stroke-width="6" stroke-linejoin="round"/>
+<path d="M760 130 V210 H840" fill="none" stroke="#1b2a41" stroke-width="6"/>
+<rect x="390" y="190" width="300" height="50" fill="url(#h)" stroke="#1b2a41" stroke-width="4"/>
+<g fill="#ffffff" stroke="#1b2a41" stroke-width="5"><rect x="390" y="320" width="40" height="40"/><rect x="390" y="420" width="40" height="40"/><rect x="390" y="520" width="40" height="40"/></g>
+<path d="M398 340 l14 14 l26 -32" fill="none" stroke="#1f5aa6" stroke-width="7" stroke-linecap="round"/>
+<path d="M398 440 l14 14 l26 -32" fill="none" stroke="#1f5aa6" stroke-width="7" stroke-linecap="round"/>
+<g stroke="#4a5a70" stroke-width="7" stroke-linecap="round"><line x1="460" y1="340" x2="760" y2="340"/><line x1="460" y1="440" x2="720" y2="440"/><line x1="460" y1="540" x2="740" y2="540"/><line x1="390" y1="650" x2="620" y2="650"/></g>
+<g transform="rotate(35 880 560)"><rect x="860" y="360" width="40" height="320" fill="#ffffff" stroke="#1b2a41" stroke-width="5"/><path d="M860 680 L880 730 L900 680" fill="#ffffff" stroke="#1b2a41" stroke-width="5" stroke-linejoin="round"/></g></svg>
