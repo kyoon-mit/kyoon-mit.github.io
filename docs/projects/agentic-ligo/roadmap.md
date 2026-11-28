@@ -18,7 +18,7 @@ summary: >-
   <li class="timeline__item">
     <span class="timeline__meta"><span class="timeline__kind">Public · Nov 2026</span></span>
     <span class="timeline__title">The high energy physics benchmark, HEP-Ex-Bench</span>
-    <span class="timeline__where">Started in July 2026 as Slopbench. Sealed datasets with hidden truths, a sandbox, a scoring rule and cheating tests, on Higgs boson and lepton calibration tasks. Its code is <a href="https://github.com/hep-ex-bench/hep-ex-bench">public</a>, with its public datasets on <a href="https://huggingface.co/hep-ex-bench">Hugging Face</a>. <a href="{{ '/projects/agentic-ligo/' | relative_url }}">Agent report</a></span>
+    <span class="timeline__where">Started in July 2026 as Slopbench. Sealed datasets with hidden truths, a sandbox, a scoring rule and cheating tests, on Higgs boson and lepton calibration tasks. Its code is <a href="https://github.com/hep-ex-bench/hep-ex-bench">public</a>, with its public datasets on <a href="https://huggingface.co/hep-ex-bench">Hugging Face</a>. <a href="{{ '/projects/agentic-ligo/monitor/' | relative_url }}">Monitor</a></span>
   </li>
   <li class="timeline__item">
     <span class="timeline__meta"><span class="timeline__kind">Done · Oct 2026</span></span>

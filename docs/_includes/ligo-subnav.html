@@ -2,8 +2,8 @@
   Section navigation for the Agentic LIGO project.
 {%- endcomment -%}
 {%- assign base = '/projects/agentic-ligo/' -%}
-{%- assign u_report = base -%}
-{%- assign u_overview = base | append: 'overview/' -%}
+{%- assign u_overview = base -%}
+{%- assign u_monitor = base | append: 'monitor/' -%}
 {%- assign u_roadmap = base | append: 'roadmap/' -%}
 {%- assign u_updates = base | append: 'updates/' -%}
 
@@ -11,10 +11,10 @@
   <p class="subnav__label">Agentic LIGO</p>
   <ul class="subnav__list">
     <li>
-      <a href="{{ u_report | relative_url }}" class="subnav__link {% if page.url == u_report %}is-current{% endif %}">Agent report</a>
+      <a href="{{ u_overview | relative_url }}" class="subnav__link {% if page.url == u_overview %}is-current{% endif %}">Overview</a>
     </li>
     <li>
-      <a href="{{ u_overview | relative_url }}" class="subnav__link {% if page.url == u_overview %}is-current{% endif %}">Overview</a>
+      <a href="{{ u_monitor | relative_url }}" class="subnav__link" target="_blank" rel="noopener">Monitor <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
     </li>
     <li>
       <a href="{{ u_roadmap | relative_url }}" class="subnav__link {% if page.url == u_roadmap %}is-current{% endif %}">Roadmap</a>

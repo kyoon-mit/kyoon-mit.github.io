@@ -1,0 +1,4 @@
+{
+ "note": "Published agent runs for the benchmark monitor (/projects/agentic-ligo/monitor/). Only published results go here. Each run: id, task, suite (the sealed suite; scores are relative to its reference), harness, model, effort (null for the harness default), prompt, date (YYYY-MM-DD), relative_score (S/S_ref in percent), relative_score_range [lo, hi] (the 1 sigma range from 1000 resamples of the worlds, percent), terms {phys, cal, gof, syst, truth, claims, peak, compute} (charges before weighting; null when unused), wall_time_s, budget_s, segments [{start_s, end_s, exit}], worlds {n, failed {timeout, oom, crash, rejected, env, missing}}.",
+ "runs": []
+}
