@@ -3,7 +3,7 @@
 {%- endcomment -%}
 {%- assign base = '/projects/agentic-ligo/' -%}
 {%- assign u_overview = base -%}
-{%- assign u_monitor = base | append: 'monitor/' -%}
+{%- assign u_monitor = 'https://kyoon-mit.github.io/agentic-ligo/' -%}
 {%- assign u_roadmap = base | append: 'roadmap/' -%}
 {%- assign u_updates = base | append: 'updates/' -%}
 
@@ -14,7 +14,7 @@
       <a href="{{ u_overview | relative_url }}" class="subnav__link {% if page.url == u_overview %}is-current{% endif %}">Overview</a>
     </li>
     <li>
-      <a href="{{ u_monitor | relative_url }}" class="subnav__link" target="_blank" rel="noopener">Monitor <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+      <a href="{{ u_monitor }}" class="subnav__link" target="_blank" rel="noopener">Monitor <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
     </li>
     <li>
       <a href="{{ u_roadmap | relative_url }}" class="subnav__link {% if page.url == u_roadmap %}is-current{% endif %}">Roadmap</a>

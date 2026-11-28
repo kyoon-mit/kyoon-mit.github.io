@@ -1,4 +1,0 @@
-- An AI agent gets a public dataset and writes an analysis pipeline: a folder with a script, `run.sh <dataset> <out>`, that writes its answers to a file, `RESULT.json`.
-- The pipeline is then frozen and run, unchanged and offline, on many sealed datasets ("sealed worlds"). Each sealed world is generated with injected signals, and with detector settings varied within realistic uncertainties.
-- Every answer is compared with the injected truth. The run is scored relative to an expert reference analysis, which goes through exactly the same path.
-- The sealed worlds and their truths are not public. The code is: [hep-ex-bench/hep-ex-bench](https://github.com/hep-ex-bench/hep-ex-bench) (Apache-2.0), with the public datasets on [Hugging Face](https://huggingface.co/hep-ex-bench) (CC BY 4.0).

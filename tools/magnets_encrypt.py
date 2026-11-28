@@ -112,11 +112,11 @@ def render_md(text: str) -> str:
 
     def stash(m):
         keep.append(m.group(0))
-        return f"\x02{len(keep) - 1}\x03"
+        return f"KTXMATH{len(keep) - 1}KTXEND"
 
     body = markdown.markdown(MATH.sub(stash, text), extensions=["extra", "sane_lists", "toc"],
                              output_format="html")
-    return re.sub(r"\x02(\d+)\x03", lambda m: html.escape(keep[int(m.group(1))], quote=False), body)
+    return re.sub(r"KTXMATH(\d+)KTXEND", lambda m: html.escape(keep[int(m.group(1))], quote=False), body)
 
 
 def read_entry(path: Path) -> tuple[dict, str]:

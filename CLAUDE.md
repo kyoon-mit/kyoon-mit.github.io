@@ -320,6 +320,15 @@ the URL fragment (`#/documentation/slides`, `#/updates/<slug>`, ...).
 - Behind the password, meeting notes and presenter names are allowed (owner's
   decision, 2026-11-25); notes stay factual and never criticize anyone.
 
+## Agentic LIGO benchmark monitor
+
+The interactive monitor does not live in this repository. It is the `gh-pages`
+branch of `kyoon-mit/agentic-ligo` (the fork of hep-ex-bench, renamed from
+`kyoon-mit/hep-ex-bench`), served at https://kyoon-mit.github.io/agentic-ligo/.
+Its reference text (`content/*.md`), published runs (`runs.json`) and build
+command are described in that branch's README. Here, the Agentic LIGO menu links
+to it, and `/projects/agentic-ligo/monitor/` redirects to it.
+
 ## GitHub sign-in for the protected sections
 
 Both protected sections (thesis, magnets) also open with "Sign in with GitHub",
