@@ -8,8 +8,7 @@ description: >-
   Kyungseop Yoon, MIT. Machine learning for physics: LIGO binary neutron star
   time series, an agent for LIGO, and superconducting magnet control.
 
-domain: kyungseop-yoon.com       # custom domain, without the protocol (see /CNAME)
-url: https://kyungseop-yoon.com  # the base hostname and protocol for your site
+url: https://kyoon-mit.github.io  # the base hostname and protocol for your site
 baseurl: ""                      # subpath if the site is served from a subfolder, e.g. /blog
 
 # --- Profile links -----------------------------------------------------------
@@ -62,6 +61,21 @@ defaults:
       permalink: /blog/:title/
       math: true
 
+# Pages left out of /sitemap.xml: password-protected sections, editor and
+# style pages, the 404 page, and plot files embedded in other pages.
+  - scope: {path: "thesis"}
+    values: {sitemap: false}
+  - scope: {path: "projects/superconducting-magnets"}
+    values: {sitemap: false}
+  - scope: {path: "blog/edit.html"}
+    values: {sitemap: false}
+  - scope: {path: "blog/style.md"}
+    values: {sitemap: false}
+  - scope: {path: "404.html"}
+    values: {sitemap: false}
+  - scope: {path: "assets"}
+    values: {sitemap: false}
+
 # --- Build settings ----------------------------------------------------------
 # GitHub Pages builds future-dated posts; local builds match it.
 future: true
@@ -71,6 +85,7 @@ timezone: America/New_York
 plugins:
   - jekyll-feed
   - jekyll-redirect-from
+  - jekyll-sitemap
 
 # Blog posts (docs/_posts/) get the default feed at /feed.xml; the BNS research
 # log has its own.

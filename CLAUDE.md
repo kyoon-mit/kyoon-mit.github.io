@@ -1,8 +1,10 @@
 # kyoon-mit.github.io
 
 Personal research site of Kyungseop Yoon (MIT). Jekyll, served by GitHub Pages
-from `docs/` on `main`, at https://kyungseop-yoon.com (see `CNAME`;
-kyoon-mit.github.io redirects there). Each research project has its own Claude
+from `docs/` on `main`, at https://kyoon-mit.github.io (`url` in
+`docs/_config.yml`). The `CNAME` file names kyungseop-yoon.com, but that domain
+has no DNS and Pages has no custom domain set; do not point `url` at it until it
+resolves. Each research project has its own Claude
 session; this file tells any of them how to add to the site.
 
 ## Who it is for and how it should read
