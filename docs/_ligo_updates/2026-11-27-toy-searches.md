@@ -14,7 +14,12 @@ summary: >-
 
 - Decided for testing: a matching tolerance of 0.1 s and a main FAR threshold of 1/week.
 - Three toy searches, frozen as v0: excess power; a small 1D CNN on 1 s whitened windows; and a noise-only autoencoder. Their weights are saved with checksums, and the run script refuses anything else. The two learned models were trained for about two minutes on CPU and learned essentially nothing, as expected; the aim is the pipeline. [OMITTED: training-set sizes, which are EM's data]
-- Pipeline test on one day of training data: all three ran end to end, through coincidence, a time-slide background of about one year, and scoring at 1/week. Every FAR was honest on held-out noise. [OMITTED: per-search p-values and efficiencies, pending kyoon's decision]
+- Pipeline test on one day of training data: all three ran end to end, through coincidence, a time-slide background of about one year, and scoring at 1/week. Every FAR was honest on held-out noise. Per search at 1/week on one training day:
+  - M0: efficiency 0%, honesty p = 0.92;
+  - M1: efficiency 0.2%, p = 1.0;
+  - M2: efficiency 0.2%, p = 0.29.
+
+  All pass honesty, and none is flagged by the faint-signal check.
 - The full run over the whole dataset started on a single GPU (about a day expected).
 - Test-set sensitivity needs the test answer key, which is organizer-only, so an organizer will run that scoring. Training-set scoring and the test FAR-honesty check need no test truth.
 
@@ -50,23 +55,28 @@ Built from the training answer key with the dataset handbook's merge rules: inje
 
 <div class="table-scroll" markdown="1">
 
-| List | What it does | FAR honesty | Faint-signal check | Expected |
-|---|---|---|---|---|
-| nothing | reports no triggers | honest | clean | zero sensitivity, honest |
-| every_second_honest | a 1 s trigger every second, honest FAR of 1 Hz | honest | clean | zero sensitivity at useful FAR, honest |
-| every_second_liar | a 1 s trigger every second, each claiming a tiny FAR | dishonest | flagged | caught by FAR honesty |
-| random_liar | random 1 s triggers, each claiming a tiny FAR | dishonest | clean | caught by FAR honesty |
-| oracle | reads the answer key: every injection, tiny FAR | honest | flagged | caught by the faint-signal check |
+| List | What it does | Efficiency (1/day and 1/week) | FAR honesty | Faint-signal check | Expected |
+|---|---|--:|---|---|---|
+| nothing | reports no triggers | 0% | honest | clean | zero sensitivity, honest |
+| every_second_honest | a 1 s trigger every second, honest FAR of 1 Hz | 0% | honest | clean | zero sensitivity at useful FAR, honest |
+| every_second_liar | a 1 s trigger every second, each claiming a tiny FAR | 100% | dishonest | flagged | caught by FAR honesty |
+| random_liar | random 1 s triggers, each claiming a tiny FAR | 6.9% | dishonest | clean | caught by FAR honesty |
+| oracle | reads the answer key: every injection, tiny FAR | 100% | honest | flagged | caught by the faint-signal check |
 
 </div>
 
-[OMITTED: the sensitivity column, pending kyoon's decision]
-{: .omitted}
-
 All five behave as designed. The oracle shows why the faint-signal check matters: its FARs look honest, because it reports nothing on noise, and only the faint-signal check exposes it.
 
-[OMITTED: two figures, pending kyoon's decision]
-{: .omitted}
+<div class="plot-pair">
+{% include figure.html
+   src="/assets/img/ligo/2026-11-27/every_second_liar_far_honesty.png"
+   alt="Observed trigger rate on the noise set against the claimed false-alarm-rate threshold for every_second_liar: the observed rate stays near 1 Hz at every threshold, far above the honest diagonal"
+   label="every_second_liar: FAR honesty" %}
+{% include figure.html
+   src="/assets/img/ligo/2026-11-27/oracle_far_honesty.png"
+   alt="Observed trigger rate on the noise set against the claimed false-alarm-rate threshold for oracle: no triggers on noise at any threshold, so no curve appears above the honest diagonal"
+   label="oracle: FAR honesty" %}
+</div>
 
 ## 4. Reference search (plumbing test)
 
@@ -76,8 +86,31 @@ All five behave as designed. The oracle shows why the faint-signal check matters
 - Scored on one injection day, with FAR honesty checked on a second, unused noise day.
 - Compute: 126 single-core Condor jobs, about 2 CPU-hours.
 
-[OMITTED: the sensitivity table, the per-family table and two figures, pending kyoon's decision]
-{: .omitted}
+<div class="table-scroll" markdown="1">
+
+| FAR threshold | Efficiency | Found | Noise expected | Noise observed |
+|---|--:|--:|--:|--:|
+| 1/hour | 20.8% | 89 | 13.77 | 7 |
+| 1/day | 0.7% | 3 | 0.57 | 1 |
+| 1/week | 0% | 0 | 0.08 | 0 |
+| 1/month | 0% | 0 | 0.02 | 0 |
+| 1/year | 0% | 0 | 0.00 | 0 |
+| 1/10yr | 0% | 0 | 0.00 | 0 |
+
+</div>
+
+Per family at 1/day: circular BBH 4.0%, sine-Gaussian 0.9%, white-noise burst 0%. FAR honesty: worst p = 0.15, pass.
+
+<div class="plot-pair">
+{% include figure.html
+   src="/assets/img/ligo/2026-11-27/reference_excesspower_eff_snr.png"
+   alt="Efficiency at a false-alarm rate of 1 per day against network optimal SNR for the reference excess-power search, per waveform family: near zero everywhere, rising only for sine-Gaussians at the highest SNR"
+   label="Reference search: efficiency against SNR at FAR 1/day" %}
+{% include figure.html
+   src="/assets/img/ligo/2026-11-27/reference_excesspower_far_honesty.png"
+   alt="Observed trigger rate on the noise set against the claimed false-alarm-rate threshold for the reference excess-power search: the curve stays at or below the honest diagonal"
+   label="Reference search: FAR honesty" %}
+</div>
 
 FAR honesty passes. Sensitivity is poor: glitches dominate the background. One year of background cannot support thresholds beyond about 1/year; the LVK rule of at least 100 years would need far more slides or noise.
 
