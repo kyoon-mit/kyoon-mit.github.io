@@ -3,9 +3,9 @@ layout: page
 title: PhyTS (NeurIPS)
 permalink: /projects/phyts/
 summary: >-
-  A benchmark of real physics time series for testing whether machine learning
-  can pull weak signals out of noisy detector data, from gravitational waves to
-  neutrino mass.
+  A benchmark of physics time series, real and simulated, for testing whether
+  machine learning can pull weak signals out of noisy detector data, from
+  gravitational waves to neutrino mass.
 ---
 
 ## About
@@ -30,14 +30,15 @@ PhyTS is a benchmark suite built from four physics experiments, spanning about
 - **Neutrino mass (Project 8):** estimate the energy of single electrons from
   simulated cyclotron-radiation signals.
 
-Each dataset comes with fixed training, validation and test splits, a standard
-task and metric, and baseline results.
+Each dataset comes with fixed training, validation and test splits, standard
+tasks and metrics, and baseline results.
 
 ## Main findings
 
-- Task-specific supervised models, especially state-space models (S4D, LinOSS),
-  consistently outperform six pretrained time-series foundation models evaluated
-  zero-shot (MOMENT, Chronos, Time-MoE, TimesFM, MOIRAI, Granite-TTM).
+- On every dataset, the best task-specific supervised model, a state-space
+  model (S4D or LinOSS), outperforms six pretrained time-series foundation
+  models evaluated zero-shot (MOMENT, Chronos, Time-MoE, TimesFM, MOIRAI,
+  Granite-TTM).
 - The gap is largest for weak-signal recovery, denoising and precise parameter
   estimation. On Project 8, S4D reaches an energy error of about 15.7 eV,
   against about 25 eV for the best foundation models.

@@ -35,6 +35,37 @@ layout: default
   </div>
 </section>
 
+<section class="section">
+  <div class="wrap">
+    <header class="section__head">
+      <h2 class="section__title">Publications</h2>
+    </header>
+    <ol class="pubs">
+      {%- for pub in site.data.publications -%}
+      <li class="pub">
+        <p class="pub__title">{{ pub.title }}</p>
+        <p class="pub__authors">{{ pub.authors | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>
+        <p class="pub__venue">{{ pub.venue }}</p>
+        {%- if pub.links %}
+        <p class="pub__links">
+          {%- for l in pub.links -%}
+            {%- if l.url contains '://' -%}
+              <a href="{{ l.url }}">{{ l.label }}</a>
+            {%- else -%}
+              <a href="{{ l.url | relative_url }}">{{ l.label }}</a>
+            {%- endif -%}
+          {%- endfor -%}
+        </p>
+        {%- endif %}
+      </li>
+      {%- endfor -%}
+    </ol>
+    <p class="pubs__more">All papers, including the CMS collaboration papers:
+      <a href="https://inspirehep.net/authors/1800715">INSPIRE</a> ·
+      <a href="{{ site.links.scholar }}">Google Scholar</a></p>
+  </div>
+</section>
+
 <section class="section section--alt">
   <div class="wrap">
     <header class="section__head">

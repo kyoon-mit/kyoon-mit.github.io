@@ -1069,3 +1069,16 @@ body.theme-dark > * {
 
 /* --- Utilities -------------------------------------------------------------- */
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* --- Publications (home page) ---------------------------------------------- */
+.pubs { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+.pub { padding: 1.1rem 0; border-bottom: 1px solid var(--rule); }
+.pub p { margin: 0; }
+.pub__title { font-family: var(--font-display); font-size: 1.02rem; font-weight: 600; color: var(--ink); line-height: 1.4; }
+.pub__authors { margin-top: .3rem; font-size: .88rem; color: var(--ink-2); }
+.pub__authors strong { color: var(--ink); font-weight: 600; }
+.pub__venue { margin-top: .15rem; font-size: .85rem; color: var(--ink-3); font-style: italic; }
+.pub__links { margin-top: .45rem; display: flex; flex-wrap: wrap; gap: .4rem; }
+.pub__links a { font-size: .78rem; padding: .12rem .55rem; border: 1px solid var(--rule-2); border-radius: var(--r); color: var(--accent); text-decoration: none; }
+.pub__links a:hover { border-color: var(--accent); background: var(--accent-wash); }
+.pubs__more { margin-top: .9rem; font-size: .85rem; color: var(--ink-3); }

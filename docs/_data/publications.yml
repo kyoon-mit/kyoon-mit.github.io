@@ -1,0 +1,26 @@
+# Publications shown on the home page, newest first.
+#   title   — as published
+#   authors — as published; the owner's name is wrapped in ** for bold
+#   venue   — journal reference, conference, or preprint number
+#   links   — label and url pairs; internal pages start with /
+- title: "PhyTS: A Benchmark for Weak-Signal Recovery in Physics Time Series"
+  authors: "The PhyTS Collaboration"
+  venue: "40th Conference on Neural Information Processing Systems (NeurIPS 2026), Track on Evaluations and Datasets"
+  links:
+    - { label: "Project page", url: "/projects/phyts/" }
+    - { label: "Code", url: "https://github.com/kyoon-mit/PhyTS" }
+    - { label: "Data", url: "https://huggingface.co/datasets/PhyTS-team/PhyTS-bench" }
+
+- title: "AI-enabled gravitational-waves searches for binary neutron stars at optimal sensitivity"
+  authors: "B. Gupta, D. Chatterjee, W. Benoit, E. Marx, C. Reissel, S. Tsukamoto, **K. Yoon**, M. W. Coughlin, P. Harris, E. Katsavounidis"
+  venue: "arXiv:2607.01372 (2026)"
+  links:
+    - { label: "arXiv", url: "https://arxiv.org/abs/2607.01372" }
+
+- title: "Search for the Higgs boson decays to a ρ⁰, ϕ, or K*⁰ meson and a photon in proton-proton collisions at √s = 13 TeV"
+  authors: "CMS Collaboration"
+  venue: "Phys. Lett. B 862 (2025) 139296"
+  links:
+    - { label: "Project page", url: "/projects/higgs-rare-decays/" }
+    - { label: "arXiv", url: "https://arxiv.org/abs/2410.18289" }
+    - { label: "DOI", url: "https://doi.org/10.1016/j.physletb.2025.139296" }
