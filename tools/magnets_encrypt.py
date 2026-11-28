@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Encrypt the superconducting magnet section into docs/projects/superconducting-magnets/vault/.
 
-The plaintext lives outside the repository (default ../magnets-private/):
+The plaintext lives outside the repository (default ../site-private/magnets/):
 
     meetings.yml        slide calendar: meetings, talks, files, notes
     slides/*.pdf        the decks
@@ -53,7 +53,7 @@ ITER = 1_000_000
 AAD = b"magnets-vault-v1"
 REPO = Path(__file__).resolve().parent.parent
 OUT = REPO / "docs" / "projects" / "superconducting-magnets" / "vault"
-SRC_DEFAULT = REPO.parent / "magnets-private"
+SRC_DEFAULT = REPO.parent / "site-private" / "magnets"
 PW_FILE = Path.home() / ".config" / "kyoon-site" / "magnets.pass"
 BASE = "/projects/superconducting-magnets/"
 IMG_PREFIX = "/assets/img/magnets/"
@@ -246,7 +246,7 @@ def read_password(new: bool, save: bool) -> str:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("src", type=Path, nargs="?", default=SRC_DEFAULT, help="plaintext folder (default ../magnets-private)")
+    ap.add_argument("src", type=Path, nargs="?", default=SRC_DEFAULT, help="plaintext folder (default ../site-private/magnets)")
     ap.add_argument("--out", type=Path, default=OUT, help="output folder (default the site's vault folder)")
     ap.add_argument("--new-password", action="store_true", help="re-key with a new password and salt")
     ap.add_argument("--no-save", action="store_true", help="do not save a prompted password")

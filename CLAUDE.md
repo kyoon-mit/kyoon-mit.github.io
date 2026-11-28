@@ -268,11 +268,12 @@ thesis notes. The path west leads to a tree that asks for the password.
   1,000,000 iterations, then AES-256-GCM. No hash of the password is stored;
   only a correct password decrypts. "Keep logged in" stores a non-extractable
   key in IndexedDB.
-- The plaintext lives outside the repository, in `../thesis-private/` (one
-  folder per section, Markdown or `.tex` files). It is never committed, and it
-  exists only on the machine where it was written.
+- The plaintext lives outside the repository, in `../site-private/thesis/`
+  (one folder per section, Markdown or `.tex` files), part of the private
+  repository `kyoon-mit/site-private`. It is never committed to this
+  repository.
 - To update the notes: edit the plaintext, run
-  `uv run --with cryptography tools/thesis_encrypt.py ../thesis-private`, and
+  `uv run --with cryptography tools/thesis_encrypt.py ../site-private/thesis`, and
   commit `vault.json`. The tool keeps the salt, so remembered logins stay
   valid, and it refuses a password that does not open the old vault.
 - Never write the password into a file, a commit message or a log, and never
@@ -293,13 +294,15 @@ pages (Overview, Background, Definitions, Brainstorm, Results). Routes are in
 the URL fragment (`#/documentation/slides`, `#/updates/<slug>`, ...).
 
 - Nothing about this section is committed in plain text. The plaintext lives
-  outside the repository, in `../magnets-private/` (`meetings.yml` for the
+  outside the repository, in `../site-private/magnets/` (`meetings.yml` for the
   slide calendar and notes, `slides/`, `pages/`, `updates/`, `img/`,
   `glossary.yml`, `data.yml`; see its README). Never add magnet pages,
   updates, figures or glossary entries under `docs/`.
-- `../magnets-private/` is its own git repository, backed up to the private
-  GitHub repository `kyoon-mit/magnets-private`. Commit and push there after
-  changing the plaintext. Pages deleted from this site's history before the
+- `../site-private/` is the private GitHub repository `kyoon-mit/site-private`
+  (magnet section in `magnets/`, thesis notes in `thesis/`). Commit and push
+  there after changing the plaintext. `../magnets-private` and
+  `../thesis-private` are links to those folders on the machine where it was
+  set up. Pages deleted from this site's history before the
   password went on (commit 20e2c6e) are still readable in its git history.
 - Encrypted output: `docs/projects/superconducting-magnets/vault/site.json`
   and `vault/f/*.bin` (PBKDF2-SHA256, 1,000,000 iterations, AES-256-GCM; IVs
