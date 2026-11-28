@@ -1,6 +1,7 @@
 /* GitHub sign-in (GitHub App kyoon-mit-site-login) and file reads from the private
    repository kyoon-mit/site-private. The token exchange runs on the Cloudflare Worker in
-   auth-worker/; the access token is kept in this browser's localStorage. */
+   auth-worker/; the access token is kept in this browser's localStorage. token() gives a
+   current access token, renewing it when needed, or null; the blog editor uses it to publish. */
 'use strict';
 window.GHAUTH = (() => {
   const CLIENT_ID = 'Iv23liWHhUCCklDDkViM';
@@ -22,8 +23,12 @@ window.GHAUTH = (() => {
       rexp: res.refresh_token_expires_in ? now + res.refresh_token_expires_in * 1000 : null,
     }));
   }
-  function signOut() {
-    try { localStorage.removeItem(KEY); } catch (_) {}
+  // with an access token: only while that is still the stored one
+  function signOut(access) {
+    try {
+      if (typeof access === 'string' && (read() || {}).access !== access) return;
+      localStorage.removeItem(KEY);
+    } catch (_) {}
   }
   const safeBack = p => (typeof p === 'string' && p.startsWith('/') && !p.startsWith('//')) ? p : '/';
 
@@ -35,12 +40,34 @@ window.GHAUTH = (() => {
       new URLSearchParams({ client_id: CLIENT_ID, redirect_uri: REDIRECT_URI, state }));
   }
 
+  /* Errors: final (the Worker refused: a 4xx answer with its error) or not (no
+     answer in 20 s, no connection, a server fault, an answer that is not the
+     Worker's). A renewal is saved only while the sign-in it renewed is still
+     stored. */
   async function exchange(path, body) {
-    const r = await fetch(WORKER + path, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
-    });
-    const d = await r.json().catch(() => ({}));
-    if (!r.ok || !d.access_token) throw new Error(d.error || 'auth');
+    const fail = (msg, final) => Object.assign(new Error(msg), { final });
+    const stop = new AbortController();
+    const timer = setTimeout(() => stop.abort(), 20000);
+    let r, d = null;
+    try {
+      r = await fetch(WORKER + path, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: stop.signal,
+      });
+      const text = await r.text();
+      try { d = JSON.parse(text); } catch (_) { d = null; }
+    } catch (_) {
+      throw fail('net', false);
+    } finally {
+      clearTimeout(timer);
+    }
+    if (!r.ok || !d || !d.access_token) {
+      const refused = !!(d && d.error) && r.status >= 400 && r.status < 500 && r.status !== 429;
+      throw fail((d && d.error) || 'net', refused);
+    }
+    if (path === '/refresh') {
+      const now = read();
+      if (!now || now.refresh !== body.refresh_token) throw fail('stale', false);
+    }
     save(d);
   }
 
@@ -54,13 +81,27 @@ window.GHAUTH = (() => {
     return safeBack(flow.back);
   }
 
+  let renewing = null;  // one /refresh at a time: a refresh token works once
+  /* null when signed out; throws 'net' when the Worker could not be reached (the
+     sign-in is kept for a later try). */
   async function token() {
     const t = read();
     if (!t || !t.access) return null;
     if (Date.now() < t.exp - 60000) return t.access;
+    let fault = null;
     if (t.refresh && (!t.rexp || Date.now() < t.rexp)) {
-      try { await exchange('/refresh', { refresh_token: t.refresh }); return read().access; } catch (_) {}
+      if (!renewing) {
+        renewing = exchange('/refresh', { refresh_token: t.refresh }).then(() => null, e => e);
+        renewing.then(() => { renewing = null; });
+      }
+      fault = await renewing;
+      if (!fault) { const n = read(); if (n && n.access) return n.access; }
     }
+    // signed out meanwhile, or another tab renewed it
+    const n = read();
+    if (!n || !n.access) return null;
+    if (Date.now() < n.exp - 60000) return n.access;
+    if (fault && !fault.final) throw new Error('net');
     signOut();
     return null;
   }
@@ -81,7 +122,7 @@ window.GHAUTH = (() => {
   }
 
   return {
-    signIn, finish, signOut,
+    signIn, finish, signOut, token,
     get signedIn() { return !!read(); },
     json: async path => (await get(path)).json(),
     blob: async (path, type) => new Blob([await (await get(path)).arrayBuffer()], { type: type || 'application/octet-stream' }),

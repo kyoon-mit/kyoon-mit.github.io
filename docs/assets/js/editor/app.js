@@ -9,8 +9,8 @@ import {schema, safeHref, PENS} from './schema.js';
 import {plugins, insertAtom, insertBlock, linkRange, cursorAfter} from './commands.js';
 import {MathView, CodeBlockView, FigureView, FootnoteView} from './views.js';
 import {buildToolbar, PEN_NAMES} from './toolbar.js';
-import {el, button, popover, closePopover} from './ui.js';
-import {GitHub} from './github.js';
+import {el, button, popover, closePopover, popoverOpen, initTips} from './ui.js';
+import {GitHub, GitHubError} from './github.js';
 import * as store from './store.js';
 import {emptyMeta, parsePost, postFile, newSlug, addressOf, splitFile, cleanURL, webURL, descriptionProblem, visible, POST_NAME, RESERVED, stamp} from './format.js';
 import {renderTex} from './math.js';
@@ -23,6 +23,15 @@ const REPO = root.dataset.repo, BRANCH = root.dataset.branch, BASE = root.datase
 const BLOG = JSON.parse(document.getElementById('ed-blog-data').textContent);
 const POSTS = 'docs/_posts', IMAGES = 'docs/assets/img/blog';
 const TOKEN = 'blog-editor-token', OWNER = 'blog-editor';
+const APP_KEY = 'gh-site-token';      // where gh-auth.js keeps the site's GitHub sign-in
+const SIDE = 'blog-editor-settings';  // localStorage: 'open' or 'closed' (wide screens)
+const WIDE = matchMedia('(min-width: 1100px)');
+const TAG_HINT = 'Paper summary or Concept (one at most), and any fields.';
+const APP_WRITE = `the site's GitHub App (kyoon-mit-site-login) cannot write to ${REPO}. On GitHub, give the App Contents: Read and write and install it on ${REPO}; or sign out and sign in with a pasted token.`;
+let via = '';         // how gh signed in: 'token' (pasted) or 'app' (the site's GitHub sign-in)
+let canWrite = null;  // app sign-in only: whether the App can write to REPO (null: unknown)
+let sideOpen = false;
+let tagActive = -1, tagFlat = [];
 
 let gh = null, login = '';
 // the open post: {id (draft key), path (on GitHub, or null), baseSha (the
@@ -386,15 +395,100 @@ function notice(text, kind = '') {
 
 function explain(e) {
   const m = e.message || String(e);
-  if (e.status === 401) return 'GitHub did not accept the token (expired or revoked?). Sign out on the Posts page and sign in with a new one.';
-  if (e.status === 403 && /rate limit/i.test(m)) return 'GitHub limits how often a token may be used, and that limit is reached; try again within the hour.';
-  if (e.status === 403 || e.status === 404) return `the token cannot write to ${REPO}; it needs Contents: Read and write on that repository.`;
+  if (e.status === 401) return via === 'app'
+    ? 'GitHub sign-in has expired or was revoked. Go back to Posts and sign in again.'
+    : 'GitHub did not accept the token (expired or revoked?). Sign out on the Posts page and sign in with a new one.';
+  if (e.status === 403 && /rate limit/i.test(m)) return 'GitHub limits how often the editor may call it, and that limit is reached; try again within the hour.';
+  if (via === 'app' && (/not accessible by integration/i.test(m) || ((e.status === 403 || e.status === 404) && e.method && e.method !== 'GET'))) return APP_WRITE;
+  if (e.status === 403 || e.status === 404) return via === 'app'
+    ? `GitHub refused the request (${m}); the site's GitHub App may not be installed on ${REPO}.`
+    : `the token cannot write to ${REPO}; it needs Contents: Read and write on that repository.`;
   if (e.status === 422) return /fast.forward/i.test(m) ? 'the site changed meanwhile; try again.' : `GitHub refused the change (${m}).`;
   return m;
 }
 
 function setView(name) {
   for (const s of $$('[data-view]')) s.hidden = s.dataset.view !== name;
+  if (name === 'list' && sideOpen && !WIDE.matches) {
+    sideOpen = false;
+    applySide();
+  }
+}
+
+// --- the settings panel: docked on wide screens, a drawer below 1100px ---------
+
+const sidePref = () => { try { return localStorage.getItem(SIDE); } catch (e) { return null; } };
+
+function applySide() {
+  const side = $('[data-settings]'), t = $('[data-settings-toggle]'), drawer = sideOpen && !WIDE.matches;
+  side.hidden = !sideOpen;
+  root.classList.toggle('is-side-open', sideOpen);
+  $('[data-scrim]').hidden = !drawer;
+  document.documentElement.classList.toggle('ed-noscroll', drawer);
+  t.setAttribute('aria-expanded', String(sideOpen));
+  t.classList.toggle('is-active', sideOpen);
+  if (drawer) {
+    side.setAttribute('role', 'dialog');
+    side.setAttribute('aria-modal', 'true');
+  } else {
+    side.removeAttribute('role');
+    side.removeAttribute('aria-modal');
+  }
+}
+
+function setSide(open, focusSel = null) {
+  sideOpen = open;
+  if (WIDE.matches) try { localStorage.setItem(SIDE, open ? 'open' : 'closed'); } catch (e) { /* storage off */ }
+  applySide();
+  if (open) {
+    const f = focusSel ? $(focusSel) : !WIDE.matches ? $('[data-settings-close]') : null;
+    if (f) f.focus();
+  } else {
+    const a = document.activeElement;
+    if (!a || a === document.body || $('[data-settings]').contains(a)) $('[data-settings-toggle]').focus();
+  }
+}
+
+const openSettings = sel => setSide(true, sel);
+// the drawer covers the status line; the docked panel does not
+const closeDrawer = () => { if (sideOpen && !WIDE.matches) setSide(false); };
+
+function wireSide() {
+  const side = $('[data-settings]');
+  $('[data-settings-toggle]').addEventListener('click', e => {
+    const open = !sideOpen;
+    setSide(open, open && e.detail === 0 && WIDE.matches ? '[data-tag-input]' : null);
+  });
+  $('[data-settings-close]').addEventListener('click', () => setSide(false));
+  $('[data-scrim]').addEventListener('click', () => setSide(false));
+  $('[data-tags-open]').addEventListener('click', () => openSettings('[data-tag-input]'));
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape' || composing(e) || e.defaultPrevented || !sideOpen || WIDE.matches || popoverOpen()) return;
+    e.preventDefault();
+    setSide(false);
+  });
+  // the drawer keeps Tab inside it
+  side.addEventListener('keydown', e => {
+    if (e.key !== 'Tab' || WIDE.matches || !sideOpen) return;
+    const f = [...side.querySelectorAll('button, input, select, textarea, a[href]')]
+      .filter(x => !x.disabled && x.getClientRects().length && !x.closest('[inert]'));
+    if (!f.length) return;
+    if (e.shiftKey && document.activeElement === f[0]) {
+      e.preventDefault();
+      f[f.length - 1].focus();
+    } else if (!e.shiftKey && document.activeElement === f[f.length - 1]) {
+      e.preventDefault();
+      f[0].focus();
+    }
+  });
+  WIDE.addEventListener('change', () => {
+    sideOpen = WIDE.matches && sidePref() !== 'closed';
+    applySide();
+  });
+  const bar = $('[data-sticky]');
+  new ResizeObserver(() => root.style.setProperty('--ed-bar-h', `${bar.offsetHeight}px`)).observe(bar);
+  sideOpen = WIDE.matches && sidePref() !== 'closed';
+  applySide();
 }
 
 // While GitHub is busy with the post, in a tab that does not hold it, and
@@ -911,14 +1005,229 @@ function renderLinks() {
   });
 }
 
+// --- tags: a kind (one at most) and fields, from docs/_data/blog.yml -----------
+
+function tagItems(m) {
+  const out = [];
+  if (m.kind) {
+    const k = BLOG.kinds.find(x => x.key === m.kind);
+    out.push({type: 'kind', key: m.kind, label: k ? k.label : m.kind, color: k ? 'var(--accent)' : 'var(--ink-3)'});
+  }
+  for (const key of m.fields) {
+    const f = BLOG.fields.find(x => x.key === key);
+    out.push({type: 'field', key, label: f ? f.label : key, color: f && f.pen ? `var(--pen-${f.pen})` : 'var(--ink-3)'});
+  }
+  return out;
+}
+
+function tagOptions(m, query) {
+  const q = query.trim().toLowerCase(), hit = o => !q || o.label.toLowerCase().includes(q) || o.key.toLowerCase().includes(q);
+  const now = BLOG.kinds.find(x => x.key === m.kind);
+  const kinds = BLOG.kinds.filter(k => k.key !== m.kind).map(k => ({type: 'kind', key: k.key, label: k.label, color: 'var(--accent)',
+    note: m.kind ? `Replaces ${now ? now.label : m.kind}` : ''})).filter(hit);
+  const fields = BLOG.fields.filter(f => !m.fields.includes(f.key)).map(f => ({type: 'field', key: f.key, label: f.label,
+    color: `var(--pen-${f.pen})`, note: ''})).filter(hit);
+  return {kinds, fields};
+}
+
+function addTag(o) {
+  const m = cur.meta;
+  if (o.type === 'kind') m.kind = o.key;
+  else if (!m.fields.includes(o.key)) {
+    const order = BLOG.fields.map(f => f.key), next = [...m.fields, o.key];
+    m.fields = [...order.filter(k => next.includes(k)), ...next.filter(k => !order.includes(k))];
+  }
+  renderHeader();
+  changed();
+  tagMsg(`Added ${o.label}.`);
+}
+
+function removeTag(t) {
+  if (t.type === 'kind') cur.meta.kind = null;
+  else cur.meta.fields = cur.meta.fields.filter(k => k !== t.key);
+  renderHeader();
+  changed();
+  tagMsg(`Removed ${t.label}.`);
+}
+
+function tagMsg(text = TAG_HINT, error = false) {
+  const p = $('[data-tag-msg]');
+  if (p.textContent !== text) p.textContent = text;
+  p.classList.toggle('is-error', error);
+}
+
+// the chips in Settings, and the read-only kind and fields in the post head
+function renderTags() {
+  const m = cur.meta, ul = $('[data-tag-chips]');
+  ul.textContent = '';
+  for (const t of tagItems(m)) {
+    const li = el('li', 'ed-chip');
+    li.style.setProperty('--tag', t.color);
+    li.dataset.tag = `${t.type}:${t.key}`;
+    const x = el('button', 'ed-chip__x', '\u00d7');
+    x.type = 'button';
+    x.setAttribute('aria-label', `Remove tag ${t.label}`);
+    x.addEventListener('click', () => { removeTag(t); $('[data-tag-input]').focus(); });
+    li.append(el('span', '', t.label), x);
+    ul.append(li);
+  }
+  const k = BLOG.kinds.find(x => x.key === m.kind);
+  $('[data-kind-label]').hidden = !k;
+  $('[data-kind-text]').textContent = k ? k.label : '';
+  const fc = $('[data-field-chips]');
+  fc.textContent = '';
+  for (const key of m.fields) {
+    const f = BLOG.fields.find(x => x.key === key);
+    const s = el('span', 'tag tag--topic', f ? f.label : key);
+    if (f && f.pen) s.style.setProperty('--tag', `var(--pen-${f.pen})`);
+    fc.append(s);
+  }
+  fc.hidden = !m.fields.length;
+  $('[data-tags-open]').textContent = m.kind || m.fields.length ? 'Edit tags' : 'Add tags';
+  if (!$('[data-tag-list]').hidden) renderSuggest();
+}
+
+function markActive() {
+  const input = $('[data-tag-input]');
+  tagFlat.forEach(({d}, i) => {
+    d.classList.toggle('is-active', i === tagActive);
+    d.setAttribute('aria-selected', String(i === tagActive));
+  });
+  if (tagActive >= 0) {
+    input.setAttribute('aria-activedescendant', tagFlat[tagActive].d.id);
+    tagFlat[tagActive].d.scrollIntoView({block: 'nearest'});
+  } else input.removeAttribute('aria-activedescendant');
+}
+
+function renderSuggest() {
+  const input = $('[data-tag-input]'), list = $('[data-tag-list]');
+  const {kinds, fields} = tagOptions(cur.meta, input.value);
+  list.textContent = '';
+  tagFlat = [];
+  const section = (id, title, opts) => {
+    if (!opts.length) return;
+    const g = el('div'), h = el('div', 'ed-suggest__group', title);
+    g.setAttribute('role', 'group');
+    h.id = id;
+    h.setAttribute('role', 'presentation');
+    g.setAttribute('aria-labelledby', id);
+    g.append(h);
+    for (const o of opts) {
+      const d = el('div', 'ed-suggest__opt'), sw = el('span', 'ed-sw');
+      d.id = `ed-tag-opt-${o.type}-${o.key}`;
+      d.setAttribute('role', 'option');
+      sw.style.setProperty('--sw', o.color);
+      d.append(sw, el('span', '', o.label));
+      if (o.note) d.append(el('span', 'ed-suggest__note', o.note));
+      d.addEventListener('mousedown', e => e.preventDefault());
+      d.addEventListener('click', () => chooseTag(o));
+      g.append(d);
+      tagFlat.push({o, d});
+    }
+    list.append(g);
+  };
+  section('ed-tag-h-kind', 'Kind (one at most)', kinds);
+  section('ed-tag-h-fields', 'Fields', fields);
+  const q = input.value.trim();
+  if (!tagFlat.length) list.append(el('div', 'ed-suggest__empty', q ? `No tag matches "${q}".` : 'All tags are added.'));
+  tagActive = tagFlat.length ? Math.min(Math.max(tagActive, 0), tagFlat.length - 1) : -1;
+  markActive();
+}
+
+function openSuggest() {
+  $('[data-tag-list]').hidden = false;
+  $('[data-tag-input]').setAttribute('aria-expanded', 'true');
+  renderSuggest();
+}
+
+function closeSuggest() {
+  $('[data-tag-list]').hidden = true;
+  const input = $('[data-tag-input]');
+  input.setAttribute('aria-expanded', 'false');
+  input.removeAttribute('aria-activedescendant');
+  tagActive = -1;
+}
+
+function chooseTag(o) {
+  const input = $('[data-tag-input]');
+  input.value = '';
+  tagMsg();
+  tagActive = 0;
+  addTag(o);
+  input.focus();
+}
+
+function wireTags() {
+  const box = $('[data-tags]'), input = $('[data-tag-input]'), list = $('[data-tag-list]');
+  box.addEventListener('mousedown', e => {
+    if (e.target === box || e.target === $('[data-tag-chips]')) {
+      e.preventDefault();
+      input.focus();
+    }
+  });
+  input.addEventListener('input', () => {
+    tagMsg();
+    tagActive = 0;
+    if (list.hidden) openSuggest();
+    else renderSuggest();
+  });
+  input.addEventListener('click', () => {
+    if (list.hidden) {
+      tagActive = 0;
+      openSuggest();
+    }
+  });
+  input.addEventListener('keydown', e => {
+    if (composing(e)) return;
+    const open = !list.hidden, n = tagFlat.length;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (!open) {
+        tagActive = 0;
+        openSuggest();
+      } else if (n) {
+        tagActive = (tagActive + 1) % n;
+        markActive();
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (open && n) {
+        tagActive = (tagActive - 1 + n) % n;
+        markActive();
+      }
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      const q = input.value.trim();
+      if (open && tagActive >= 0) return chooseTag(tagFlat[tagActive].o);
+      const {kinds, fields} = tagOptions(cur.meta, q), all = [...kinds, ...fields];
+      if (q && all.length === 1) return chooseTag(all[0]);
+      if (q) tagMsg(`No tag "${q}". Tags come from docs/_data/blog.yml.`, true);
+    } else if (e.key === 'Escape' && open) {
+      e.preventDefault();
+      e.stopPropagation();
+      closeSuggest();
+    } else if (e.key === 'Backspace' && !input.value) {
+      const items = tagItems(cur.meta);
+      if (items.length) {
+        e.preventDefault();
+        removeTag(items[items.length - 1]);
+      }
+    } else if (e.key === 'Tab') closeSuggest();
+  });
+  input.addEventListener('blur', () => setTimeout(() => {
+    if (box.contains(document.activeElement)) return;
+    closeSuggest();
+    tagMsg();
+  }));
+}
+
 function renderHeader() {
   const m = cur.meta;
   const title = $('[data-title]'), desc = $('[data-description]');
   title.value = m.title;
   desc.value = m.description;
   requestAnimationFrame(() => { grow(title); grow(desc); });
-  for (const b of $$('[data-kind]')) b.setAttribute('aria-pressed', String(b.dataset.kind === m.kind));
-  for (const b of $$('[data-field]')) b.setAttribute('aria-pressed', String(m.fields.includes(b.dataset.field)));
+  renderTags();
   $('[data-paper]').hidden = m.kind !== 'paper';
   for (const i of $$('[data-paper-key]')) i.value = m.paper[i.dataset.paperKey];
   renderLinks();
@@ -927,6 +1236,23 @@ function renderHeader() {
   $('[data-draft]').checked = m.draft;
   $('[data-date]').value = m.date ? m.date.slice(0, 10) : '';
   $('[data-date-label]').textContent = m.date ? dayOf(m.date) : 'Not published yet';
+  slugHint();
+  dateHint(!(cur.path || m.date));
+}
+
+function slugHint(error = '') {
+  const h = $('[data-slug-hint]');
+  h.textContent = error || (cur.path
+    ? (cur.public ? 'If you change it, the old address redirects to the new one.' : '')
+    : (cur.slugTouched ? '' : 'Made from the title until you change it.'));
+  h.classList.toggle('is-error', !!error);
+}
+
+// a hidden hint is still read out when referenced, so the link goes with it
+function dateHint(show) {
+  $('[data-date-hint]').hidden = !show;
+  if (show) $('[data-date]').setAttribute('aria-describedby', 'ed-date-hint');
+  else $('[data-date]').removeAttribute('aria-describedby');
 }
 
 function updateBar() {
@@ -939,7 +1265,8 @@ function updateBar() {
   $('[data-delete]').disabled = !gh || !canEdit();
   const discard = $('[data-discard]');
   discard.hidden = cur.path ? !cur.dirty : false;
-  discard.textContent = cur.path ? 'Discard changes' : 'Delete draft';
+  discard.textContent = cur.path ? 'Discard changes' : 'Delete this post';
+  discard.classList.toggle('ed-link--warn', !cur.path);
   const live = $('[data-live]');
   live.hidden = !(cur.path && cur.public);
   if (cur.path) live.href = addressFor(slugOfPath(cur.path));
@@ -953,6 +1280,7 @@ function wire() {
     if (!cur.slugTouched) {
       cur.slug = newSlug(title.value);
       slug.value = cur.slug;
+      slugHint();
     }
     changed();
   });
@@ -973,23 +1301,6 @@ function wire() {
       view.focus();
     }
   });
-  for (const b of $$('[data-kind]')) {
-    b.addEventListener('click', () => {
-      cur.meta.kind = b.dataset.kind;
-      renderHeader();
-      changed();
-    });
-  }
-  const order = BLOG.fields.map(f => f.key);
-  for (const b of $$('[data-field]')) {
-    b.addEventListener('click', () => {
-      const f = b.dataset.field, have = cur.meta.fields;
-      const next = have.includes(f) ? have.filter(x => x !== f) : [...have, f];
-      cur.meta.fields = [...order.filter(k => next.includes(k)), ...next.filter(k => !order.includes(k))];
-      renderHeader();
-      changed();
-    });
-  }
   for (const i of $$('[data-paper-key]')) {
     i.addEventListener('input', () => {
       cur.meta.paper[i.dataset.paperKey] = i.value;
@@ -1007,12 +1318,14 @@ function wire() {
     cur.slugTouched = true;
     cur.slug = slug.value;
     changed();
+    slugHint();
   });
   slug.addEventListener('change', () => {
     cur.slug = newSlug(slug.value);
     slug.value = cur.slug;
     if (!cur.slug) cur.slugTouched = false;
     changed();
+    slugHint();
   });
   $('[data-toc]').addEventListener('change', e => {
     cur.meta.toc = e.target.checked;
@@ -1036,13 +1349,15 @@ function wire() {
   $('[data-publish]').addEventListener('click', publish);
   $('[data-delete]').addEventListener('click', deletePost);
   $('[data-discard]').addEventListener('click', discard);
-  for (const b of $$('[data-new]')) b.addEventListener('click', () => newPost(b.dataset.new));
+  $('[data-new]').addEventListener('click', () => newPost());
   document.addEventListener('keydown', e => {
     if ((e.metaKey || e.ctrlKey) && e.key === 's') {
       e.preventDefault();
       if (cur) saveDraft();
     }
   });
+  wireTags();
+  wireSide();
 }
 
 // --- views: the list of posts, and a post ---------------------------------------------
@@ -1085,12 +1400,16 @@ function renderAccount() {
   const box = $('[data-account]');
   box.textContent = '';
   if (gh) {
-    const p = el('p', 'ed-account__line', `Signed in to GitHub${login ? ` as ${login}` : ''}; posts are published to ${REPO}. `);
+    const p = el('p', 'ed-account__line', via === 'app'
+      ? `Signed in with GitHub${login ? ` as ${login}` : ''}; posts are published to ${REPO}. `
+      : `Signed in to GitHub${login ? ` as ${login}` : ''} with a pasted token; posts are published to ${REPO}. `);
     p.append(button('Sign out', signOut, 'ed-link'));
     box.append(p);
+    if (via === 'app' && canWrite === false) box.append(el('p', 'ed-account__warn', `Publishing will fail until this is fixed: ${APP_WRITE}`));
     return;
   }
   box.append($('[data-signin-template]').content.cloneNode(true));
+  box.querySelector('[data-gh-signin]').addEventListener('click', signInWithGitHub);
   const form = box.querySelector('[data-signin]');
   form.addEventListener('submit', e => {
     e.preventDefault();
@@ -1112,6 +1431,8 @@ async function signIn(token, remember) {
       localStorage.setItem(OWNER, '1');
     } catch (e) { /* storage off: signed in for this page only */ }
     gh = g;
+    via = 'token';
+    canWrite = null;
     login = u ? u.login : '';
     if (cur) {
       updateBar();
@@ -1125,33 +1446,125 @@ async function signIn(token, remember) {
   }
 }
 
-let signOutLater = false;
-function signOutHere() {
-  if (busyNow || loading) {
-    signOutLater = true;
+// The site's GitHub sign-in (gh-auth.js, shared with the thesis and magnet
+// pages): it leaves this page and comes back to it signed in.
+async function signInWithGitHub() {
+  const msg = $('[data-signin-msg]');
+  if (!window.GHAUTH) {
+    msg.textContent = 'The sign-in script did not load; reload the page.';
     return;
   }
-  signOutLater = false;
+  await flush();
+  try {
+    GHAUTH.signIn(location.pathname + location.search);
+  } catch (e) {
+    msg.textContent = 'This browser does not let the site keep data, so GitHub sign-in cannot finish here. Use a pasted token below.';
+  }
+}
+
+// a current token from the site's GitHub sign-in; when it is gone, this page
+// signs out too
+async function appToken() {
+  let t = null;
+  try {
+    t = window.GHAUTH ? await GHAUTH.token() : null;
+  } catch (e) {
+    // the sign-in Worker did not answer: the sign-in is kept
+    throw new GitHubError(0, 'Could not reach the GitHub sign-in service; try again.');
+  }
+  if (!t && via === 'app' && gh) setTimeout(() => signOutHere('expired'));
+  return t;
+}
+
+// GitHub refused the sign-in's token (401): it is dropped here and on the
+// thesis and magnet pages, unless another tab has renewed it meanwhile
+function appRefused(token) {
+  if (!window.GHAUTH) return;
+  GHAUTH.signOut(token);
+  if (!GHAUTH.signedIn) setTimeout(() => signOutHere('expired'));
+}
+
+// Signs in with the site's GitHub sign-in; gives a message when it has expired.
+async function useApp() {
+  via = 'app';
+  const g = gh = new GitHub(appToken, REPO, BRANCH, appRefused);
+  try {
+    login = (await g.user()).login;
+    try {
+      localStorage.setItem(OWNER, '1');
+    } catch (e) { /* storage off */ }
+    // the write check only feeds a warning: the page does not wait for it
+    g.appCanWrite().then(v => {
+      if (gh !== g) return;
+      canWrite = v;
+      renderAccount();
+    }, () => {});
+    return '';
+  } catch (e) {
+    if (e.status !== 401) return '';
+    gh = null;
+    via = '';
+    canWrite = null;
+    try {
+      GHAUTH.signOut();
+    } catch (_) { /* nothing stored */ }
+    return 'Your GitHub sign-in has expired; sign in again.';
+  }
+}
+
+// reason: 'expired' (the GitHub sign-in ran out) or 'other' (another tab or
+// page signed out)
+let signOutLater = '';
+function signOutHere(reason = 'other') {
+  if (!gh) return;
+  if (busyNow || loading) {
+    signOutLater = reason;
+    return;
+  }
+  signOutLater = '';
   try {
     sessionStorage.removeItem(TOKEN);
   } catch (e) { /* storage off */ }
   gh = null;
   login = '';
+  via = '';
+  canWrite = null;
+  const text = reason === 'expired' ? 'Your GitHub sign-in has expired' : 'Signed out in another tab or page';
   if (cur) {
     updateBar();
-    status('Signed out in another tab; sign in again on the Posts page to publish.', 'error');
-  } else showList('Signed out in another tab.');
+    status(`${text}; sign in again on the Posts page to publish.`, 'error');
+  } else showList(`${text}.`);
 }
 
+// Signs out of the pasted token and of the site's GitHub sign-in.
 function signOut() {
+  const hadToken = via === 'token';
+  let hadApp = false;
+  try {
+    hadApp = !!localStorage.getItem(APP_KEY);
+  } catch (e) { /* storage off */ }
   try {
     localStorage.removeItem(TOKEN);
     sessionStorage.removeItem(TOKEN);
     localStorage.removeItem(OWNER);
   } catch (e) { /* nothing stored */ }
+  let appGone = true;
+  if (hadApp) {
+    try {
+      if (window.GHAUTH) GHAUTH.signOut();
+      else localStorage.removeItem(APP_KEY);
+      appGone = !localStorage.getItem(APP_KEY);
+    } catch (e) { appGone = false; }
+  }
   gh = null;
   login = '';
-  showList('Signed out; the token is no longer kept in this browser. Revoke it on GitHub if you will not use it again.');
+  via = '';
+  canWrite = null;
+  const parts = ['Signed out.'];
+  if (hadApp && appGone) parts.push('This also signed you out of the thesis and magnet pages.');
+  if (hadApp) parts.push('If this browser may have been exposed, also revoke the sign-in on GitHub: Settings, Applications, Authorized GitHub Apps, kyoon-mit-site-login, Revoke.');
+  if (hadToken) parts.push('The token is no longer kept in this browser; revoke it on GitHub if you will not use it again.');
+  showList(parts.join(' '));
 }
 
 // Every post Jekyll 3.10 builds: files named like posts in any _posts
@@ -1283,21 +1696,26 @@ function mount(c, doc, held, seq = navSeq) {
   renderHeader();
   updateBar();
   setView('edit');
+  if (!WIDE.matches) sideOpen = false;
+  applySide();
+  closeSuggest();
+  $('[data-tag-input]').value = '';
+  tagMsg();
   setLocked();
   toolbar.update(view.state);
   window.scrollTo(0, 0);
   if (readOnly) status('This post is open in another tab or window. Edit it there, or close that one and reload this page.', 'error');
-  if (signOutLater) signOutHere();
+  if (signOutLater) signOutHere(signOutLater);
   return held;
 }
 
-async function newPost(kind) {
+async function newPost() {
   const seq = ++navSeq;
   await flush();
   if (seq !== navSeq) return;
   const id = 'new-' + store.randomId();
   const rec = {
-    id, path: null, baseSha: null, public: false, meta: emptyMeta(BLOG.kinds.some(k => k.key === kind) ? kind : null),
+    id, path: null, baseSha: null, public: false, meta: emptyMeta(),
     slug: '', slugTouched: false, doc: emptyDoc().toJSON(), dirty: false, updated: Date.now(),
   };
   history.pushState(null, '', '?' + new URLSearchParams({draft: id}));
@@ -1390,7 +1808,7 @@ function busy(on) {
   if (on) navSeq++;  // a navigation still on its way stops itself
   setLocked();
   updateBar();
-  if (!on && signOutLater) signOutHere();
+  if (!on && signOutLater) signOutHere(signOutLater);
 }
 
 function paperProblem(m) {
@@ -1413,11 +1831,17 @@ async function publish() {
   const slug = newSlug(c.slug || m.title);
   const address = `/blog/${slug}/`;
   const problem = !oneLine(m.title) ? 'Give the post a title first.'
-    : !m.kind ? 'Choose what it is first: Paper summary or Concept, above the title.'
-    : !slug ? 'The address is empty; type one next to Address.'
-    : RESERVED.has(address) ? `${address} is used by the site itself; choose another address.`
+    : !slug ? 'The address is empty; type one in Settings, under Address.'
+    : RESERVED.has(address) ? `${address} is used by the site itself; choose another address in Settings.`
     : descriptionProblem(m.description) || paperProblem(m);
-  if (problem) return status(problem, 'error');
+  if (problem) {
+    if (oneLine(m.title) && (!slug || RESERVED.has(address))) {
+      // the drawer covers the status line: the reason also shows under Address
+      slugHint(problem);
+      openSettings('[data-slug]');
+    }
+    return status(problem, 'error');
+  }
   busy(true);
   try {
     await flush();
@@ -1470,6 +1894,8 @@ async function publish() {
       if (!m.date) {
         m.date = date;
         await saveDraft();
+        $('[data-date]').value = date.slice(0, 10);
+        dateHint(false);
       }
       try {
         // on the head checked above: if the branch moved, GitHub refuses
@@ -1538,6 +1964,7 @@ async function deletePost() {
   closePopover(true);
   const c = cur, title = oneLine(c.meta.title) || 'this post';
   if (!confirm(`Delete "${title}" from the site? The post, and the images no other page shows, are removed from the repository (the git history keeps a copy).`)) return;
+  closeDrawer();
   busy(true);
   status('Deleting…');
   try {
@@ -1595,8 +2022,9 @@ async function discard() {
   closePopover(false);
   const c = cur, title = oneLine(c.meta.title) || 'Untitled';
   const ask = c.path ? `Discard your unpublished changes to "${title}" and load the version on GitHub?`
-    : `Delete the draft "${title}" from this browser? It was never published, so it cannot be brought back.`;
+    : `Delete "${title}" from this browser? It was never published, so it cannot be brought back.`;
   if (!confirm(ask)) return;
+  closeDrawer();
   if (c.path && !gh) return status('Sign in on the Posts page to load the version on GitHub.', 'error');
   busy(true);
   try {
@@ -1644,6 +2072,7 @@ async function init() {
     root.textContent = 'The editor does not run inside a frame; open it directly.';
     return;
   }
+  initTips();
   wire();
   await restoreBackups();
   let token = null;
@@ -1651,26 +2080,34 @@ async function init() {
     token = localStorage.getItem(TOKEN) || sessionStorage.getItem(TOKEN);
   } catch (e) { /* storage off */ }
   let msg = '';
-  if (token) {
+  if (token) {  // a pasted token wins over the shared site sign-in
+    via = 'token';
     gh = new GitHub(token, REPO, BRANCH);
     try {
       login = (await gh.user()).login;
     } catch (e) {
       if (e.status === 401) {
         gh = null;
+        via = '';
         try {
           localStorage.removeItem(TOKEN);
           sessionStorage.removeItem(TOKEN);
         } catch (_) { /* storage off */ }
-        msg = 'GitHub no longer accepts the saved token; sign in with a new one.';
+        msg = 'GitHub no longer accepts the saved token; sign in again.';
       }
     }
   }
+  if (!gh && window.GHAUTH && GHAUTH.signedIn) {
+    const m2 = await useApp();
+    msg = gh ? '' : (m2 || msg);
+  }
   window.addEventListener('popstate', route);
-  // a sign-out in another tab signs this one out too (after any publish
-  // running here), whichever storage held its token
+  // a sign-out in another tab or page signs this one out too (after any
+  // publish running here), whichever storage held its token
   window.addEventListener('storage', e => {
-    if (e.key === OWNER && !e.newValue && gh) signOutHere();
+    if (!gh) return;
+    if (e.key === OWNER && !e.newValue) signOutHere('other');
+    else if (e.key === APP_KEY && !e.newValue && via === 'app') signOutHere('other');
   });
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState !== 'hidden') return;

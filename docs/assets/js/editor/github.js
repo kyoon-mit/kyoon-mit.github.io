@@ -1,12 +1,13 @@
 // The site's repository on GitHub, through the REST API with the owner's
-// token. A publish is one commit made with the Git data API, so a post and
+// GitHub sign-in or pasted token. A publish is one commit made with the Git data API, so a post and
 // its images land together.
 const API = 'https://api.github.com';
 
 export class GitHubError extends Error {
-  constructor(status, message) {
+  constructor(status, message, method = '') {
     super(message);
     this.status = status;
+    this.method = method;
   }
 }
 
@@ -17,16 +18,21 @@ export function decodeBase64(b64) {
 }
 
 export class GitHub {
-  constructor(token, repo, branch) {
-    this.token = token;
+  // auth: a token, or an async function giving one (null when signed out);
+  // onUnauthorized(token): called when GitHub refuses that token (401)
+  constructor(auth, repo, branch, onUnauthorized = null) {
+    this.auth = typeof auth === 'function' ? auth : async () => auth;
     this.repo = repo;
     this.branch = branch;
+    this.onUnauthorized = onUnauthorized;
     this.blobs = new Map();
   }
 
   // A request that hangs is given up after a while (longer for uploads), so a
   // publish never stays locked for good.
   async req(method, path, body, seconds = method === 'POST' ? 120 : 30) {
+    const token = await this.auth();
+    if (!token) throw new GitHubError(401, 'Not signed in to GitHub.', method);
     const stop = new AbortController();
     const timer = setTimeout(() => stop.abort(), seconds * 1000);
     let r, text;
@@ -34,7 +40,7 @@ export class GitHub {
       r = await fetch(API + path, {
         method, cache: 'no-store', signal: stop.signal,
         headers: {
-          Authorization: `Bearer ${this.token}`,
+          Authorization: `Bearer ${token}`,
           Accept: 'application/vnd.github+json',
           'X-GitHub-Api-Version': '2022-11-28',
           ...(body ? {'Content-Type': 'application/json'} : {}),
@@ -44,7 +50,7 @@ export class GitHub {
       // the answer is read within the time limit too
       text = r.status === 204 ? '' : await r.text();
     } catch (e) {
-      throw new GitHubError(0, stop.signal.aborted ? 'GitHub did not answer in time; try again.' : 'Could not reach GitHub; check the connection.');
+      throw new GitHubError(0, stop.signal.aborted ? 'GitHub did not answer in time; try again.' : 'Could not reach GitHub; check the connection.', method);
     } finally {
       clearTimeout(timer);
     }
@@ -54,15 +60,28 @@ export class GitHub {
       data = text ? JSON.parse(text) : null;
     } catch (e) {
       // a cut-off answer is never taken for an empty one
-      if (r.ok) throw new GitHubError(0, 'GitHub sent an answer that could not be read; try again.');
+      if (r.ok) throw new GitHubError(0, 'GitHub sent an answer that could not be read; try again.', method);
     }
-    if (!r.ok) throw new GitHubError(r.status, (data && data.message) || r.statusText);
-    if (data === null) throw new GitHubError(0, 'GitHub sent an empty answer; try again.');
+    if (r.status === 401 && this.onUnauthorized) this.onUnauthorized(token);
+    if (!r.ok) throw new GitHubError(r.status, (data && data.message) || r.statusText, method);
+    if (data === null) throw new GitHubError(0, 'GitHub sent an empty answer; try again.', method);
     return data;
   }
 
   user() { return this.req('GET', '/user'); }
   repoInfo() { return this.req('GET', `/repos/${this.repo}`); }
+
+  // With the site's GitHub App sign-in: whether an installation of the App
+  // covers this repository with Contents write (true or false).
+  async appCanWrite() {
+    const {installations} = await this.req('GET', '/user/installations?per_page=100');
+    const owner = this.repo.split('/')[0].toLowerCase();
+    const i = (installations || []).find(x => (x.account && x.account.login || '').toLowerCase() === owner);
+    if (!i || !i.permissions || i.permissions.contents !== 'write') return false;
+    if (i.repository_selection === 'all') return true;
+    const r = await this.req('GET', `/user/installations/${i.id}/repositories?per_page=100`);
+    return (r.repositories || []).some(x => x.full_name.toLowerCase() === this.repo.toLowerCase());
+  }
 
   // the branch's newest commit and its tree
   async head() {

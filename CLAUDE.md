@@ -118,8 +118,11 @@ engineering, programming, machine learning and computer science. Listed at
   Drafts are kept in that browser (IndexedDB) as the owner types. Publish
   commits the post, `docs/_posts/YYYY-MM-DD-slug.html`, and its new images,
   `docs/assets/img/blog/<slug>/`, to `main` in one commit through the GitHub
-  API, with a fine-grained token the owner pasted into the page (Contents read
-  and write on this repository only; kept in that browser only). "Draft, kept
+  API, signed in either with the site's GitHub sign-in (`window.GHAUTH`, the
+  GitHub App below; publishing needs the App to have Contents: Read and write
+  and be installed on this repository) or with a fine-grained token pasted
+  into the page (Contents read and write on this repository only; kept in
+  that browser only). A stored pasted token is used first. "Draft, kept
   off the site" commits with `published: false`; a changed address renames the
   file and adds the old address to `redirect_from`; publishing with nothing
   changed makes no commit. While a publish or delete runs, the post is locked
@@ -130,7 +133,9 @@ engineering, programming, machine learning and computer science. Listed at
   only when no other post shows them, and every post, drafts included, needs
   its own address (its images live in a folder named after it). Post pages show
   "Edit this post", and the blog index "Write or edit posts", only in a browser
-  where the editor signed in.
+  where the editor or the site's GitHub sign-in signed in. The footer of every
+  default-layout page links to the editor ("Write") and to `/thesis/`
+  ("Thesis").
 - **Posts from the editor are HTML, and only the editor should change them**
   (it rewrites the whole body on each publish). The front matter is as below,
   plus `toc: true` for the contents list. The body is HTML in kramdown's shape,
@@ -153,8 +158,9 @@ engineering, programming, machine learning and computer science. Listed at
   `python3 tools/vendor_editor.py`, never by hand. The editor page loads
   nothing from a CDN except KaTeX, pinned with an integrity hash, and sets a
   Content-Security-Policy (its `csp:` front matter, written out by
-  `_includes/head.html`) that allows only the site's scripts, that KaTeX and
-  the GitHub API: keep it, and add no inline script to that page. The token
+  `_includes/head.html`) that allows only the site's scripts (including
+  `gh-auth.js`), that KaTeX, the GitHub API and the sign-in Worker: keep it,
+  and add no inline script to that page. The token
   shares its origin with every page of the site, so nothing on the site may
   run script it did not ship: the editor writes only links and image sources
   that cannot run script (and checks them again when writing), refuses SVG and
@@ -211,8 +217,9 @@ engineering, programming, machine learning and computer science. Listed at
   the header stays on one row, the 600/700 italic faces in the font link,
   `timezone:` (datetime attributes now carry -04:00/-05:00), `author:` (the
   research-log feed now names an author), escaped page titles and KaTeX
-  integrity hashes in `head.html`, and a page's own Content-Security-Policy
-  from a `csp:` front-matter key (used by the editor only).
+  integrity hashes in `head.html`, a page's own Content-Security-Policy from
+  a `csp:` front-matter key (used by the editor only), and the Write and
+  Thesis links in the footer.
   The layout is `_layouts/post.html` (it wraps tables so they scroll, makes
   code blocks focusable and names checklist boxes, by text replacement, so an
   inline script in a post must not hold the string `<table` in double quotes)
@@ -335,13 +342,19 @@ Both protected sections (thesis, magnets) also open with "Sign in with GitHub",
 for the owner only. Being moved off the password vaults.
 
 - GitHub App `kyoon-mit-site-login` (Contents read-only, installed only on
-  `kyoon-mit/site-private`); redirect URI `/auth/callback/`.
+  `kyoon-mit/site-private`; for the blog editor to publish with it, the owner
+  must give it Contents: Read and write and install it on
+  `kyoon-mit/kyoon-mit.github.io`, which gives the thesis and magnet pages a
+  write-capable token too); redirect URI `/auth/callback/`.
 - The token exchange runs on a Cloudflare Worker,
   `https://kyoon-mit-site-login.kyoon-fbe.workers.dev`; its code is
   `auth-worker/worker.js`, and the client secret lives only in Cloudflare.
 - `docs/assets/js/gh-auth.js` signs in and reads files from `site-private`;
   `docs/auth/callback/` finishes sign-in. Pages using it list the API and the
   Worker in their CSP `connect-src`.
+- The blog editor also uses it: `GHAUTH.token()` gives a current access token
+  (one renewal at a time). Signing out in the editor signs out of these
+  sections too.
 - The pages read `build/magnets.json` and `build/thesis.json` from
   `site-private`. After changing the plaintext, rebuild them with `--plain`
   (commands in `site-private/README.md`) and push `site-private`.
