@@ -23,6 +23,26 @@
     detection: Abbott et al., Phys. Rev. Lett. 119, 161101 (2017),
     [arXiv:1710.05832](https://arxiv.org/abs/1710.05832).
 
+- id: binary-black-hole
+  term: binary black hole
+  also: [binary black holes, BBH, BBHs]
+  group: Gravitational waves
+  short: >-
+    Two black holes orbiting each other until they merge.
+  source: >-
+    The first detection: Abbott et al., Phys. Rev. Lett. 116, 061102 (2016),
+    [arXiv:1602.03837](https://arxiv.org/abs/1602.03837).
+
+- id: neutron-star-black-hole
+  term: neutron star-black hole binary
+  also: [neutron star-black hole binaries, neutron star-black hole, NSBH, NSBHs]
+  group: Gravitational waves
+  short: >-
+    A neutron star and a black hole orbiting each other until they merge.
+  source: >-
+    The first detections: Abbott et al., Astrophys. J. Lett. 915, L5 (2021),
+    [arXiv:2106.15163](https://arxiv.org/abs/2106.15163).
+
 - id: compact-binary
   term: compact binary
   also: [compact binaries, compact binary coalescence, compact binary coalescences]
