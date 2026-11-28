@@ -13,12 +13,19 @@
       <a href="{{ '/about/' | relative_url }}"
          class="site-nav__link {% if page.url == '/about/' %}is-current{% endif %}">About</a>
       <a href="{{ site.links.cv | relative_url }}" class="site-nav__link">CV</a>
-      <a class="site-nav__icon" href="{{ site.links.scholar }}" title="Google Scholar"
-         aria-label="Google Scholar profile" rel="noopener" target="_blank">
+      <div class="site-nav__menu" data-menu>
+        <button type="button" class="site-nav__icon" data-menu-button aria-expanded="false" aria-controls="cite-menu" aria-label="Citation profiles">
         <svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18">
           <path d="M12 2 1 9l4 2.6V17l7 5 7-5v-5.4L23 9 12 2Zm0 2.4 7.6 4.8-7.6 5-7.6-5L12 4.4Zm-5 8.6 5 3.3 5-3.3v3.3l-5 3.6-5-3.6v-3.3Z" fill="currentColor"/>
         </svg>
-      </a>
+        </button>
+        <div class="site-nav__dropdown" id="cite-menu">
+          <ul>
+            <li><a href="{{ site.links.inspire }}" rel="noopener" target="_blank">INSPIRE-HEP</a></li>
+            <li><a href="{{ site.links.scholar }}" rel="noopener" target="_blank">Google Scholar</a></li>
+          </ul>
+        </div>
+      </div>
       <a class="site-nav__icon" href="{{ site.links.github }}" title="GitHub"
          aria-label="GitHub profile" rel="noopener" target="_blank">
         <svg viewBox="0 0 16 16" aria-hidden="true" width="18" height="18">
