@@ -84,7 +84,6 @@ All five behave as designed. The oracle shows why the faint-signal check matters
 - Coincidence: H1 and L1 trigger extents overlap within 15 ms; the rank is the smaller of the two detectors' scores.
 - Background: one noise day, with L1 time-slid against H1 by multiples of 7 s (1,000 slides), giving about one year.
 - Scored on one injection day, with FAR honesty checked on a second, unused noise day.
-- Compute: 126 single-core Condor jobs, about 2 CPU-hours.
 
 <div class="table-scroll" markdown="1">
 
