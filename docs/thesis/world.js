@@ -768,15 +768,6 @@ window.WORLD = (() => {
     } else {
       await say('ANCIENT TREE: Hmmm... You again.');
     }
-    if (window.GHAUTH) {
-      await say('ANCIENT TREE: Do you carry a GitHub mark?\nSign in with GitHub?', { wait: false });
-      if (await yesno()) {
-        await say('ANCIENT TREE: Then go. The pages will be open when you return.');
-        close();
-        GHAUTH.signIn('/thesis/');
-        return;
-      }
-    }
     await say('ANCIENT TREE: Password?');
     close();
     const pw = await NAMING.open();
@@ -792,6 +783,14 @@ window.WORLD = (() => {
       return;
     }
     await say('ANCIENT TREE: ...Yes. That is the word.');
+    if (window.GHAUTH) {
+      await say('ANCIENT TREE: Go on. The pages are waiting.');
+      close();
+      await fadeTo(1, 40, WHITE);
+      TG.stop();
+      GHAUTH.signIn('/thesis/');
+      return;
+    }
     await say('ANCIENT TREE: Shall I remember you?\nKeep logged in?', { wait: false });
     const keep = await yesno();
     const ok = await VAULT.remember(res.key, keep);
