@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 {% include head.html %}
-<body>
+<body{% if page.theme == 'dark' %} class="theme-dark"{% endif %}>
   <a class="skip-link" href="#main">Skip to content</a>
   {% include site-header.html %}
   <main id="main">

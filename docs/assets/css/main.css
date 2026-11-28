@@ -1036,3 +1036,32 @@ ul, ol { margin: 0; }
 .post__foot .pager { margin-top: 3.5rem; }
 .post__edit { margin-top: 3rem; font-size: .85rem; }
 .post__edit[hidden] { display: none; }
+
+/* --- Dark pages (front matter `theme: dark`) ------------------------------- */
+/* The body keeps the light values under other names; its children swap ink and
+   paper, so every component styled with the tokens turns dark. */
+body.theme-dark {
+  --light-paper: var(--paper);
+  --light-paper-3: var(--paper-3);
+  --light-rule-2: var(--rule-2);
+  --dark-ink: var(--ink);
+  --dark-ink-2: var(--ink-2);
+  --dark-ink-3: var(--ink-3);
+  --dark-accent-2: var(--accent-2);
+  background: var(--ink);
+  color: var(--paper);
+}
+body.theme-dark > * {
+  --paper: var(--dark-ink);
+  --paper-2: var(--dark-accent-2);
+  --paper-3: var(--dark-ink-2);
+  --ink: var(--light-paper);
+  --ink-2: var(--light-paper-3);
+  --ink-3: var(--light-rule-2);
+  --rule: var(--dark-ink-2);
+  --rule-2: var(--dark-ink-3);
+  --accent: var(--light-paper-3);
+  --accent-2: var(--light-paper);
+  --accent-wash: var(--dark-accent-2);
+  --on-accent: var(--dark-ink);
+}
