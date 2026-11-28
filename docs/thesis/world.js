@@ -768,6 +768,15 @@ window.WORLD = (() => {
     } else {
       await say('ANCIENT TREE: Hmmm... You again.');
     }
+    if (window.GHAUTH) {
+      await say('ANCIENT TREE: Do you carry a GitHub mark?\nSign in with GitHub?', { wait: false });
+      if (await yesno()) {
+        await say('ANCIENT TREE: Then go. The pages will be open when you return.');
+        close();
+        GHAUTH.signIn('/thesis/');
+        return;
+      }
+    }
     await say('ANCIENT TREE: Password?');
     close();
     const pw = await NAMING.open();

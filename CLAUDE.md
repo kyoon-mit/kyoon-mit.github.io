@@ -320,6 +320,23 @@ the URL fragment (`#/documentation/slides`, `#/updates/<slug>`, ...).
 - Behind the password, meeting notes and presenter names are allowed (owner's
   decision, 2026-11-25); notes stay factual and never criticize anyone.
 
+## GitHub sign-in for the protected sections
+
+Both protected sections (thesis, magnets) also open with "Sign in with GitHub",
+for the owner only. Being moved off the password vaults.
+
+- GitHub App `kyoon-mit-site-login` (Contents read-only, installed only on
+  `kyoon-mit/site-private`); redirect URI `/auth/callback/`.
+- The token exchange runs on a Cloudflare Worker,
+  `https://kyoon-mit-site-login.kyoon-fbe.workers.dev`; its code is
+  `auth-worker/worker.js`, and the client secret lives only in Cloudflare.
+- `docs/assets/js/gh-auth.js` signs in and reads files from `site-private`;
+  `docs/auth/callback/` finishes sign-in. Pages using it list the API and the
+  Worker in their CSP `connect-src`.
+- The pages read `build/magnets.json` and `build/thesis.json` from
+  `site-private`. After changing the plaintext, rebuild them with `--plain`
+  (commands in `site-private/README.md`) and push `site-private`.
+
 ## Publishing
 
 - Commit with a plain-English subject line; push only when the owner asks.

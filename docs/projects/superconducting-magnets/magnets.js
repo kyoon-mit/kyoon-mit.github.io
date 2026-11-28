@@ -1,6 +1,7 @@
-/* Superconducting magnet section: password gate, decryption (PBKDF2 + AES-GCM), and the pages behind it.
-   Everything shown after the gate comes from vault/site.json and vault/f/*.bin, written by
-   tools/magnets_encrypt.py. Routes live in the URL fragment: #/documentation/slides, #/updates/<slug>, ... */
+/* Superconducting magnet section: GitHub sign-in or password gate, and the pages behind it.
+   After GitHub sign-in the page data and files come from the private repository
+   (build/magnets.json, written by tools/magnets_encrypt.py --plain); with the password they come
+   from vault/site.json and vault/f/*.bin, decrypted here (PBKDF2 + AES-GCM). Routes live in the URL fragment: #/documentation/slides, #/updates/<slug>, ... */
 'use strict';
 (() => {
   const root = document.getElementById('mg');
@@ -40,6 +41,11 @@
     if (blobs.has(id)) return blobs.get(id);
     const meta = data.files[id];
     if (!meta) throw new Error('missing');
+    if (meta.path) {
+      const gh = URL.createObjectURL(await GHAUTH.blob(meta.path, meta.type));
+      blobs.set(id, gh);
+      return gh;
+    }
     const r = await fetch(VAULT + 'f/' + id + '.bin');
     if (!r.ok) throw new Error('net');
     const buf = new Uint8Array(await r.arrayBuffer());
@@ -467,6 +473,7 @@
     route();
   }
   async function signOut() {
+    if (window.GHAUTH) GHAUTH.signOut();
     await delRec();
     blobs.forEach(u => URL.revokeObjectURL(u));
     location.replace(location.pathname);
@@ -491,9 +498,15 @@
     }
     btn.disabled = false;
   });
+  const gh = document.getElementById('mg-gh');
+  if (gh) gh.addEventListener('click', () => GHAUTH.signIn(location.pathname + location.hash));
   window.addEventListener('hashchange', route);
 
   (async () => {
+    if (window.GHAUTH && GHAUTH.signedIn) {
+      try { show(await GHAUTH.json('build/magnets.json'), null); return; }
+      catch (e) { if (e.message !== 'signin') msg.textContent = e.message === 'denied' ? 'This GitHub account cannot open this section.' : 'Could not load the page data from GitHub. Try again.'; }
+    }
     if (!window.crypto || !crypto.subtle) { msg.textContent = 'This browser cannot decrypt the page (it needs Web Crypto over HTTPS).'; gate.hidden = false; return; }
     try {
       const [h, rec] = await Promise.all([loadHead(), getRec()]);

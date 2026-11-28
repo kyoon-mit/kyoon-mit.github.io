@@ -1,4 +1,5 @@
-/* Thesis vault: PBKDF2 + AES-GCM decryption, remembered keys, and the notes reader. */
+/* Thesis notes: loaded from the private repository after GitHub sign-in (build/thesis.json), or
+   decrypted from vault.json with the password (PBKDF2 + AES-GCM); remembered keys; the notes reader. */
 'use strict';
 window.VAULT = (() => {
   const AAD = new TextEncoder().encode('thesis-vault-v1');
@@ -104,6 +105,7 @@ window.VAULT = (() => {
   }
   async function logout() {
     memKey = null;
+    if (window.GHAUTH) GHAUTH.signOut();
     await delRec();
     try { sessionStorage.removeItem(TOKEN); } catch (_) {}
     location.replace(location.pathname);
@@ -200,7 +202,7 @@ window.VAULT = (() => {
     const main = el('div', 'th-main');
     body.appendChild(nav); body.appendChild(main);
     root.appendChild(body);
-    if (data.built) root.appendChild(el('p', 'th-built', 'Last encrypted ' + data.built + '.'));
+    if (data.built) root.appendChild(el('p', 'th-built', 'Last updated ' + data.built + '.'));
     const sections = data.sections || [];
     const navBtns = {};
     function openSection(sec, article) {
@@ -255,6 +257,9 @@ window.VAULT = (() => {
   }
 
   async function boot() {
+    if (window.GHAUTH && GHAUTH.signedIn) {
+      try { show(await GHAUTH.json('build/thesis.json')); return true; } catch (_) { /* fall back to the vault */ }
+    }
     if (!window.crypto || !crypto.subtle) return false;
     const data = await recall();
     if (data) { show(data); return true; }

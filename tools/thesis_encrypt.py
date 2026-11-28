@@ -20,6 +20,11 @@ and the password must open the old vault, so a typo cannot re-key it. Pass
 
 Format: PBKDF2-HMAC-SHA256 (1,000,000 iterations, 16-byte salt) -> AES-256-GCM
 (12-byte IV, tag appended, associated data "thesis-vault-v1").
+
+--plain FILE writes the notes unencrypted to FILE instead (no password); the page reads
+it from kyoon-mit/site-private after GitHub sign-in:
+
+    uv run --no-project --with cryptography python tools/thesis_encrypt.py ../site-private/thesis --plain ../site-private/build/thesis.json
 """
 import argparse
 import base64
@@ -80,7 +85,14 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("src", type=Path, help="folder with one subfolder per section")
     ap.add_argument("--new-password", action="store_true", help="re-key with a new password and salt")
+    ap.add_argument("--plain", type=Path, help="write the notes unencrypted to this file instead of the vault")
     args = ap.parse_args()
+
+    if args.plain:
+        args.plain.parent.mkdir(parents=True, exist_ok=True)
+        args.plain.write_text(json.dumps(collect(args.src), ensure_ascii=False, indent=1) + "\n")
+        print(f"wrote {args.plain}")
+        return 0
 
     pw = os.environ.get("THESIS_PASSWORD") or getpass.getpass("Thesis password: ")
     if not pw:

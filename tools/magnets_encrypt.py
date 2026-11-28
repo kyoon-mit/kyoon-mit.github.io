@@ -26,6 +26,12 @@ f/<id>.bin = 12-byte IV || ciphertext || tag (associated data "magnets-vault-v1/
 IVs and ids are HMACs of the content under a key derived from the AES key, so an unchanged
 file gives the same bytes and git sees no change; nothing about the content is readable
 without the password.
+
+--plain FILE writes the same page data unencrypted to FILE (no password needed), with each
+file's path in the private repository instead of a vault blob; the page reads it, and the
+files, from kyoon-mit/site-private after GitHub sign-in:
+
+    uv run --no-project --with cryptography --with markdown --with pyyaml python tools/magnets_encrypt.py --plain ../site-private/build/magnets.json
 """
 import argparse
 import base64
@@ -224,6 +230,25 @@ class Builder:
                 "datasets": datasets, "plan": safe_links(plan), "files": self.files}
 
 
+class PlainBuilder(Builder):
+    """Files keep their path in the private repository; nothing is encrypted."""
+
+    def __init__(self, src: Path):
+        super().__init__(src, None)
+
+    def add_file(self, rel: str, name: str | None = None) -> str:
+        p = (self.src / rel).resolve()
+        if not p.is_file() or self.src.resolve() not in p.parents:
+            raise SystemExit(f"missing or outside the source folder: {rel}")
+        data = p.read_bytes()
+        fid = hashlib.sha256(data).hexdigest()[:32]
+        if fid not in self.files:
+            path = f"{self.src.resolve().name}/{p.relative_to(self.src.resolve()).as_posix()}"
+            self.files[fid] = {"name": name or p.name, "type": TYPES.get(p.suffix.lower(), "application/octet-stream"),
+                               "size": len(data), "path": path}
+        return fid
+
+
 # ---------------------------------------------------------------------------- password
 def read_password(new: bool, save: bool) -> str:
     pw = os.environ.get("MAGNETS_PASSWORD")
@@ -250,7 +275,17 @@ def main() -> int:
     ap.add_argument("--out", type=Path, default=OUT, help="output folder (default the site's vault folder)")
     ap.add_argument("--new-password", action="store_true", help="re-key with a new password and salt")
     ap.add_argument("--no-save", action="store_true", help="do not save a prompted password")
+    ap.add_argument("--plain", type=Path, help="write the page data unencrypted to this file instead of the vault")
     args = ap.parse_args()
+
+    if args.plain:
+        builder = PlainBuilder(args.src)
+        data = builder.build()
+        args.plain.parent.mkdir(parents=True, exist_ok=True)
+        args.plain.write_text(json.dumps(data, ensure_ascii=False, indent=1, sort_keys=True) + "\n")
+        print(f"wrote {args.plain}: {len(data['meetings'])} meetings, {len(data['pages'])} pages, "
+              f"{len(data['updates'])} updates, {len(data['glossary'])} terms, {len(data['files'])} files")
+        return 0
 
     out: Path = args.out
     site = out / "site.json"

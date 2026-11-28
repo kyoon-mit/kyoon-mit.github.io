@@ -14,7 +14,7 @@ csp: >-
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/;
   font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/fonts/;
   img-src 'self' data: blob:;
-  connect-src 'self';
+  connect-src 'self' https://api.github.com https://kyoon-mit-site-login.kyoon-fbe.workers.dev;
   object-src 'none'; base-uri 'self'; form-action 'none'
 ---
 <link rel="stylesheet" href="{{ '/projects/superconducting-magnets/magnets.css' | relative_url }}">
@@ -43,6 +43,7 @@ csp: >-
       <h1 class="page__title">Superconducting magnet control</h1>
       <p class="page__lede">This section is password protected.</p>
     </header>
+    <p><button type="button" class="mg-btn" id="mg-gh">Sign in with GitHub</button></p>
     <form class="mg-gate__form" id="mg-form" autocomplete="off">
       <label for="mg-pw">Password</label>
       <input id="mg-pw" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" required>
@@ -55,4 +56,5 @@ csp: >-
 
   <div id="mg-app" hidden></div>
 </div>
+<script src="{{ '/assets/js/gh-auth.js' | relative_url }}"></script>
 <script src="{{ '/projects/superconducting-magnets/magnets.js' | relative_url }}"></script>

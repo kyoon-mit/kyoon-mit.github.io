@@ -1,0 +1,26 @@
+---
+layout: null
+permalink: /auth/callback/
+sitemap: false
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://kyoon-mit-site-login.kyoon-fbe.workers.dev; base-uri 'none'; form-action 'none'">
+  <title>Signing in · {{ site.title }}</title>
+  <link rel="icon" href="{{ '/assets/img/favicon.svg' | relative_url }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+</head>
+<body>
+  <main class="wrap">
+    <p id="msg" role="status" aria-live="polite">Signing in…</p>
+    <p><a href="{{ '/' | relative_url }}">Home</a></p>
+  </main>
+  <script src="{{ '/assets/js/gh-auth.js' | relative_url }}"></script>
+  <script src="{{ '/auth/callback/callback.js' | relative_url }}"></script>
+</body>
+</html>
