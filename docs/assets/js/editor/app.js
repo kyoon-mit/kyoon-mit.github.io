@@ -1071,18 +1071,16 @@ function renderTags() {
     li.append(el('span', '', t.label), x);
     ul.append(li);
   }
-  const k = BLOG.kinds.find(x => x.key === m.kind);
-  $('[data-kind-label]').hidden = !k;
-  $('[data-kind-text]').textContent = k ? k.label : '';
   const fc = $('[data-field-chips]');
   fc.textContent = '';
-  for (const key of m.fields) {
-    const f = BLOG.fields.find(x => x.key === key);
-    const s = el('span', 'tag tag--topic', f ? f.label : key);
-    if (f && f.pen) s.style.setProperty('--tag', `var(--pen-${f.pen})`);
+  const chip = (label, color) => {
+    const s = el('span', 'tag tag--topic', label);
+    s.style.setProperty('--tag', color);
     fc.append(s);
-  }
-  fc.hidden = !m.fields.length;
+  };
+  if (!m.date) chip('Not published yet', 'var(--ink-3)');
+  for (const t of tagItems(m)) chip(t.label, t.color);
+  fc.hidden = !fc.childElementCount;
   $('[data-tags-open]').textContent = m.kind || m.fields.length ? 'Edit tags' : 'Add tags';
   if (!$('[data-tag-list]').hidden) renderSuggest();
 }
@@ -1227,7 +1225,6 @@ function renderHeader() {
   title.value = m.title;
   desc.value = m.description;
   requestAnimationFrame(() => { grow(title); grow(desc); });
-  renderTags();
   $('[data-paper]').hidden = m.kind !== 'paper';
   for (const i of $$('[data-paper-key]')) i.value = m.paper[i.dataset.paperKey];
   renderLinks();
@@ -1235,9 +1232,17 @@ function renderHeader() {
   $('[data-toc]').checked = m.toc;
   $('[data-draft]').checked = m.draft;
   $('[data-date]').value = m.date ? m.date.slice(0, 10) : '';
-  $('[data-date-label]').textContent = m.date ? dayOf(m.date) : 'Not published yet';
+  headDate();
   slugHint();
   dateHint(!(cur.path || m.date));
+}
+
+// the date above the title, or "Not published yet" among the tags
+function headDate() {
+  const m = cur.meta, l = $('[data-date-label]');
+  l.textContent = m.date ? dayOf(m.date) : '';
+  l.hidden = !m.date;
+  renderTags();
 }
 
 function slugHint(error = '') {
@@ -1896,6 +1901,7 @@ async function publish() {
         await saveDraft();
         $('[data-date]').value = date.slice(0, 10);
         dateHint(false);
+        headDate();
       }
       try {
         // on the head checked above: if the branch moved, GitHub refuses
