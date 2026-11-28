@@ -39,6 +39,16 @@ current:
     image: /assets/img/projects/placeholder.svg
     url: /projects/superconducting-magnets/
 
+  - title: PhyTS (NeurIPS)
+    blurb: A benchmark of real physics time series for machine learning
+    detail: >-
+      A benchmark of real physics time series for testing whether machine
+      learning can pull weak signals out of noisy detector data, from
+      gravitational waves to neutrino mass.
+    tags: [Benchmark, Time series, NeurIPS 2026]
+    image: /assets/img/projects/placeholder.svg
+    url: /projects/phyts/
+
 past:
   - title: Higgs Rare Decays to Light Quark Mesons
     blurb: Probing Higgs couplings to light quarks at the LHC
