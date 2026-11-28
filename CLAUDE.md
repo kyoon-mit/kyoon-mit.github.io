@@ -297,6 +297,10 @@ the URL fragment (`#/documentation/slides`, `#/updates/<slug>`, ...).
   slide calendar and notes, `slides/`, `pages/`, `updates/`, `img/`,
   `glossary.yml`, `data.yml`; see its README). Never add magnet pages,
   updates, figures or glossary entries under `docs/`.
+- `../magnets-private/` is its own git repository, backed up to the private
+  GitHub repository `kyoon-mit/magnets-private`. Commit and push there after
+  changing the plaintext. Pages deleted from this site's history before the
+  password went on (commit 20e2c6e) are still readable in its git history.
 - Encrypted output: `docs/projects/superconducting-magnets/vault/site.json`
   and `vault/f/*.bin` (PBKDF2-SHA256, 1,000,000 iterations, AES-256-GCM; IVs
   and file names are HMACs of the content, so unchanged files stay

@@ -75,6 +75,8 @@ defaults:
     values: {sitemap: false}
   - scope: {path: "assets"}
     values: {sitemap: false}
+  - scope: {path: "google749fc2b5b4927c38.html"}
+    values: {sitemap: false}
 
 # --- Build settings ----------------------------------------------------------
 # GitHub Pages builds future-dated posts; local builds match it.
