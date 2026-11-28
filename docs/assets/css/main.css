@@ -1082,3 +1082,12 @@ body.theme-dark > * {
 .pub__links a { font-size: .78rem; padding: .12rem .55rem; border: 1px solid var(--rule-2); border-radius: var(--r); color: var(--accent); text-decoration: none; }
 .pub__links a:hover { border-color: var(--accent); background: var(--accent-wash); }
 .pubs__more { margin-top: .9rem; font-size: .85rem; color: var(--ink-3); }
+
+/* Update pages: a summary callout box ({: .callout} under a blockquote) and muted omission notes ({: .omitted}) */
+.prose blockquote.callout {
+  font-style: normal; color: var(--ink-2);
+  padding: .85rem 1.05rem .95rem;
+  border-left: 3px solid var(--accent); border-radius: 0 var(--r) var(--r) 0;
+  background: color-mix(in srgb, var(--accent) 6%, var(--paper));
+}
+.prose p.omitted { font-size: .8rem; color: var(--ink-3); }
